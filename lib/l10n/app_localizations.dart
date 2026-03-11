@@ -14,10 +14,8 @@ class AppLocalizations {
   bool get isNL => locale.languageCode == 'nl';
 
   // ── APP ──────────────────────────────────────────────────────────────────
-  String get appTitle => isNL
-      ? 'Kabelberekening  —  IEC 60364-5-52 / NEN 1010'
-      : 'Cable Calculation  —  IEC 60364-5-52 / NEN 1010';
-  String get appTitleShort => isNL ? 'Kabelberekening' : 'Cable Calculation';
+  String get appTitle => 'MijnKabelberekening  —  IEC 60364-5-52 / NEN 1010';
+  String get appTitleShort => 'MijnKabelberekening';
 
   // ── NAVIGATIE / HOME ─────────────────────────────────────────────────────
   String get navKabelcatalogus => isNL ? 'Kabelcatalogus' : 'Cable Catalogue';
