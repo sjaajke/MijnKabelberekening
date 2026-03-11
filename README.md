@@ -1,4 +1,4 @@
-# Kabelberekening
+# MijnKabelberekening
 
 Flutter app voor het berekenen van kabeldoorsneden conform **IEC 60364-5-52** en **NEN 1010**.
 Beschikbaar voor **Windows**, **macOS** en **iOS**.
