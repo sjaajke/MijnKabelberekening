@@ -105,6 +105,10 @@ Interactive table for:
 
 ---
 
+[Api documentation](./api/)
+
+---
+
 ## License
 
 MijnKabelberekening is open source software, licensed under the
