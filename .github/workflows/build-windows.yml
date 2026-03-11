@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versienummer (bijv. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
 
 jobs:
   build:
@@ -28,14 +34,25 @@ jobs:
       - name: Build Windows release
         run: flutter build windows --release
 
+      - name: Set version name
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Zip build output
         run: |
-          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath kabelberekening-windows-${{ github.ref_name }}.zip
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath kabelberekening-windows-${{ steps.version.outputs.name }}.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Kabelberekening ${{ github.ref_name }}
-          files: kabelberekening-windows-${{ github.ref_name }}.zip
+          tag_name: ${{ steps.version.outputs.name }}
+          name: MijnKabelberekening ${{ steps.version.outputs.name }}
+          files: kabelberekening-windows-${{ steps.version.outputs.name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
