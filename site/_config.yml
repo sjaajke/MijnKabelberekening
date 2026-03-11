@@ -1,0 +1,16 @@
+title: MijnKabelberekening
+description: Cable cross-section calculation app — IEC 60364-5-52 / NEN 1010
+baseurl: "/MijnKabelberekening"
+url: "https://sjaajke.github.io"
+
+theme: minima
+
+author:
+  name: Jay Smeekes
+
+minima:
+  skin: classic
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
