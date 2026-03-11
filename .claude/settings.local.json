@@ -10,7 +10,10 @@
       "Bash(flutter analyze lib/screens/uitleg_screen.dart)",
       "Bash(flutter analyze lib/models/enums.dart lib/l10n/uitleg_localizations.dart lib/screens/uitleg_screen.dart lib/l10n/app_localizations.dart)",
       "Bash(flutter analyze lib/screens/project_detail_screen.dart)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(\"/Users/sjaaj/Flutter/mijn-kabel-berekeningen-5 met:*)",
+      "Bash(chmod +x \"/Users/sjaaj/Flutter/mijn-kabel-berekeningen-5 met bronimpedantie/generate_docs.sh\")",
+      "Bash(bash generate_docs.sh)"
     ]
   }
 }
