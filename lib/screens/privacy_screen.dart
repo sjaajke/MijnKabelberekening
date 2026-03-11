@@ -85,6 +85,13 @@ class PrivacyScreen extends StatelessWidget {
               body: Text(l10n.privacy7Body),
             ),
             const SizedBox(height: 24),
+            Center(
+              child: Text(
+                'v1.0.0',
+                style: textTheme.bodySmall?.copyWith(color: colorScheme.outline),
+              ),
+            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
