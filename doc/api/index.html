@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="mijnkabelberekening API docs, for the Dart programming language.">
+  <title>mijnkabelberekening - Dart API docs</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static-assets/github.css?v1">
+  <link rel="stylesheet" href="static-assets/styles.css?v1">
+  <link rel="icon" href="static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">mijnkabelberekening package</li>
+  </ol>
+  <div class="self-name">mijnkabelberekening</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div id="dartdoc-main-content" class="main-content">
+      
+<section class="desc markdown">
+  <h1 id="mijnkabelberekening">MijnKabelberekening</h1>
+<p>Flutter app voor het berekenen van kabeldoorsneden conform <strong>IEC 60364-5-52</strong> en <strong>NEN 1010</strong>.
+Beschikbaar voor <strong>Windows</strong>, <strong>macOS</strong> en <strong>iOS</strong>.</p>
+<hr>
+<h2 id="functies">Functies</h2>
+<ul>
+<li>Berekening van minimale kabeldoorsnede op basis van:
+<ul>
+<li>Belastingsstroom en omgevingstemperatuur</li>
+<li>Correctiefactoren (bundeling, grond, temperatuur)</li>
+<li>Maximale spanningsval</li>
+<li>Kortsluitbeveiliging (thermisch en dynamisch)</li>
+</ul>
+</li>
+<li><strong>Bronimpedantie module</strong> — transformatorgegevens (50–2000 kVA) of handmatige invoer:
+<ul>
+<li>Kortsluitstroom aan de bron (Ik3f, Ik1f)</li>
+<li>Kortsluitstroom aan het kabeluiteinde</li>
+<li>Aardingsstelsel selectie (TN-S, TN-C, TN-C-S, TT, IT) met NEN 1010 hints</li>
+</ul>
+</li>
+<li>Kabelcatalogus met eigen kabels toevoegen</li>
+<li>Projectenbeheer — meerdere berekeningen per project</li>
+<li>Boomberekening — meerdere aftakkingen in één overzicht</li>
+<li>Tweetalig: Nederlands en Engels</li>
+<li>Meerdere gebruikersprofielen</li>
+</ul>
+<hr>
+<h2 id="download">Download</h2>
+<p>De nieuwste Windows-versie (.zip met .exe) is te vinden onder <a href="../../releases">Releases</a>.</p>
+<p>Download, uitpakken en <code>kabelberekening.exe</code> starten — geen installatie nodig.</p>
+<hr>
+<h2 id="bouwen-vanuit-broncode">Bouwen vanuit broncode</h2>
+<p>Vereisten: <a href="https://docs.flutter.dev/get-started/install">Flutter SDK</a> (stable channel)</p>
+<pre class="language-bash"><code class="language-bash">git clone &lt;repository-url&gt;
+cd kabelberekening
+flutter pub get
+
+# macOS
+flutter build macos --release
+
+# Windows
+flutter create --platforms=windows .
+flutter build windows --release
+
+# iOS
+flutter build ios --release
+</code></pre>
+<hr>
+<h2 id="normen">Normen</h2>
+<p>Berekeningen zijn gebaseerd op:</p>
+<ul>
+<li>IEC 60364-5-52 — Selectie en installatie van elektrisch materieel</li>
+<li>NEN 1010 — Veiligheidsbepalingen voor laagspanningsinstallaties</li>
+<li>IEC 60076-5 — Transformatoren, kortsluitvastheid</li>
+</ul>
+<hr>
+<h2 id="licentie">Licentie</h2>
+<p>Privégebruik. Zie <a href="lib/screens/privacy_screen.dart">Privacy Policy</a> in de app.</p>
+</section>
+
+
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="correctiefactoren">
+  <span class="name"><a href="berekening_correctiefactoren/">berekening/correctiefactoren</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="cyclisch">
+  <span class="name"><a href="berekening_cyclisch/">berekening/cyclisch</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="kortsluit">
+  <span class="name"><a href="berekening_kortsluit/">berekening/kortsluit</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="ontwerper">
+  <span class="name"><a href="berekening_ontwerper/">berekening/ontwerper</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="rapport">
+  <span class="name"><a href="berekening_rapport/">berekening/rapport</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="spanningsval">
+  <span class="name"><a href="berekening_spanningsval/">berekening/spanningsval</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="thermisch">
+  <span class="name"><a href="berekening_thermisch/">berekening/thermisch</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="catalogus">
+  <span class="name"><a href="data_catalogus/">data/catalogus</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="materiaal_data">
+  <span class="name"><a href="data_materiaal_data/">data/materiaal_data</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="transformatoren">
+  <span class="name"><a href="data_transformatoren/">data/transformatoren</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="app_localizations">
+  <span class="name"><a href="l10n_app_localizations/">l10n/app_localizations</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="uitleg_localizations">
+  <span class="name"><a href="l10n_uitleg_localizations/">l10n/uitleg_localizations</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="main">
+  <span class="name"><a href="main/">main</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="bundel_config">
+  <span class="name"><a href="models_bundel_config/">models/bundel_config</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="enums">
+  <span class="name"><a href="models_enums/">models/enums</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="gebruiker">
+  <span class="name"><a href="models_gebruiker/">models/gebruiker</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="invoer">
+  <span class="name"><a href="models_invoer/">models/invoer</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="kabel_boom">
+  <span class="name"><a href="models_kabel_boom/">models/kabel_boom</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="kabel_spec">
+  <span class="name"><a href="models_kabel_spec/">models/kabel_spec</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="leiding_node">
+  <span class="name"><a href="models_leiding_node/">models/leiding_node</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="project">
+  <span class="name"><a href="models_project/">models/project</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="resultaten">
+  <span class="name"><a href="models_resultaten/">models/resultaten</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="boom_screen">
+  <span class="name"><a href="screens_boom_screen/">screens/boom_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="catalogus_screen">
+  <span class="name"><a href="screens_catalogus_screen/">screens/catalogus_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="correctiefactoren_screen">
+  <span class="name"><a href="screens_correctiefactoren_screen/">screens/correctiefactoren_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="gebruiker_selectie_screen">
+  <span class="name"><a href="screens_gebruiker_selectie_screen/">screens/gebruiker_selectie_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="home_screen">
+  <span class="name"><a href="screens_home_screen/">screens/home_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="invoer_screen">
+  <span class="name"><a href="screens_invoer_screen/">screens/invoer_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="kabel_toevoegen_dialog">
+  <span class="name"><a href="screens_kabel_toevoegen_dialog/">screens/kabel_toevoegen_dialog</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="privacy_screen">
+  <span class="name"><a href="screens_privacy_screen/">screens/privacy_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="project_detail_screen">
+  <span class="name"><a href="screens_project_detail_screen/">screens/project_detail_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="projecten_screen">
+  <span class="name"><a href="screens_projecten_screen/">screens/projecten_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="resultaten_screen">
+  <span class="name"><a href="screens_resultaten_screen/">screens/resultaten_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="uitleg_screen">
+  <span class="name"><a href="screens_uitleg_screen/">screens/uitleg_screen</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="berekening_provider">
+  <span class="name"><a href="state_berekening_provider/">state/berekening_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="boom_provider">
+  <span class="name"><a href="state_boom_provider/">state/boom_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="custom_catalogus_provider">
+  <span class="name"><a href="state_custom_catalogus_provider/">state/custom_catalogus_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="gebruikers_provider">
+  <span class="name"><a href="state_gebruikers_provider/">state/gebruikers_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="language_provider">
+  <span class="name"><a href="state_language_provider/">state/language_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="projecten_provider">
+  <span class="name"><a href="state_projecten_provider/">state/projecten_provider</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="invoer_rij">
+  <span class="name"><a href="widgets_invoer_rij/">widgets/invoer_rij</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+          <dt id="sectie_card">
+  <span class="name"><a href="widgets_sectie_card/">widgets/sectie_card</a></span> 
+
+</dt>
+<dd>
+</dd>
+
+        </dl>
+      </section>
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li class="self-crumb">mijnkabelberekening package</li>
+</ol>
+
+    <h5 class="hidden-xs"><span class="package-name">mijnkabelberekening</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="berekening_correctiefactoren/">berekening/correctiefactoren</a></li>
+      <li><a href="berekening_cyclisch/">berekening/cyclisch</a></li>
+      <li><a href="berekening_kortsluit/">berekening/kortsluit</a></li>
+      <li><a href="berekening_ontwerper/">berekening/ontwerper</a></li>
+      <li><a href="berekening_rapport/">berekening/rapport</a></li>
+      <li><a href="berekening_spanningsval/">berekening/spanningsval</a></li>
+      <li><a href="berekening_thermisch/">berekening/thermisch</a></li>
+      <li><a href="data_catalogus/">data/catalogus</a></li>
+      <li><a href="data_materiaal_data/">data/materiaal_data</a></li>
+      <li><a href="data_transformatoren/">data/transformatoren</a></li>
+      <li><a href="l10n_app_localizations/">l10n/app_localizations</a></li>
+      <li><a href="l10n_uitleg_localizations/">l10n/uitleg_localizations</a></li>
+      <li><a href="main/">main</a></li>
+      <li><a href="models_bundel_config/">models/bundel_config</a></li>
+      <li><a href="models_enums/">models/enums</a></li>
+      <li><a href="models_gebruiker/">models/gebruiker</a></li>
+      <li><a href="models_invoer/">models/invoer</a></li>
+      <li><a href="models_kabel_boom/">models/kabel_boom</a></li>
+      <li><a href="models_kabel_spec/">models/kabel_spec</a></li>
+      <li><a href="models_leiding_node/">models/leiding_node</a></li>
+      <li><a href="models_project/">models/project</a></li>
+      <li><a href="models_resultaten/">models/resultaten</a></li>
+      <li><a href="screens_boom_screen/">screens/boom_screen</a></li>
+      <li><a href="screens_catalogus_screen/">screens/catalogus_screen</a></li>
+      <li><a href="screens_correctiefactoren_screen/">screens/correctiefactoren_screen</a></li>
+      <li><a href="screens_gebruiker_selectie_screen/">screens/gebruiker_selectie_screen</a></li>
+      <li><a href="screens_home_screen/">screens/home_screen</a></li>
+      <li><a href="screens_invoer_screen/">screens/invoer_screen</a></li>
+      <li><a href="screens_kabel_toevoegen_dialog/">screens/kabel_toevoegen_dialog</a></li>
+      <li><a href="screens_privacy_screen/">screens/privacy_screen</a></li>
+      <li><a href="screens_project_detail_screen/">screens/project_detail_screen</a></li>
+      <li><a href="screens_projecten_screen/">screens/projecten_screen</a></li>
+      <li><a href="screens_resultaten_screen/">screens/resultaten_screen</a></li>
+      <li><a href="screens_uitleg_screen/">screens/uitleg_screen</a></li>
+      <li><a href="state_berekening_provider/">state/berekening_provider</a></li>
+      <li><a href="state_boom_provider/">state/boom_provider</a></li>
+      <li><a href="state_custom_catalogus_provider/">state/custom_catalogus_provider</a></li>
+      <li><a href="state_gebruikers_provider/">state/gebruikers_provider</a></li>
+      <li><a href="state_language_provider/">state/language_provider</a></li>
+      <li><a href="state_projecten_provider/">state/projecten_provider</a></li>
+      <li><a href="widgets_invoer_rij/">widgets/invoer_rij</a></li>
+      <li><a href="widgets_sectie_card/">widgets/sectie_card</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="static-assets/highlight.pack.js?v1"></script>
+<script src="static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

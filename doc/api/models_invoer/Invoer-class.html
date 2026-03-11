@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the Invoer class from the invoer library, for the Dart programming language.">
+  <title>Invoer class - invoer library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li><a href="../models_invoer/">models&#47;invoer.dart</a></li>
+    <li class="self-crumb">Invoer class</li>
+  </ol>
+  <div class="self-name">Invoer</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="models_invoer&#47;models_invoer-library-sidebar.html"
+    data-below-sidebar="models_invoer&#47;Invoer-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">Invoer</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Volledige invoer voor de kabelberekening.</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="Invoer.new" class="callable">
+          <span class="name"><a href="../models_invoer/Invoer/Invoer.html">Invoer</a></span><span class="signature">({<span class="parameter" id="-param-systeem"><span>required</span> <span class="type-annotation"><a href="../models_enums/Systeemtype.html">Systeemtype</a></span> <span class="parameter-name">systeem</span>, </span><span class="parameter" id="-param-spanningV"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">spanningV</span>, </span><span class="parameter" id="-param-stroomA"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">stroomA</span> = <span class="default-value">0</span>, </span><span class="parameter" id="-param-vermogenW"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">vermogenW</span>, </span><span class="parameter" id="-param-cosPhi"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">cosPhi</span> = <span class="default-value">1.0</span>, </span><span class="parameter" id="-param-frequentieHz"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">frequentieHz</span> = <span class="default-value">50</span>, </span><span class="parameter" id="-param-lengteM"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">lengteM</span>, </span><span class="parameter" id="-param-legging"><span class="type-annotation"><a href="../models_enums/Leggingswijze.html">Leggingswijze</a></span> <span class="parameter-name">legging</span> = <span class="default-value">Leggingswijze.c</span>, </span><span class="parameter" id="-param-geleider"><span class="type-annotation"><a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a></span> <span class="parameter-name">geleider</span> = <span class="default-value">Geleidermateriaal.koper</span>, </span><span class="parameter" id="-param-isolatie"><span class="type-annotation"><a href="../models_enums/Isolatiemateriaal.html">Isolatiemateriaal</a></span> <span class="parameter-name">isolatie</span> = <span class="default-value">Isolatiemateriaal.pvc</span>, </span><span class="parameter" id="-param-omgevingstempC"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">omgevingstempC</span> = <span class="default-value">30</span>, </span><span class="parameter" id="-param-grondtempC"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">grondtempC</span> = <span class="default-value">20</span>, </span><span class="parameter" id="-param-lambdaGrond"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">lambdaGrond</span> = <span class="default-value">1.0</span>, </span><span class="parameter" id="-param-bundel"><span class="type-annotation"><a href="../models_bundel_config/BundelConfig-class.html">BundelConfig</a>?</span> <span class="parameter-name">bundel</span>, </span><span class="parameter" id="-param-maxSpanningsvalPct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">maxSpanningsvalPct</span> = <span class="default-value">3.0</span>, </span><span class="parameter" id="-param-kortsluitstroomA"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">kortsluitstroomA</span> = <span class="default-value">0</span>, </span><span class="parameter" id="-param-kortsluitduurMs"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">kortsluitduurMs</span> = <span class="default-value">500</span>, </span><span class="parameter" id="-param-beveiligingType"><span class="type-annotation"><a href="../models_enums/BeveiligingType.html">BeveiligingType</a>?</span> <span class="parameter-name">beveiligingType</span>, </span><span class="parameter" id="-param-beveiligingWaarde"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">beveiligingWaarde</span>, </span><span class="parameter" id="-param-zonlichtToeslagK"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">zonlichtToeslagK</span> = <span class="default-value">0</span>, </span><span class="parameter" id="-param-derdeHarmonischePct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">derdeHarmonischePct</span> = <span class="default-value">0</span>, </span><span class="parameter" id="-param-forceerDoorsnedemm2"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">forceerDoorsnedemm2</span>, </span><span class="parameter" id="-param-nParallel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">nParallel</span> = <span class="default-value">1</span>, </span><span class="parameter" id="-param-aantalAders"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">aantalAders</span> = <span class="default-value">5</span>, </span><span class="parameter" id="-param-geleidersPerKring"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">geleidersPerKring</span> = <span class="default-value">2</span>, </span><span class="parameter" id="-param-diepteM"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">diepteM</span> = <span class="default-value">0.70</span>, </span><span class="parameter" id="-param-cyclischProfiel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>?</span> <span class="parameter-name">cyclischProfiel</span>, </span><span class="parameter" id="-param-cyclischNKringen"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">cyclischNKringen</span> = <span class="default-value">1</span>, </span><span class="parameter" id="-param-cyclischAanliggend"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">cyclischAanliggend</span> = <span class="default-value">true</span>, </span><span class="parameter" id="-param-cyclischHartOpHartMm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">cyclischHartOpHartMm</span> = <span class="default-value">0</span>, </span><span class="parameter" id="-param-bronimpedantieActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">bronimpedantieActief</span> = <span class="default-value">false</span>, </span><span class="parameter" id="-param-transformatorHandmatig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">transformatorHandmatig</span> = <span class="default-value">false</span>, </span><span class="parameter" id="-param-transformatorKva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">transformatorKva</span> = <span class="default-value">250</span>, </span><span class="parameter" id="-param-transformatorUccPct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">transformatorUccPct</span> = <span class="default-value">4.0</span>, </span><span class="parameter" id="-param-aardingsstelsel"><span class="type-annotation"><a href="../models_enums/Aardingsstelsel.html">Aardingsstelsel</a></span> <span class="parameter-name">aardingsstelsel</span> = <span class="default-value">Aardingsstelsel.tnS</span>, </span><span class="parameter" id="-param-skNetOneindig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">skNetOneindig</span> = <span class="default-value">true</span>, </span><span class="parameter" id="-param-skNetMva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">skNetMva</span> = <span class="default-value">100.0</span>, </span><span class="parameter" id="-param-zUpstreamHandmatigMohm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zUpstreamHandmatigMohm</span></span>})</span>
+        </dt>
+        <dd>
+          
+            <div class="constructor-modifier features">const</div>
+        </dd>
+        <dt id="Invoer.fromJson" class="callable">
+          <span class="name"><a href="../models_invoer/Invoer/Invoer.fromJson.html">Invoer.fromJson</a></span><span class="signature">(<span class="parameter" id="fromJson-param-j"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">j</span></span>)</span>
+        </dt>
+        <dd>
+          
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+        <dt id="Invoer.standaard" class="callable">
+          <span class="name"><a href="../models_invoer/Invoer/Invoer.standaard.html">Invoer.standaard</a></span><span class="signature">()</span>
+        </dt>
+        <dd>
+          Standaard-invoer voor nieuwe berekening.
+            <div class="constructor-modifier features">factory</div>
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="aantalAders" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/aantalAders.html">aantalAders</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="aardingsstelsel" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/aardingsstelsel.html">aardingsstelsel</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/Aardingsstelsel.html">Aardingsstelsel</a></span>
+  
+
+</dt>
+<dd>
+  Aardingsstelsel (TN-S, TN-C, TN-C-S, TT, IT) voor NEN 1010-checks.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="beveiligingIa" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/beveiligingIa.html">beveiligingIa</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+  Berekende activeringsstroom <code>A</code> voor de kortsluitbeveiliging,
+of null als de max-lengte-toets niet actief is.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="beveiligingType" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/beveiligingType.html">beveiligingType</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/BeveiligingType.html">BeveiligingType</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="beveiligingWaarde" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/beveiligingWaarde.html">beveiligingWaarde</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="bronimpedantieActief" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/bronimpedantieActief.html">bronimpedantieActief</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Bronimpedantie-sectie ingeschakeld.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="bundel" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/bundel.html">bundel</a></span>
+  <span class="signature">&#8594; <a href="../models_bundel_config/BundelConfig-class.html">BundelConfig</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cosPhi" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/cosPhi.html">cosPhi</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cyclischAanliggend" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/cyclischAanliggend.html">cyclischAanliggend</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cyclischHartOpHartMm" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/cyclischHartOpHartMm.html">cyclischHartOpHartMm</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cyclischNKringen" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/cyclischNKringen.html">cyclischNKringen</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="cyclischProfiel" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/cyclischProfiel.html">cyclischProfiel</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="derdeHarmonischePct" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/derdeHarmonischePct.html">derdeHarmonischePct</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  3e harmonische als % van fasestroom (0 = geen correctie).
+NEN 1010 Bijlage 52.E.1 — alleen voor ac3Fase met 4 of 5 aders.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="diepteM" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/diepteM.html">diepteM</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="effectieveKortsluitstroomA" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/effectieveKortsluitstroomA.html">effectieveKortsluitstroomA</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Effectieve kortsluitstroom <code>A</code> voor de berekening:
+uit bronimpedantie als actief, anders handmatig ingevoerd.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="effectieveStroom" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/effectieveStroom.html">effectieveStroom</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="forceerDoorsnedemm2" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/forceerDoorsnedemm2.html">forceerDoorsnedemm2</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="frequentieHz" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/frequentieHz.html">frequentieHz</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="geleider" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/geleider.html">geleider</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="geleidersPerKring" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/geleidersPerKring.html">geleidersPerKring</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+  Aantal geleiders per kring bij 1-aderige AC-kabels (singels).
+2 = L + N,  3 = L + N + PE.  Alleen relevant voor ac1Fase + aantalAders==1.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="grondtempC" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/grondtempC.html">grondtempC</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="harmonischenActief" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/harmonischenActief.html">harmonischenActief</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  Of harmonischencorrectie van toepassing is (NEN 1010 Bijlage 52.E.1).
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="ikBronBerekendA" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/ikBronBerekendA.html">ikBronBerekendA</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Enkelfasige lus-kortsluitstroom aan de bron <code>A</code> (TN-stelsel).
+Geld als effectieve kortsluitstroomA wanneer bronimpedantie actief is.
+  I_k = U_fase / (2 × Z_b)
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="isGrondkabel" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/isGrondkabel.html">isGrondkabel</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="isolatie" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/isolatie.html">isolatie</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/Isolatiemateriaal.html">Isolatiemateriaal</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="kortsluitduurMs" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/kortsluitduurMs.html">kortsluitduurMs</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="kortsluitstroomA" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/kortsluitstroomA.html">kortsluitstroomA</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="lambdaGrond" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/lambdaGrond.html">lambdaGrond</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="legging" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/legging.html">legging</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/Leggingswijze.html">Leggingswijze</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="lengteM" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/lengteM.html">lengteM</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="maxSpanningsvalPct" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/maxSpanningsvalPct.html">maxSpanningsvalPct</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="nParallel" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/nParallel.html">nParallel</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="omgevingstempC" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/omgevingstempC.html">omgevingstempC</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="skNetMva" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/skNetMva.html">skNetMva</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Kortsluitvermogen distributienet <code>MVA</code> — alleen als !skNetOneindig.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="skNetOneindig" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/skNetOneindig.html">skNetOneindig</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  true = primair netwerk heeft oneindig kortsluitvermogen (Z_net = 0).
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="spanningV" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/spanningV.html">spanningV</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="stroomA" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/stroomA.html">stroomA</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="systeem" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/systeem.html">systeem</a></span>
+  <span class="signature">&#8594; <a href="../models_enums/Systeemtype.html">Systeemtype</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="transformatorHandmatig" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/transformatorHandmatig.html">transformatorHandmatig</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  
+
+</dt>
+<dd>
+  false = kies uit standaard transformatordatabank; true = handmatig invoeren.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="transformatorKva" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/transformatorKva.html">transformatorKva</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Transformatorvermogen <code>kVA</code> — uit databank of handmatig.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="transformatorUccPct" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/transformatorUccPct.html">transformatorUccPct</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Kortsluitspanning <code>%</code> — uit databank of handmatig.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="uFaseV" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/uFaseV.html">uFaseV</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Fasespanning <code>V</code>: U_LL/√3 voor 3-fase, U_LL voor 1-fase.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="vermogenW" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/vermogenW.html">vermogenW</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="zbOhm" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/zbOhm.html">zbOhm</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  Bronimpedantie per fase, verwezen naar secundaire zijde <code>Ω</code>.
+Bevat transformatorimpedantie + optionele netwerkimpedantie.
+Geeft 0 terug als bronimpedantie niet actief is.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="zonlichtToeslagK" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/zonlichtToeslagK.html">zonlichtToeslagK</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  
+
+</dt>
+<dd>
+  
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+        <dt id="zUpstreamHandmatigMohm" class="property">
+  <span class="name"><a href="../models_invoer/Invoer/zUpstreamHandmatigMohm.html">zUpstreamHandmatigMohm</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span>
+  
+
+</dt>
+<dd>
+  Handmatig ingevoerde totale stroomopwaartse lusimpedantie <code>mΩ</code>.
+null = gebruik transformatordatabank/handmatige transformatorinvoer.
+Vul hier Z_totaal_lus in van de bovenliggende kabel om te ketenen.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="copyWith" class="callable">
+  <span class="name"><a href="../models_invoer/Invoer/copyWith.html">copyWith</a></span><span class="signature">(<wbr>{<span class="parameter" id="copyWith-param-systeem"><span class="type-annotation"><a href="../models_enums/Systeemtype.html">Systeemtype</a>?</span> <span class="parameter-name">systeem</span>, </span><span class="parameter" id="copyWith-param-spanningV"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">spanningV</span>, </span><span class="parameter" id="copyWith-param-stroomA"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">stroomA</span>, </span><span class="parameter" id="copyWith-param-vermogenW"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">vermogenW</span>, </span><span class="parameter" id="copyWith-param-clearVermogen"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearVermogen</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-cosPhi"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">cosPhi</span>, </span><span class="parameter" id="copyWith-param-frequentieHz"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">frequentieHz</span>, </span><span class="parameter" id="copyWith-param-lengteM"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">lengteM</span>, </span><span class="parameter" id="copyWith-param-legging"><span class="type-annotation"><a href="../models_enums/Leggingswijze.html">Leggingswijze</a>?</span> <span class="parameter-name">legging</span>, </span><span class="parameter" id="copyWith-param-geleider"><span class="type-annotation"><a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a>?</span> <span class="parameter-name">geleider</span>, </span><span class="parameter" id="copyWith-param-isolatie"><span class="type-annotation"><a href="../models_enums/Isolatiemateriaal.html">Isolatiemateriaal</a>?</span> <span class="parameter-name">isolatie</span>, </span><span class="parameter" id="copyWith-param-omgevingstempC"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">omgevingstempC</span>, </span><span class="parameter" id="copyWith-param-grondtempC"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">grondtempC</span>, </span><span class="parameter" id="copyWith-param-lambdaGrond"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">lambdaGrond</span>, </span><span class="parameter" id="copyWith-param-bundel"><span class="type-annotation"><a href="../models_bundel_config/BundelConfig-class.html">BundelConfig</a>?</span> <span class="parameter-name">bundel</span>, </span><span class="parameter" id="copyWith-param-clearBundel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearBundel</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-maxSpanningsvalPct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">maxSpanningsvalPct</span>, </span><span class="parameter" id="copyWith-param-kortsluitstroomA"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">kortsluitstroomA</span>, </span><span class="parameter" id="copyWith-param-kortsluitduurMs"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">kortsluitduurMs</span>, </span><span class="parameter" id="copyWith-param-beveiligingType"><span class="type-annotation"><a href="../models_enums/BeveiligingType.html">BeveiligingType</a>?</span> <span class="parameter-name">beveiligingType</span>, </span><span class="parameter" id="copyWith-param-clearBeveiligingType"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearBeveiligingType</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-beveiligingWaarde"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">beveiligingWaarde</span>, </span><span class="parameter" id="copyWith-param-clearBeveiligingWaarde"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearBeveiligingWaarde</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-zonlichtToeslagK"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zonlichtToeslagK</span>, </span><span class="parameter" id="copyWith-param-derdeHarmonischePct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">derdeHarmonischePct</span>, </span><span class="parameter" id="copyWith-param-forceerDoorsnedemm2"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">forceerDoorsnedemm2</span>, </span><span class="parameter" id="copyWith-param-clearForceer"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearForceer</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-nParallel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">nParallel</span>, </span><span class="parameter" id="copyWith-param-aantalAders"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">aantalAders</span>, </span><span class="parameter" id="copyWith-param-geleidersPerKring"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">geleidersPerKring</span>, </span><span class="parameter" id="copyWith-param-diepteM"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">diepteM</span>, </span><span class="parameter" id="copyWith-param-cyclischProfiel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span>?</span> <span class="parameter-name">cyclischProfiel</span>, </span><span class="parameter" id="copyWith-param-clearCyclisch"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearCyclisch</span> = <span class="default-value">false</span>, </span><span class="parameter" id="copyWith-param-cyclischNKringen"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a>?</span> <span class="parameter-name">cyclischNKringen</span>, </span><span class="parameter" id="copyWith-param-cyclischAanliggend"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">cyclischAanliggend</span>, </span><span class="parameter" id="copyWith-param-cyclischHartOpHartMm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">cyclischHartOpHartMm</span>, </span><span class="parameter" id="copyWith-param-bronimpedantieActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">bronimpedantieActief</span>, </span><span class="parameter" id="copyWith-param-transformatorHandmatig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">transformatorHandmatig</span>, </span><span class="parameter" id="copyWith-param-transformatorKva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">transformatorKva</span>, </span><span class="parameter" id="copyWith-param-transformatorUccPct"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">transformatorUccPct</span>, </span><span class="parameter" id="copyWith-param-aardingsstelsel"><span class="type-annotation"><a href="../models_enums/Aardingsstelsel.html">Aardingsstelsel</a>?</span> <span class="parameter-name">aardingsstelsel</span>, </span><span class="parameter" id="copyWith-param-skNetOneindig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">skNetOneindig</span>, </span><span class="parameter" id="copyWith-param-skNetMva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">skNetMva</span>, </span><span class="parameter" id="copyWith-param-zUpstreamHandmatigMohm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zUpstreamHandmatigMohm</span>, </span><span class="parameter" id="copyWith-param-clearZUpstream"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearZUpstream</span> = <span class="default-value">false</span></span>})
+    <span class="returntype parameter">&#8594; <a href="../models_invoer/Invoer-class.html">Invoer</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="toJson" class="callable">
+  <span class="name"><a href="../models_invoer/Invoer/toJson.html">toJson</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li><a href="../models_invoer/">invoer</a></li>
+    <li class="self-crumb">Invoer class</li>
+</ol>
+
+    <h5>invoer library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

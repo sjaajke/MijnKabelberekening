@@ -36,7 +36,7 @@ jobs:
           source: ./site
           destination: ./_site
       - name: copy api documentation
-        run: cp -rf ./docs/api ./site/
+        run: cp -rf ./doc/api ./site/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 

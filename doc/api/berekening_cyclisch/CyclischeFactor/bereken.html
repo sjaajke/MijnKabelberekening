@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the bereken method from the CyclischeFactor class, for the Dart programming language.">
+  <title>bereken method - CyclischeFactor class - cyclisch library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">mijnkabelberekening</a></li>
+    <li><a href="../../berekening_cyclisch/">berekening&#47;cyclisch.dart</a></li>
+    <li><a href="../../berekening_cyclisch/CyclischeFactor-class.html">CyclischeFactor</a></li>
+    <li class="self-crumb">bereken static method</li>
+  </ol>
+  <div class="self-name">bereken</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="berekening_cyclisch&#47;CyclischeFactor-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">bereken</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+<span class="name ">bereken</span>(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="bereken-param-profiel"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span> <span class="parameter-name">profiel</span>, </span></li>
+<li><span class="parameter" id="bereken-param-de"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">de</span>, </span></li>
+<li><span class="parameter" id="bereken-param-L"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">L</span>, </span></li>
+<li><span class="parameter" id="bereken-param-xi"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">xi</span>, </span></li>
+<li><span class="parameter" id="bereken-param-tMax"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">tMax</span>, </span></li>
+<li><span class="parameter" id="bereken-param-tGr"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">tGr</span>, </span></li>
+<li><span class="parameter" id="bereken-param-W"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">W</span>, </span></li>
+<li><span class="parameter" id="bereken-param-N"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">N</span>, </span></li>
+<li><span class="parameter" id="bereken-param-dp1"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">dp1</span>, </span></li>
+<li><span class="parameter" id="bereken-param-aanliggend"><span>required</span> <span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">aanliggend</span>, </span></li>
+</ol>})
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Berekent de cyclische factor M.</p>
+<p>Parameters:</p>
+<ul>
+<li>profiel      : 24 waarden I/Imax per uur (uur 0..23), waarden 0..1</li>
+<li>De           : uitwendige diameter kabel/mantel in meters</li>
+<li>L            : legdiepte (m)</li>
+<li>xi           : thermische grondweerstand (K·m/W)</li>
+<li>tMax         : max geleidertemperatuur (°C)</li>
+<li>tGr          : grondtemperatuur (°C)</li>
+<li>W            : Joule-verliezen per kabel bij Tmax (W/m) = I²·R</li>
+<li>N            : aantal kringen in groep (≥1)</li>
+<li>dp1          : hart-op-hart afstand tussen kringen (m);
+gebruik De voor aanliggende kabels (touching)</li>
+<li>aanliggend   : true → T4-formule voor aanliggende legging (touching);
+false → gespreid (spaced)</li>
+</ul>
+<p>Retourneert M ≥ 1.0; bij fouten of N=1 zonder naburige kringen: 1.0.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static double bereken({
+  required List&lt;double&gt; profiel,
+  required double de,
+  required double L,
+  required double xi,
+  required double tMax,
+  required double tGr,
+  required double W,
+  required int N,
+  required double dp1,
+  required bool aanliggend,
+}) {
+  if (profiel.length != 24) return 1.0;
+  if (N &lt; 1 || de &lt;= 0 || L &lt;= 0 || xi &lt;= 0) return 1.0;
+
+  &#47;&#47; Yi = (I&#47;Imax)² per uur
+  final yi = List&lt;double&gt;.generate(24, (h) =&gt; profiel[h] * profiel[h]);
+
+  &#47;&#47; μ = gemiddelde Yi over 24 uur (gelijkwaardige continu-belasting)
+  final mu = yi.fold(0.0, (s, v) =&gt; s + v) &#47; 24;
+
+  &#47;&#47; ── F: beeldfactor ──────────────────────────────────────────────────────
+  &#47;&#47; Kabels in rechte lijn; afstand kring k naar kring 0 = k × dp1.
+  &#47;&#47; F = ∏ d&#39;k &#47; ∏ dk  (k = 1..N-1)
+  final double F;
+  if (N &lt;= 1 || dp1 &lt;= 0) {
+    F = 1.0;
+  } else {
+    double prodReal = 1.0;
+    double prodImg = 1.0;
+    for (int k = 1; k &lt; N; k++) {
+      final dk = k * dp1;
+      prodReal *= dk;
+      prodImg *= sqrt((2 * L) * (2 * L) + dk * dk);
+    }
+    F = prodImg &#47; prodReal;
+  }
+
+  &#47;&#47; df: fictieve diameter (equivalent één-kabeldiameter voor de groep)
+  final double df = (N &lt;= 1 || dp1 &lt;= 0 || F &lt;= 1.0)
+      ? de
+      : (4 * L) &#47; pow(F, 1.0 &#47; (N - 1)).toDouble();
+
+  &#47;&#47; δ: thermische diffusiviteit grond (m²&#47;s)
+  final delta = _diffusiviteit(xi);
+
+  &#47;&#47; u1 = 2L &#47; de
+  final u1 = (2 * L) &#47; de;
+
+  &#47;&#47; T4: externe thermische weerstand (K·m&#47;W)
+  final t4 = aanliggend ? _t4Aanliggend(u1, xi) : _t4Gespreid(u1, xi);
+
+  &#47;&#47; ΔT4: bijdrage van de beeldwarmtebron van de groep
+  final deltaT4 = (N &lt;= 1 || dp1 &lt;= 0 || F &lt;= 1.0)
+      ? 0.0
+      : (xi * log(F)) &#47; (2 * pi);
+
+  &#47;&#47; θR(∞) = Tmax − Tgr
+  final thetaInf = tMax - tGr;
+  if (thetaInf &lt;= 0 || W &lt;= 0) return 1.0;
+  final totaalT4 = t4 + deltaT4;
+  if (totaalT4 &lt;= 0) return 1.0;
+
+  &#47;&#47; k1 = W · (T4 + ΔT4) &#47; θR(∞)
+  final k1 = W * totaalT4 &#47; thetaInf;
+
+  &#47;&#47; θR(i)&#47;θR(∞) voor i = 0..6
+  &#47;&#47; θR(0) = 0 per definitie (beginpunt)
+  final thetaR = List&lt;double&gt;.filled(7, 0.0);
+  for (int i = 1; i &lt;= 6; i++) {
+    final t = 3600.0 * i;
+    final gamma = _gamma(t, de, df, delta, N, L, F, dp1);
+    thetaR[i] = 1.0 - k1 + k1 * gamma;
+  }
+
+  &#47;&#47; Vind het piekuur (laatste uur met hoogste I&#47;Imax, conform Excel)
+  final maxI = profiel.reduce(max);
+  if (maxI &lt;= 0) return 1.0;
+  int piekUur = 0;
+  for (int h = 0; h &lt; 24; h++) {
+    if (profiel[h] &gt;= maxI) piekUur = h;
+  }
+
+  &#47;&#47; Y0..Y5: Yi op en voorafgaand aan het piekuur
+  &#47;&#47; Y0 = piekuur zelf, Y1 = uur ervoor, ...
+  final Y = List&lt;double&gt;.generate(6, (i) =&gt; yi[(piekUur - i + 24) % 24]);
+
+  &#47;&#47; M = 1 &#47; √( Σ(i=0..5) Yi·(θR(i+1) − θR(i))  +  μ·(1 − θR(6)) )
+  double som = 0.0;
+  for (int i = 0; i &lt; 6; i++) {
+    som += Y[i] * (thetaR[i + 1] - thetaR[i]);
+  }
+  som += mu * (1.0 - thetaR[6]);
+
+  if (som &lt;= 0 || som.isNaN || som.isInfinite) return 1.0;
+  final M = 1.0 &#47; sqrt(som);
+  return (M.isNaN || M.isInfinite || M &lt; 1.0) ? 1.0 : M;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">mijnkabelberekening</a></li>
+    <li><a href="../../berekening_cyclisch/">cyclisch</a></li>
+    <li><a href="../../berekening_cyclisch/CyclischeFactor-class.html">CyclischeFactor</a></li>
+    <li class="self-crumb">bereken static method</li>
+</ol>
+
+    <h5>CyclischeFactor class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

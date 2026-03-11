@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="materiaal_data library API docs, for the Dart programming language.">
+  <title>materiaal_data library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li class="self-crumb">data/materiaal_data.dart</li>
+  </ol>
+  <div class="self-name">materiaal_data</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar=""
+    data-below-sidebar="data_materiaal_data&#47;data_materiaal_data-library-sidebar.html">
+  
+    <div>
+      
+
+      <h1>
+        <span class="kind-library">data/materiaal_data</span>
+        library 
+ 
+
+      </h1>
+    </div>
+
+    
+
+
+    <section class="summary offset-anchor" id="classes">
+      <h2>Classes</h2>
+      <dl>
+          <dt id="GeleiderProp">
+  <span class="name "><a href="../data_materiaal_data/GeleiderProp-class.html">GeleiderProp</a></span> 
+
+</dt>
+<dd>
+  Geleider-eigenschappen: ρ₂₀ in Ω·mm²/m, α₂₀ in 1/K.
+</dd>
+
+          <dt id="IsolatieProp">
+  <span class="name "><a href="../data_materiaal_data/IsolatieProp-class.html">IsolatieProp</a></span> 
+
+</dt>
+<dd>
+  Isolatie-eigenschappen per IEC 60502 / 60228.
+</dd>
+
+      </dl>
+    </section>
+
+
+
+
+
+    <section class="summary offset-anchor" id="constants">
+      <h2>Constants</h2>
+      <dl class="properties">
+          <dt id="geleiderEigenschappen" class="constant">
+    <span class="name "><a href="../data_materiaal_data/geleiderEigenschappen-constant.html">geleiderEigenschappen</a></span>
+  <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a></span>, <span class="type-parameter"><a href="../data_materiaal_data/GeleiderProp-class.html">GeleiderProp</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+          <dt id="isolatieEigenschappen" class="constant">
+    <span class="name "><a href="../data_materiaal_data/isolatieEigenschappen-constant.html">isolatieEigenschappen</a></span>
+  <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../models_enums/Isolatiemateriaal.html">Isolatiemateriaal</a></span>, <span class="type-parameter"><a href="../data_materiaal_data/IsolatieProp-class.html">IsolatieProp</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  
+  
+
+</dd>
+
+          <dt id="kWaarden" class="constant">
+    <span class="name "><a href="../data_materiaal_data/kWaarden-constant.html">kWaarden</a></span>
+  <span class="signature">&#8594; const <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter">(<span class="field"><span class="type-annotation"><a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a></span>, </span><span class="field"><span class="type-annotation"><a href="../models_enums/Isolatiemateriaal.html">Isolatiemateriaal</a></span></span>)</span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  k-waarden per IEC 60949 voor adiabatische kortsluitberekening.
+A_min = I_k · √t / k
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+    <section class="summary offset-anchor" id="functions">
+      <h2>Functions</h2>
+      <dl class="callables">
+          <dt id="iec60228R20PerM" class="callable">
+  <span class="name"><a href="../data_materiaal_data/iec60228R20PerM.html">iec60228R20PerM</a></span><span class="signature">(<wbr><span class="parameter" id="iec60228R20PerM-param-geleider"><span class="type-annotation"><a href="../models_enums/Geleidermateriaal.html">Geleidermateriaal</a></span> <span class="parameter-name">geleider</span>, </span><span class="parameter" id="iec60228R20PerM-param-doorsnedemm2"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">doorsnedemm2</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+  </span>
+  
+
+</dt>
+<dd>
+  R20 per meter per NEN-EN-IEC 60228:2005 Tabel 1 <code>Ω/m</code>.
+Valt terug op soortelijke weerstand als doorsnede niet in de tabel staat.
+  
+
+</dd>
+
+      </dl>
+    </section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li class="self-crumb">data/materiaal_data.dart</li>
+</ol>
+
+    <h5><span class="package-name">mijnkabelberekening</span> <span class="package-kind">package</span></h5>
+    <ol>
+      <li class="section-title">Libraries</li>
+      <li><a href="../berekening_correctiefactoren/">berekening/correctiefactoren</a></li>
+      <li><a href="../berekening_cyclisch/">berekening/cyclisch</a></li>
+      <li><a href="../berekening_kortsluit/">berekening/kortsluit</a></li>
+      <li><a href="../berekening_ontwerper/">berekening/ontwerper</a></li>
+      <li><a href="../berekening_rapport/">berekening/rapport</a></li>
+      <li><a href="../berekening_spanningsval/">berekening/spanningsval</a></li>
+      <li><a href="../berekening_thermisch/">berekening/thermisch</a></li>
+      <li><a href="../data_catalogus/">data/catalogus</a></li>
+      <li><a href="../data_materiaal_data/">data/materiaal_data</a></li>
+      <li><a href="../data_transformatoren/">data/transformatoren</a></li>
+      <li><a href="../l10n_app_localizations/">l10n/app_localizations</a></li>
+      <li><a href="../l10n_uitleg_localizations/">l10n/uitleg_localizations</a></li>
+      <li><a href="../main/">main</a></li>
+      <li><a href="../models_bundel_config/">models/bundel_config</a></li>
+      <li><a href="../models_enums/">models/enums</a></li>
+      <li><a href="../models_gebruiker/">models/gebruiker</a></li>
+      <li><a href="../models_invoer/">models/invoer</a></li>
+      <li><a href="../models_kabel_boom/">models/kabel_boom</a></li>
+      <li><a href="../models_kabel_spec/">models/kabel_spec</a></li>
+      <li><a href="../models_leiding_node/">models/leiding_node</a></li>
+      <li><a href="../models_project/">models/project</a></li>
+      <li><a href="../models_resultaten/">models/resultaten</a></li>
+      <li><a href="../screens_boom_screen/">screens/boom_screen</a></li>
+      <li><a href="../screens_catalogus_screen/">screens/catalogus_screen</a></li>
+      <li><a href="../screens_correctiefactoren_screen/">screens/correctiefactoren_screen</a></li>
+      <li><a href="../screens_gebruiker_selectie_screen/">screens/gebruiker_selectie_screen</a></li>
+      <li><a href="../screens_home_screen/">screens/home_screen</a></li>
+      <li><a href="../screens_invoer_screen/">screens/invoer_screen</a></li>
+      <li><a href="../screens_kabel_toevoegen_dialog/">screens/kabel_toevoegen_dialog</a></li>
+      <li><a href="../screens_privacy_screen/">screens/privacy_screen</a></li>
+      <li><a href="../screens_project_detail_screen/">screens/project_detail_screen</a></li>
+      <li><a href="../screens_projecten_screen/">screens/projecten_screen</a></li>
+      <li><a href="../screens_resultaten_screen/">screens/resultaten_screen</a></li>
+      <li><a href="../screens_uitleg_screen/">screens/uitleg_screen</a></li>
+      <li><a href="../state_berekening_provider/">state/berekening_provider</a></li>
+      <li><a href="../state_boom_provider/">state/boom_provider</a></li>
+      <li><a href="../state_custom_catalogus_provider/">state/custom_catalogus_provider</a></li>
+      <li><a href="../state_gebruikers_provider/">state/gebruikers_provider</a></li>
+      <li><a href="../state_language_provider/">state/language_provider</a></li>
+      <li><a href="../state_projecten_provider/">state/projecten_provider</a></li>
+      <li><a href="../widgets_invoer_rij/">widgets/invoer_rij</a></li>
+      <li><a href="../widgets_sectie_card/">widgets/sectie_card</a></li>
+</ol>
+
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+    <h5>materiaal_data library</h5>
+  </div><!--/sidebar-offcanvas-right-->
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

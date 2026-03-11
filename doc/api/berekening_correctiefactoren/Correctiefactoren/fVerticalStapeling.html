@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the fVerticalStapeling method from the Correctiefactoren class, for the Dart programming language.">
+  <title>fVerticalStapeling method - Correctiefactoren class - correctiefactoren library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">mijnkabelberekening</a></li>
+    <li><a href="../../berekening_correctiefactoren/">berekening&#47;correctiefactoren.dart</a></li>
+    <li><a href="../../berekening_correctiefactoren/Correctiefactoren-class.html">Correctiefactoren</a></li>
+    <li class="self-crumb">fVerticalStapeling static method</li>
+  </ol>
+  <div class="self-name">fVerticalStapeling</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="berekening_correctiefactoren&#47;Correctiefactoren-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">fVerticalStapeling</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span>
+<span class="name ">fVerticalStapeling</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="fVerticalStapeling-param-nLagen"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">nLagen</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Aanvullende reductiefactor voor gestapelde lagen.
+IEC 60364-5-52 Tabel B.52.21</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static double fVerticalStapeling(int nLagen) {
+  const tabel = {
+    1: 1.00, 2: 0.87, 3: 0.79, 4: 0.72,
+    5: 0.66, 6: 0.61, 7: 0.57, 8: 0.53,
+    9: 0.50, 10: 0.47,
+  };
+  if (nLagen &lt;= 1) return 1.00;
+  if (tabel.containsKey(nLagen)) return tabel[nLagen]!;
+  if (nLagen &gt; 10) return max(0.40, 0.47 * exp(-0.05 * (nLagen - 10)));
+
+  final sleutels = tabel.keys.toList()..sort();
+  for (int i = 0; i &lt; sleutels.length - 1; i++) {
+    final a = sleutels[i];
+    final b = sleutels[i + 1];
+    if (nLagen &gt; a &amp;&amp; nLagen &lt; b) {
+      final frac = (nLagen - a) &#47; (b - a);
+      return tabel[a]! + frac * (tabel[b]! - tabel[a]!);
+    }
+  }
+  return 0.47;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">mijnkabelberekening</a></li>
+    <li><a href="../../berekening_correctiefactoren/">correctiefactoren</a></li>
+    <li><a href="../../berekening_correctiefactoren/Correctiefactoren-class.html">Correctiefactoren</a></li>
+    <li class="self-crumb">fVerticalStapeling static method</li>
+</ol>
+
+    <h5>Correctiefactoren class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

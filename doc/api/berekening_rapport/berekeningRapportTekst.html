@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the berekeningRapportTekst function from the rapport library, for the Dart programming language.">
+  <title>berekeningRapportTekst function - rapport library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li><a href="../berekening_rapport/">berekening&#47;rapport.dart</a></li>
+    <li class="self-crumb">berekeningRapportTekst function</li>
+  </ol>
+  <div class="self-name">berekeningRapportTekst</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="berekening_rapport&#47;berekening_rapport-library-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-function">berekeningRapportTekst</span> function 
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+<span class="name ">berekeningRapportTekst</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="berekeningRapportTekst-param-inv"><span class="type-annotation"><a href="../models_invoer/Invoer-class.html">Invoer</a></span> <span class="parameter-name">inv</span>, </span></li>
+<li><span class="parameter" id="berekeningRapportTekst-param-r"><span class="type-annotation"><a href="../models_resultaten/Resultaten-class.html">Resultaten</a></span> <span class="parameter-name">r</span>, </span></li>
+<li><span class="parameter" id="berekeningRapportTekst-param-l10n"><span class="type-annotation"><a href="../l10n_app_localizations/AppLocalizations-class.html">AppLocalizations</a></span> <span class="parameter-name">l10n</span></span></li>
+</ol>)
+
+        
+
+    </section>
+    
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
+  final buf = StringBuffer();
+  final nu = DateTime.now();
+  final datum =
+      &#39;${nu.day.toString().padLeft(2, &#39;0&#39;)}-${nu.month.toString().padLeft(2, &#39;0&#39;)}-${nu.year}&#39;
+      &#39;  ${nu.hour.toString().padLeft(2, &#39;0&#39;)}:${nu.minute.toString().padLeft(2, &#39;0&#39;)}&#39;;
+
+  void lijn([int n = 64]) =&gt; buf.writeln(&#39;─&#39; * n);
+  void titel(String t) { buf.writeln(); lijn(); buf.writeln(t); lijn(); }
+  void rij(String label, String waarde) =&gt;
+      buf.writeln(&#39;${label.padRight(26)}$waarde&#39;);
+
+  buf.writeln(l10n.rapportTitel);
+  buf.writeln(l10n.rapportNorm);
+  buf.writeln(&#39;${l10n.rapportDatum}: $datum&#39;);
+  buf.writeln(&#39;=&#39; * 64);
+
+  &#47;&#47; ── 1. INVOER ──────────────────────────────────────────────────
+  titel(l10n.rapportInvoer);
+  rij(&#39;Systeemtype&#39;, inv.systeem.label);
+  rij(&#39;Spanning&#39;, &#39;${inv.spanningV.toStringAsFixed(0)} V&#39;);
+  if (inv.vermogenW != null &amp;&amp; inv.vermogenW! &gt; 0) {
+    rij(&#39;Vermogen&#39;, &#39;${inv.vermogenW!.toStringAsFixed(0)} W&#39;);
+    rij(&#39;Eff. stroom (berekend)&#39;, &#39;${inv.effectieveStroom.toStringAsFixed(2)} A&#39;);
+  } else {
+    rij(&#39;Stroom&#39;, &#39;${inv.stroomA.toStringAsFixed(2)} A&#39;);
+  }
+  if (inv.systeem.isAC) rij(&#39;Cos φ&#39;, inv.cosPhi.toStringAsFixed(3));
+  rij(&#39;Kabellengte&#39;, &#39;${inv.lengteM.toStringAsFixed(1)} m&#39;);
+  rij(&#39;Geleider&#39;, inv.geleider.label);
+  rij(&#39;Isolatie&#39;, inv.isolatie.label);
+  rij(&#39;Aantal aders&#39;, adersLabel(inv.aantalAders));
+  if (inv.aantalAders == 1 &amp;&amp; inv.systeem.isAC) {
+    final gpkR = inv.geleidersPerKring;
+    final is3F = inv.systeem == Systeemtype.ac3Fase;
+    final gpkLabel = is3F
+        ? switch (gpkR) {
+            3 =&gt; &#39;$gpkR  (L1 + L2 + L3)&#39;,
+            4 =&gt; &#39;$gpkR  (L1 + L2 + L3 + N)&#39;,
+            _ =&gt; &#39;$gpkR  (L1 + L2 + L3 + N + PE)&#39;,
+          }
+        : (gpkR == 2 ? &#39;$gpkR  (L + N)&#39; : &#39;$gpkR  (L + N + PE)&#39;);
+    rij(&#39;Geleiders per kring&#39;, gpkLabel);
+  }
+  rij(&#39;Leggingswijze&#39;, inv.legging.label);
+  if (inv.isGrondkabel) {
+    rij(&#39;Legdiepte&#39;, &#39;${inv.diepteM.toStringAsFixed(2)} m&#39;);
+    rij(&#39;Grondtemperatuur&#39;, &#39;${inv.grondtempC.toStringAsFixed(0)} °C&#39;);
+    rij(&#39;Bodemweerstand λ&#39;, &#39;${inv.lambdaGrond.toStringAsFixed(2)} K·m&#47;W&#39;);
+    if (inv.cyclischProfiel != null) {
+      rij(&#39;Cyclisch profiel&#39;, l10n.rapportCyclischIngeschakeld(
+          inv.cyclischNKringen, inv.cyclischAanliggend));
+    }
+  } else {
+    rij(&#39;Omgevingstemperatuur&#39;, &#39;${inv.omgevingstempC.toStringAsFixed(0)} °C&#39;);
+    if (inv.zonlichtToeslagK &gt; 0) {
+      rij(&#39;Zonlichttoeslag&#39;, &#39;+${inv.zonlichtToeslagK.toStringAsFixed(0)} K  (NEN 1010)&#39;);
+    }
+  }
+  if (inv.nParallel &gt; 1) {
+    rij(&#39;Parallel kabels&#39;, &#39;${inv.nParallel} ${l10n.rapportParallelKabels}&#39;);
+  }
+  rij(&#39;Max. spanningsval&#39;, &#39;${inv.maxSpanningsvalPct.toStringAsFixed(1)} %&#39;);
+  if (inv.kortsluitstroomA &gt; 0) {
+    rij(&#39;Kortsluitstroom I_k&#39;, &#39;${inv.kortsluitstroomA.toStringAsFixed(0)} A&#39;);
+    rij(&#39;Kortsluitduur&#39;, &#39;${inv.kortsluitduurMs.toStringAsFixed(0)} ms&#39;);
+  } else {
+    rij(&#39;Kortsluittoets&#39;, l10n.rapportKortsluitNiet);
+  }
+  if (inv.harmonischenActief) {
+    final iN = 3.0 * (inv.derdeHarmonischePct &#47; 100.0) * inv.effectieveStroom;
+    rij(&#39;3e harmonische&#39;, &#39;${inv.derdeHarmonischePct.toStringAsFixed(0)} %  van fasestroom&#39;);
+    rij(&#39;Nulpuntsstroom I_N&#39;, &#39;${iN.toStringAsFixed(1)} A&#39;
+        &#39;  = 3 × ${(inv.derdeHarmonischePct &#47; 100).toStringAsFixed(2)} × ${inv.effectieveStroom.toStringAsFixed(1)} A&#39;);
+  }
+  if (inv.forceerDoorsnedemm2 != null) {
+    rij(&#39;Geforceerde doorsnede&#39;, &#39;${inv.forceerDoorsnedemm2} mm²&#39;);
+  }
+  if (inv.bundel != null) {
+    rij(&#39;Bundeling&#39;, &#39;${inv.bundel!.nHorizontaal} naast × ${inv.bundel!.nVerticaal} hoog&#39;
+        &#39;  (${inv.bundel!.totaalKabels} kabels)&#39;);
+  }
+
+  if (r.kabel == null) {
+    titel(&#39;RESULTAAT&#39;);
+    buf.writeln(l10n.rapportGeenKabel);
+  } else {
+    final k = r.kabel!;
+    final ip = isolatieEigenschappen[k.isolatie]!;
+
+    titel(l10n.rapportKabel);
+    rij(&#39;Type&#39;, k.naam);
+    rij(&#39;Doorsnede&#39;, &#39;${k.doorsnedemm2} mm²&#39;);
+    rij(&#39;Geleider&#39;, k.geleider.label);
+    rij(&#39;Isolatie&#39;, &#39;${k.isolatie.label}&#39;
+        &#39;  (max. ${ip.maxTempContinu.toInt()} °C continu&#39;
+        &#39;, ${ip.maxTempKortsluit.toInt()} °C KS)&#39;);
+    rij(&#39;Aantal aders&#39;, &#39;${k.aantalAders}×&#39;);
+    if (inv.aantalAders == 1 &amp;&amp; inv.systeem.isAC) {
+      final gpkK = inv.geleidersPerKring;
+      final totaalK = r.nParallel * gpkK;
+      final is3FK = inv.systeem == Systeemtype.ac3Fase;
+      final gpkLabelK = is3FK
+          ? switch (gpkK) {
+              3 =&gt; &#39;$gpkK geleiders per kring  (L1 + L2 + L3)&#39;,
+              4 =&gt; &#39;$gpkK geleiders per kring  (L1 + L2 + L3 + N)&#39;,
+              _ =&gt; &#39;$gpkK geleiders per kring  (L1 + L2 + L3 + N + PE)&#39;,
+            }
+          : (gpkK == 2 ? &#39;$gpkK geleiders per kring  (L + N)&#39; : &#39;$gpkK geleiders per kring  (L + N + PE)&#39;);
+      rij(&#39;Singel-configuratie&#39;, gpkLabelK);
+      rij(&#39;Totaal singels&#39;,
+          &#39;$totaalK stuks${r.nParallel &gt; 1 ? &quot;  (${r.nParallel}× parallel × $gpkK)&quot; : &quot;&quot;}&#39;);
+    }
+    rij(&#39;Buitendiameter&#39;, &#39;${k.buitendiameter.toStringAsFixed(1)} mm&#39;);
+    rij(&#39;R_AC @ 20°C&#39;, &#39;${k.rAcPerKm20C.toStringAsFixed(4)} Ω&#47;km&#39;);
+    rij(&#39;X @ 50 Hz&#39;, &#39;${k.xAcPerKm.toStringAsFixed(4)} Ω&#47;km&#39;);
+
+    titel(l10n.rapportCF);
+    final tMax = ip.maxTempContinu;
+    final tRef = ip.refTempTabel;
+    rij(&#39;θ_eff (omgeving)&#39;, &#39;${r.tEffectief.toStringAsFixed(1)} °C&#39;
+        &#39;${r.tEffectief &gt; (inv.isGrondkabel ? inv.grondtempC : inv.omgevingstempC) ? &quot;  (incl. zonlicht)&quot; : &quot;&quot;}&#39;);
+    rij(&#39;f_T  (temperatuur)&#39;, &#39;${r.fT.toStringAsFixed(4)}&#39;
+        &#39;  = √[(${tMax.toInt()}−${r.tEffectief.toStringAsFixed(1)})&#47;(${tMax.toInt()}−${tRef.toInt()})]&#39;);
+    if (r.bundelPositieWorst != null) {
+      rij(&#39;f_bundel&#39;, &#39;${r.fBundel.toStringAsFixed(4)}  = f_h × f_v&#39;);
+      rij(&#39;  f_h (horizontaal)&#39;, &#39;${r.fHorizontaal.toStringAsFixed(4)}  (IEC tabel B.52.20)&#39;);
+      rij(&#39;  f_v (stapeling)&#39;, &#39;${r.fVerticaal.toStringAsFixed(4)}  (IEC tabel B.52.21)&#39;);
+      rij(&#39;  Maatg. positie&#39;, &#39;(${r.bundelPositieWorst!.$1}, ${r.bundelPositieWorst!.$2})  — centrum bundel&#39;);
+    } else {
+      rij(&#39;f_bundel&#39;, &#39;${r.fBundel.toStringAsFixed(4)}  [geen bundeling]&#39;);
+    }
+    rij(&#39;f_grond&#39;, &#39;${r.fGrond.toStringAsFixed(4)}&#39;
+        &#39;${inv.isGrondkabel ? &quot;  (λ=${inv.lambdaGrond.toStringAsFixed(2)} K·m&#47;W)&quot; : &quot;  [bovengronds]&quot;}&#39;);
+    if (r.fCyclisch != 1.0) {
+      rij(&#39;M  (cyclisch)&#39;, &#39;${r.fCyclisch.toStringAsFixed(4)}  (NEN IEC 60583-1:2002)&#39;);
+    }
+    if (r.iNeutraal &gt; 0) {
+      rij(&#39;f_harm  (harmonischen)&#39;, &#39;${r.fHarmonisch.toStringAsFixed(4)}  (NEN 1010 Bijlage 52.E.1)&#39;);
+      rij(&#39;  Grondslag&#39;, r.harmonischOpNul
+          ? &#39;${l10n.rapportNulpuntsstroom}${r.iNeutraal.toStringAsFixed(1)} A&#39;
+          : l10n.rapportFasestroom);
+    }
+    final fTotaalFormule = [
+      &#39;f_T × f_bundel × f_grond&#39;,
+      if (r.fCyclisch != 1.0) &#39; × M&#39;,
+      if (r.iNeutraal &gt; 0) &#39; × f_harm&#39;,
+    ].join();
+    rij(&#39;f_TOTAAL&#39;, &#39;${r.fTotaal.toStringAsFixed(4)}  = $fTotaalFormule&#39;);
+
+    final int sOffset = (inv.cyclischProfiel != null ? 1 : 0) +
+        (inv.harmonischenActief ? 1 : 0);
+
+    if (inv.cyclischProfiel != null) {
+      titel(l10n.rapportCyclischNr(4));
+      buf.writeln(&#39;Formule: M = 1 &#47; √( Σ Yᵢ·ΔθR(i)  +  μ·(1 − θR(6)) )&#39;);
+      rij(&#39;Aantal kringen N&#39;, &#39;${inv.cyclischNKringen}&#39;);
+      rij(&#39;Ligging kringen&#39;, inv.cyclischAanliggend
+          ? &#39;Aanliggend (touching)&#39;
+          : &#39;Gespreid (spaced)&#39;);
+      if (inv.cyclischNKringen &gt; 1 &amp;&amp; inv.cyclischHartOpHartMm &gt; 0) {
+        rij(&#39;Hart-op-hart&#39;, &#39;${inv.cyclischHartOpHartMm.toStringAsFixed(0)} mm&#39;);
+      } else if (inv.cyclischNKringen &gt; 1) {
+        rij(&#39;Hart-op-hart&#39;, l10n.rapportAanliggendKabeldiameter);
+      }
+      rij(&#39;Legdiepte L&#39;, &#39;${inv.diepteM.toStringAsFixed(2)} m&#39;);
+      rij(&#39;Grondtemperatuur Tgr&#39;, &#39;${inv.grondtempC.toStringAsFixed(0)} °C&#39;);
+      rij(&#39;Thermische weerstand ξ&#39;, &#39;${inv.lambdaGrond.toStringAsFixed(2)} K·m&#47;W&#39;);
+      buf.writeln();
+      buf.writeln(&#39;Belastingsprofiel I&#47;Imax per uur:&#39;);
+      final p = inv.cyclischProfiel!;
+      for (int rw = 0; rw &lt; 4; rw++) {
+        final start = rw * 6;
+        final label = &#39;  Uur ${start.toString().padLeft(2)}–${(start + 5).toString().padLeft(2)}&#39;;
+        final vals = List.generate(6, (c) {
+          final v = p[start + c];
+          return v.toStringAsFixed(2).padLeft(5);
+        }).join(&#39;  &#39;);
+        buf.writeln(&#39;$label:  $vals&#39;);
+      }
+      buf.writeln();
+      final mu = p.fold(0.0, (s, v) =&gt; s + v * v) &#47; 24;
+      final maxI = p.reduce((a, b) =&gt; a &gt; b ? a : b);
+      rij(&#39;μ  (gem. Yi = (I&#47;Imax)²)&#39;, mu.toStringAsFixed(4));
+      rij(&#39;Piekwaarde I&#47;Imax&#39;, maxI.toStringAsFixed(2));
+      rij(&#39;Cyclische factor M&#39;, r.fCyclisch.toStringAsFixed(4));
+      rij(&#39;Toelichting&#39;, l10n.rapportMHogerBelasting);
+    }
+
+    if (inv.harmonischenActief) {
+      final sHarm = (inv.cyclischProfiel != null ? 5 : 4);
+      titel(l10n.rapportHarmNr(sHarm));
+      buf.writeln(&#39;Tabel E.52.1: correctiefactoren voor 4- of 5-aderige 3-fase kabels&#39;);
+      buf.writeln(&#39;  h3 (%)    Grondslag        f_harm&#39;);
+      buf.writeln(&#39;  0–15      fasestroom        1,00&#39;);
+      buf.writeln(&#39;  15–33     fasestroom        0,86&#39;);
+      buf.writeln(&#39;  33–45     nulpuntsstroom    0,86&#39;);
+      buf.writeln(&#39;  &gt; 45      nulpuntsstroom    1,00&#39;);
+      buf.writeln();
+      rij(&#39;3e harmonische h3&#39;, &#39;${inv.derdeHarmonischePct.toStringAsFixed(0)} %&#39;);
+      rij(&#39;f_harm&#39;, r.fHarmonisch.toStringAsFixed(4));
+      rij(&#39;I_N = 3 × h3 × I_fase&#39;, &#39;${r.iNeutraal.toStringAsFixed(1)} A&#39;);
+      rij(&#39;Grondslag kabelkeuze&#39;, r.harmonischOpNul
+          ? &#39;nulpuntsstroom  (h3 &gt; 33%)&#39;
+          : &#39;fasestroom  (h3 ≤ 33%)&#39;);
+    }
+
+    titel(l10n.rapportBelNrVan(4 + sOffset, &#39;&#39;));
+    if (r.nParallel &gt; 1) {
+      rij(&#39;Configuratie&#39;, &#39;${r.nParallel} kabels parallel per fase&#39;);
+      rij(&#39;I_totaal&#39;, &#39;${r.iGevraagd.toStringAsFixed(2)} A&#39;);
+      rij(&#39;I per kabel&#39;, &#39;${r.iPerKabel.toStringAsFixed(2)} A&#39;
+          &#39;  = ${r.iGevraagd.toStringAsFixed(2)} &#47; ${r.nParallel}&#39;);
+    }
+    final methode = inv.legging.isVrijeLucht ? &#39;E (vrije lucht)&#39; : &#39;C (in buis&#47;wand)&#39;;
+    rij(&#39;I_z0  (tabel, 30°C)&#39;, &#39;${r.iz0.toStringAsFixed(1)} A  per kabel  [methode $methode]&#39;);
+    rij(&#39;I_z  (gecorrigeerd)&#39;, &#39;${r.iz.toStringAsFixed(1)} A  = ${r.iz0.toStringAsFixed(1)} × ${r.fTotaal.toStringAsFixed(4)}&#39;);
+    final iGrondslag = r.harmonischOpNul ? r.iNeutraal : r.iPerKabel;
+    final grondslagLabel = r.harmonischOpNul ? &#39;I_N  (maatgevend)&#39; : &#39;I_gevraagd&#39;;
+    rij(grondslagLabel, &#39;${iGrondslag.toStringAsFixed(2)} A  per kabel&#39;);
+    if (r.harmonischOpNul) {
+      rij(&#39;I_fase&#39;, &#39;${r.iPerKabel.toStringAsFixed(2)} A  per kabel&#39;);
+    }
+    rij(&#39;Veiligheidsmarge&#39;, &#39;${r.margeStroomPct &gt;= 0 ? &quot;+&quot; : &quot;&quot;}${r.margeStroomPct.toStringAsFixed(1)} %&#39;
+        &#39;  = (${r.iz.toStringAsFixed(1)}&#47;${iGrondslag.toStringAsFixed(2)} − 1) × 100&#39;);
+
+    titel(l10n.rapportSVNr(5 + sOffset));
+    final gelProp = geleiderEigenschappen[k.geleider]!;
+    final rAt = k.rAcPerKm20C * (1 + gelProp.alpha20 * (tMax - 20)) &#47; 1000;
+    final xM = k.xAcPerKm &#47; 1000;
+    switch (inv.systeem) {
+      case Systeemtype.ac1Fase:
+        final sinPhi = sqrt(max(0.0, 1 - inv.cosPhi * inv.cosPhi));
+        buf.writeln(&#39;Formule:  ΔU = 2 · I · L · (R·cosφ + X·sinφ)&#39;);
+        rij(&#39;R_AC @ ${tMax.toInt()}°C&#39;, &#39;${rAt.toStringAsFixed(6)} Ω&#47;m&#39;);
+        rij(&#39;X&#39;, &#39;${xM.toStringAsFixed(6)} Ω&#47;m&#39;);
+        rij(&#39;sin φ&#39;, sinPhi.toStringAsFixed(4));
+        buf.writeln(&#39;ΔU = 2 × ${r.iPerKabel.toStringAsFixed(2)} × ${inv.lengteM.toStringAsFixed(1)}&#39;
+            &#39; × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})&#39;);
+      case Systeemtype.ac3Fase:
+        final sinPhi = sqrt(max(0.0, 1 - inv.cosPhi * inv.cosPhi));
+        buf.writeln(&#39;Formule:  ΔU = √3 · I · L · (R·cosφ + X·sinφ)&#39;);
+        rij(&#39;R_AC @ ${tMax.toInt()}°C&#39;, &#39;${rAt.toStringAsFixed(6)} Ω&#47;m&#39;);
+        rij(&#39;X&#39;, &#39;${xM.toStringAsFixed(6)} Ω&#47;m&#39;);
+        rij(&#39;sin φ&#39;, sinPhi.toStringAsFixed(4));
+        buf.writeln(&#39;ΔU = √3 × ${r.iPerKabel.toStringAsFixed(2)} × ${inv.lengteM.toStringAsFixed(1)}&#39;
+            &#39; × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})&#39;);
+      case Systeemtype.dc2Draad:
+        final rDc = gelProp.rDc(k.doorsnedemm2, 1.0, t: tMax);
+        buf.writeln(&#39;Formule:  ΔU = 2 · I · R_DC · L&#39;);
+        rij(&#39;R_DC @ ${tMax.toInt()}°C&#39;, &#39;${rDc.toStringAsFixed(6)} Ω&#47;m&#39;);
+        buf.writeln(&#39;ΔU = 2 × ${r.iPerKabel.toStringAsFixed(2)} × ${rDc.toStringAsFixed(6)} × ${inv.lengteM.toStringAsFixed(1)}&#39;);
+      case Systeemtype.dcAarde:
+        final rDc = gelProp.rDc(k.doorsnedemm2, 1.0, t: tMax);
+        buf.writeln(&#39;Formule:  ΔU = I · R_DC · L  (aardretour)&#39;);
+        rij(&#39;R_DC @ ${tMax.toInt()}°C&#39;, &#39;${rDc.toStringAsFixed(6)} Ω&#47;m&#39;);
+        buf.writeln(&#39;ΔU = ${r.iPerKabel.toStringAsFixed(2)} × ${rDc.toStringAsFixed(6)} × ${inv.lengteM.toStringAsFixed(1)}&#39;);
+    }
+    rij(&#39;ΔU (absoluut)&#39;, &#39;${r.deltaUV.toStringAsFixed(4)} V&#39;);
+    rij(&#39;ΔU (procent)&#39;, &#39;${r.deltaUPct.toStringAsFixed(3)} %&#39;);
+    rij(&#39;Max. toegestaan&#39;, &#39;${inv.maxSpanningsvalPct.toStringAsFixed(1)} %&#39;);
+    rij(&#39;Status&#39;, r.okSpanning ? l10n.rapportVoldoet : l10n.rapportOverschreden);
+
+    titel(l10n.rapportTempNr(6 + sOffset));
+    final rDcM = gelProp.rDc(k.doorsnedemm2, 1.0, t: tMax);
+    rij(&#39;R_DC @ ${tMax.toInt()}°C&#39;, &#39;${rDcM.toStringAsFixed(6)} Ω&#47;m&#39;);
+    rij(&#39;I²R-verlies&#39;, &#39;${r.i2rVerliesWPerM.toStringAsFixed(4)} W&#47;m&#39;);
+    if (inv.isGrondkabel) {
+      buf.writeln(&#39;Formule:  ΔT = P · (λ&#47;2π) · ln(4u&#47;d)  [IEC 60287-2-1]&#39;);
+      rij(&#39;Diepte&#39;, &#39;${inv.diepteM.toStringAsFixed(2)} m&#39;);
+      rij(&#39;Buitendiameter&#39;, &#39;${k.buitendiameter.toStringAsFixed(1)} mm&#39;);
+    } else {
+      buf.writeln(&#39;Formule:  ΔT = P &#47; (π · D · h_conv)  [h_conv = 10 W&#47;(m²·K)]&#39;);
+      rij(&#39;Buitendiameter&#39;, &#39;${k.buitendiameter.toStringAsFixed(1)} mm&#39;);
+    }
+    rij(&#39;Temperatuurstijging ΔT&#39;, &#39;${r.tempStijgingK.toStringAsFixed(2)} K&#39;);
+    rij(&#39;Omgevingstemperatuur&#39;, &#39;${r.tEffectief.toStringAsFixed(1)} °C&#39;);
+    rij(&#39;Geleidertemperatuur&#39;, &#39;${r.geleiderTempC.toStringAsFixed(1)} °C&#39;);
+    rij(&#39;Maximum toegestaan&#39;, &#39;${r.maxTempC.toStringAsFixed(0)} °C&#39;);
+    rij(&#39;Marge&#39;, &#39;${(r.maxTempC - r.geleiderTempC) &gt;= 0 ? &quot;+&quot; : &quot;&quot;}${(r.maxTempC - r.geleiderTempC).toStringAsFixed(1)} K&#39;);
+    rij(&#39;Status&#39;, r.okTemp ? l10n.rapportVoldoet : l10n.rapportWaarschuwingTemp);
+
+    if (r.okKortsluit != null) {
+      titel(l10n.rapportKSNr(7 + sOffset));
+      final kVal = kWaarden[(k.geleider, k.isolatie)] ?? 0.0;
+      final tS = inv.kortsluitduurMs &#47; 1000.0;
+      final ikPK = inv.kortsluitstroomA &#47; r.nParallel;
+      buf.writeln(&#39;Formule min. doorsnede:  A_min = I_k · √t &#47; k&#39;);
+      rij(&#39;I_k (per kabel)&#39;, &#39;${ikPK.toStringAsFixed(0)} A&#39;
+          &#39;${r.nParallel &gt; 1 ? &quot;  = ${inv.kortsluitstroomA.toStringAsFixed(0)}&#47;${r.nParallel}&quot; : &quot;&quot;}&#39;);
+      rij(&#39;t (kortsluitduur)&#39;, &#39;${tS.toStringAsFixed(3)} s  (${inv.kortsluitduurMs.toStringAsFixed(0)} ms)&#39;);
+      rij(&#39;k (materiaalconstante)&#39;, &#39;$kVal  [${k.geleider.label} ${k.isolatie.label}]&#39;);
+      rij(&#39;A_min&#39;, &#39;${r.doorsnedeMinKortsluit.toStringAsFixed(2)} mm²&#39;);
+      rij(&#39;Toegepaste doorsnede&#39;, &#39;${k.doorsnedemm2} mm²&#39;);
+      buf.writeln();
+      buf.writeln(&#39;Formule eindtemperatuur:  ΔT = (I_k&#47;A)² · t &#47; c  →  T_eind = T_max + ΔT&#39;);
+      rij(&#39;Temperatuurstijging ΔT&#39;, &#39;${r.deltaTKortsluitK.toStringAsFixed(1)} K&#39;);
+      rij(&#39;Starttemperatuur (T_max)&#39;, &#39;${ip.maxTempContinu.toInt()} °C&#39;);
+      rij(&#39;Eindtemperatuur&#39;, &#39;${r.eindtempKortsluitC.toStringAsFixed(1)} °C&#39;);
+      rij(&#39;Max. toegestaan&#39;, &#39;${ip.maxTempKortsluit.toInt()} °C&#39;);
+      rij(&#39;Status&#39;, r.okKortsluit! ? l10n.rapportVoldoet : l10n.rapportFaalt);
+    }
+
+    if (r.okMaxLengte != null) {
+      titel(l10n.rapportMaxLengte);
+      final ia = inv.beveiligingIa;
+      if (inv.beveiligingType != null) {
+        rij(&#39;Beveiligingstype&#39;, inv.beveiligingType!.label);
+      }
+      if (ia != null) rij(&#39;Activeringsstroom I_a&#39;, &#39;${ia.toStringAsFixed(1)} A&#39;);
+      rij(&#39;Maximale leidinglengte&#39;, &#39;${r.maxLengteM!.toStringAsFixed(1)} m&#39;);
+      if (r.ikEind != null) rij(&#39;I_k aan kabeluiteinde&#39;, &#39;${r.ikEind!.toStringAsFixed(0)} A&#39;);
+      rij(&#39;Opgegeven lengte&#39;, &#39;${inv.lengteM.toStringAsFixed(1)} m&#39;);
+      rij(&#39;Status&#39;, r.okMaxLengte! ? l10n.rapportVoldoet : l10n.rapportFaalt);
+    }
+  }
+
+  buf.writeln();
+  buf.writeln(&#39;=&#39; * 64);
+  buf.writeln(r.voldoet ? l10n.rapportEindVoldoet : l10n.rapportEindGefaald);
+  buf.writeln(&#39;=&#39; * 64);
+  if (r.fouten.isNotEmpty) {
+    buf.writeln(&#39;\n${l10n.rapportFouten}&#39;);
+    for (final f in r.fouten) { buf.writeln(&#39;  • $f&#39;); }
+  }
+  if (r.waarschuwingen.isNotEmpty) {
+    buf.writeln(&#39;\n${l10n.rapportWaarschuwingen}&#39;);
+    for (final w in r.waarschuwingen) { buf.writeln(&#39;  ⚠ $w&#39;); }
+  }
+  buf.writeln(&#39;\n${l10n.rapportFooter}&#39;);
+  return buf.toString();
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">mijnkabelberekening</a></li>
+    <li><a href="../berekening_rapport/">rapport</a></li>
+    <li class="self-crumb">berekeningRapportTekst function</li>
+</ol>
+
+    <h5>rapport library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    mijnkabelberekening
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
