@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \":*)",
+      "Bash(pip3 install openpyxl)",
+      "Bash(flutter analyze lib/screens/invoer_screen.dart)",
+      "Bash(flutter analyze)",
+      "Bash(flutter analyze lib/)",
+      "Bash(flutter analyze lib/berekening/correctiefactoren.dart lib/models/invoer.dart lib/models/resultaten.dart lib/berekening/ontwerper.dart lib/screens/invoer_screen.dart lib/screens/resultaten_screen.dart)",
+      "Bash(flutter analyze lib/screens/uitleg_screen.dart)",
+      "Bash(flutter analyze lib/models/enums.dart lib/l10n/uitleg_localizations.dart lib/screens/uitleg_screen.dart lib/l10n/app_localizations.dart)",
+      "Bash(flutter analyze lib/screens/project_detail_screen.dart)",
+      "Bash(flutter build:*)"
+    ]
+  }
+}
