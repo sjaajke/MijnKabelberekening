@@ -285,6 +285,25 @@ class ResultatenScreen extends StatelessWidget {
                   ? l10n.grondslagNulpuntsstroom
                   : l10n.grondslagFasestroom),
         ],
+        if (r.deltaTWindK != null) ...[
+          ResultaatRij(
+            label: 'ΔT_wind  (windkoeling)',
+            waarde: '${r.deltaTWindK! >= 0 ? "+" : ""}${r.deltaTWindK!.toStringAsFixed(1)} K',
+            kleur: r.deltaTWindK! < 0 ? Colors.green.shade700 : Colors.orange.shade800,
+            vet: true,
+          ),
+          ResultaatRij(
+            label: l10n.lblThetaEff,
+            waarde: '${r.tEffectief.toStringAsFixed(1)} °C  (incl. wind)',
+          ),
+        ],
+        if (r.dtZonPvLaagK != null)
+          ResultaatRij(
+            label: 'ΔT_zon  (PV-laagpositie, IEC 60364)',
+            waarde: '+${r.dtZonPvLaagK!.toStringAsFixed(1)} K',
+            kleur: r.dtZonPvLaagK! > 10 ? Colors.orange.shade800 : Colors.blue.shade700,
+            vet: true,
+          ),
         const Divider(height: 10),
         ResultaatRij(
             label: 'f_TOTAAL',

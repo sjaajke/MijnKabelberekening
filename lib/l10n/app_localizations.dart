@@ -819,4 +819,29 @@ class AppLocalizations {
       isNL ? 'Nog geen kabelnet aangemaakt.' : 'No cable network yet.';
   String ikEindInfo(String ik) =>
       isNL ? 'I_k1f einde = $ik A' : 'I_k1f end = $ik A';
+
+  // ── WINDKOELING (IEC 60287-2-1) ──────────────────────────────────────────
+  String get lblWindkoeling =>
+      isNL ? 'Windkoeling PV-goot (IEC 60287-2-1)' : 'Wind Cooling PV Tray (IEC 60287-2-1)';
+  String get sectWindkoeling =>
+      isNL ? 'Windkoeling  (IEC 60287-2-1 / NEN 1010)' : 'Wind Cooling  (IEC 60287-2-1 / NEN 1010)';
+  String get lblWindsnelheid =>
+      isNL ? 'Windsnelheid op dakoppervlak' : 'Wind Speed at Roof Surface';
+  String get lblGootMetDeksel =>
+      isNL ? 'Stalen deksel op kabelgoot' : 'Steel Lid on Cable Tray';
+  String get lblDakOrientatie =>
+      isNL ? 'Dakoriëntatie' : 'Roof Orientation';
+  String get lblDakhelling =>
+      isNL ? 'Dakhelling' : 'Roof Slope';
+  String windkoelingInfo(String dtK, String tEffC) => isNL
+      ? 'ΔT_wind = $dtK K  →  T_effectief = $tEffC °C  (IEC 60287-2-1 convectie-correctie)'
+      : 'ΔT_wind = $dtK K  →  T_effective = $tEffC °C  (IEC 60287-2-1 convection correction)';
+
+  String get lblPvLaagModel =>
+      isNL ? 'PV-laagpositie zonneinstraling (IEC 60364-5-52)' : 'PV Layer Position Solar Irradiance (IEC 60364-5-52)';
+  String get lblPvLaagPositie =>
+      isNL ? 'Positie maatgevende kabel in stapel' : 'Position of determining cable in stack';
+  String pvLaagHint(String dtK) => isNL
+      ? 'Zoninstralingstoeslag: +$dtK K op omgevingstemperatuur  (vervangt handmatige zonlicht-ΔT)'
+      : 'Solar irradiance correction: +$dtK K above ambient  (replaces manual sunlight ΔT)';
 }

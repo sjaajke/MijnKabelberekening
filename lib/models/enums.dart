@@ -84,6 +84,40 @@ enum Leggingswijze {
   bool get isVrijeLucht => this == e || this == g;
 }
 
+enum Windsnelheid {
+  windstil('0 m/s  (windstil, natuurlijke convectie)'),
+  zwak('1–2 m/s  (zwak, lichte luchtbeweging)'),
+  matig('3–5 m/s  (matig, gemengde convectie)'),
+  sterk('5–10 m/s  (sterk, geforceerde convectie)'),
+  storm('10+ m/s  (sterk geforceerd)');
+
+  const Windsnelheid(this.label);
+  final String label;
+}
+
+enum DakOrientatie {
+  z('Zuid'),
+  zo('Zuid-Oost'),
+  zw('Zuid-West'),
+  o('Oost'),
+  w('West'),
+  n('Noord');
+
+  const DakOrientatie(this.label);
+  final String label;
+}
+
+enum PvLaagPositie {
+  topLaag('Bovenste laag  — volledige directe instraling  (+25 K)', 25.0),
+  tweedeLaag('2e laag van boven  — gedeeltelijke instraling  (+12 K)', 12.0),
+  middenLaag('Middenlaag  — minimale indirecte instraling  (+5 K)', 5.0),
+  onderLaag('Onderste laag  — volledig beschaduwd  (+0 K)', 0.0);
+
+  const PvLaagPositie(this.label, this.deltaTK);
+  final String label;
+  final double deltaTK;
+}
+
 enum BeveiligingType {
   mcbB('MCB type B  (Ia = 5×In)', 5),
   mcbC('MCB type C  (Ia = 10×In)', 10),

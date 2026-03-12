@@ -91,6 +91,10 @@ class Resultaten {
   final double? zKabelLusOhm;  // lusimpedantie kabel bij gegeven lengte [Ω]
   final double? ik1fEindA;     // enkelfasige lus-Ik aan kabeluiteinde [A]
 
+  // Windkoeling
+  final double? deltaTWindK;   // effectieve ΔT door wind [K]; null = niet actief
+  final double? dtZonPvLaagK;  // zonneinstraling ΔT per laagpositie [K]; null = niet actief
+
   // Eindoordeel
   final bool voldoet;
   final List<String> fouten;
@@ -143,6 +147,8 @@ class Resultaten {
     this.ik1fBronA,
     this.zKabelLusOhm,
     this.ik1fEindA,
+    this.deltaTWindK,
+    this.dtZonPvLaagK,
     this.voldoet = false,
     this.fouten = const [],
     this.waarschuwingen = const [],

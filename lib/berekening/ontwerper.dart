@@ -79,7 +79,11 @@ class KabelOntwerper {
     final isolProp = isolatieEigenschappen[invoer.isolatie]!;
     final tOmgBase = invoer.isGrondkabel ? invoer.grondtempC : invoer.omgevingstempC;
     // Zonstralings-toeslag alleen voor bovengrondse leggingen (IEC 60364-5-52 / NEN 1010)
-    final tOmg = tOmgBase + (invoer.isGrondkabel ? 0.0 : invoer.zonlichtToeslagK);
+    // pvLaagActief vervangt zonlichtToeslagK met laag-positie afhankelijke ΔT.
+    final dtZon = invoer.pvLaagActief ? invoer.deltaTZonPvLaag : invoer.zonlichtToeslagK;
+    final tOmg = tOmgBase + (invoer.isGrondkabel
+        ? 0.0
+        : dtZon + invoer.deltaTWindKoeling);
     final fT = Correctiefactoren.fTemperatuur(
       tOmg,
       isolProp.maxTempContinu,
@@ -512,6 +516,8 @@ class KabelOntwerper {
       ik1fBronA: ik1fBronResult,
       zKabelLusOhm: zKabelLusResult,
       ik1fEindA: ik1fEindResult,
+      deltaTWindK: invoer.windkoelingActief ? invoer.deltaTWindKoeling : null,
+      dtZonPvLaagK: invoer.pvLaagActief ? invoer.deltaTZonPvLaag : null,
       voldoet: voldoet,
       fouten: fouten,
       waarschuwingen: waarschuwingen,

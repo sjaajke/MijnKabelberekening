@@ -48,6 +48,8 @@ class _InvoerScreenState extends State<InvoerScreen> {
   int _cyclischPreset = 1;
   bool _gebruikHarmonischen = false;
   bool _gebruikBronimpedantie = false;
+  bool _gebruikWindkoeling = false;
+  bool _gebruikPvLaag = false;
 
   @override
   void initState() {
@@ -78,6 +80,8 @@ class _InvoerScreenState extends State<InvoerScreen> {
     _gebruikCyclisch = inv.cyclischProfiel != null;
     _gebruikHarmonischen = inv.derdeHarmonischePct > 0;
     _gebruikBronimpedantie = inv.bronimpedantieActief;
+    _gebruikWindkoeling = inv.windkoelingActief;
+    _gebruikPvLaag = inv.pvLaagActief;
   }
 
   static List<int> _geleidersOpties(Systeemtype s) =>
@@ -174,6 +178,8 @@ class _InvoerScreenState extends State<InvoerScreen> {
           _eisenSectie(),
           if (_gebruikMaxLengte) _maxLengteSectie(),
           if (_gebruikKortsluit) _kortsluitSectie(),
+          _windkoelingToggle(),
+          if (_gebruikWindkoeling) _windkoelingsSectie(),
           const SizedBox(height: 12),
           _berekenKnop(),
           const SizedBox(height: 24),
@@ -1091,6 +1097,112 @@ class _InvoerScreenState extends State<InvoerScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
+        ],
+      ],
+    );
+  }
+
+  // ── WINDKOELING ───────────────────────────────────────────────────────────
+  Widget _windkoelingToggle() {
+    final l10n = context.l10n;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: SchakelaarRij(
+          label: l10n.lblWindkoeling,
+          waarde: _gebruikWindkoeling,
+          onChanged: (v) => setState(() {
+            _gebruikWindkoeling = v;
+            _update(_inv.copyWith(windkoelingActief: v));
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _windkoelingsSectie() {
+    final l10n = context.l10n;
+    final inv = _inv;
+    final dtWind = inv.deltaTWindKoeling;
+    final tEff = (inv.isGrondkabel ? inv.grondtempC : inv.omgevingstempC) +
+        inv.zonlichtToeslagK + dtWind;
+
+    return SectieCard(
+      titel: l10n.sectWindkoeling,
+      icoon: Icons.air,
+      children: [
+        DropdownRij<Windsnelheid>(
+          label: l10n.lblWindsnelheid,
+          waarde: inv.windsnelheid,
+          opties: Windsnelheid.values,
+          display: (v) => v.label,
+          onChanged: (v) => _update(inv.copyWith(windsnelheid: v)),
+        ),
+        const SizedBox(height: 4),
+        SchakelaarRij(
+          label: l10n.lblGootMetDeksel,
+          waarde: inv.gootMetDeksel,
+          onChanged: (v) => _update(inv.copyWith(gootMetDeksel: v)),
+        ),
+        const SizedBox(height: 4),
+        DropdownRij<DakOrientatie>(
+          label: l10n.lblDakOrientatie,
+          waarde: inv.dakOrientatie,
+          opties: DakOrientatie.values,
+          display: (v) => v.label,
+          onChanged: (v) => _update(inv.copyWith(dakOrientatie: v)),
+        ),
+        const SizedBox(height: 4),
+        GetalVeld(
+          label: l10n.lblDakhelling,
+          eenheid: '°',
+          waarde: inv.dakhellingGraden,
+          onChanged: (v) => _update(inv.copyWith(dakhellingGraden: v)),
+          min: 0,
+          max: 90,
+          decimalen: 0,
+        ),
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsets.only(left: 2),
+          child: Text(
+            l10n.windkoelingInfo(
+              dtWind.toStringAsFixed(1),
+              tEff.toStringAsFixed(1),
+            ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        SchakelaarRij(
+          label: l10n.lblPvLaagModel,
+          waarde: _gebruikPvLaag,
+          onChanged: (v) => setState(() {
+            _gebruikPvLaag = v;
+            _update(inv.copyWith(pvLaagActief: v));
+          }),
+        ),
+        if (_gebruikPvLaag) ...[
+          const SizedBox(height: 4),
+          DropdownRij<PvLaagPositie>(
+            label: l10n.lblPvLaagPositie,
+            waarde: inv.pvLaagPositie,
+            opties: PvLaagPositie.values,
+            display: (v) => v.label,
+            onChanged: (v) => _update(inv.copyWith(pvLaagPositie: v)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 2),
+            child: Text(
+              l10n.pvLaagHint(inv.pvLaagPositie.deltaTK.toStringAsFixed(0)),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+          ),
         ],
       ],
     );
