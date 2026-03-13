@@ -83,6 +83,14 @@ class Invoer {
   /// Vul hier Z_totaal_lus in van de bovenliggende kabel om te ketenen.
   final double? zUpstreamHandmatigMohm;
 
+  // ── Bronimpedantie R + X handmatig ────────────────────────────────────────
+  /// true = gebruik handmatig ingevoerde R en X i.p.v. Ucc/transformatordatabank.
+  final bool zbRxHandmatig;
+  /// Weerstandscomponent van bronimpedantie [Ω] per fase (handmatig).
+  final double zbROhm;
+  /// Reactantiecomponent van bronimpedantie [Ω] per fase (handmatig).
+  final double zbXOhm;
+
   // ── Windkoeling (IEC 60287-2-1 / NEN 1010) ────────────────────────────────
   /// Windkoeling-sectie ingeschakeld (PV-singels in goot op dak).
   final bool windkoelingActief;
@@ -140,6 +148,9 @@ class Invoer {
     this.skNetOneindig = true,
     this.skNetMva = 100.0,
     this.zUpstreamHandmatigMohm,
+    this.zbRxHandmatig = false,
+    this.zbROhm = 0.010,
+    this.zbXOhm = 0.038,
     this.windkoelingActief = false,
     this.windsnelheid = Windsnelheid.matig,
     this.gootMetDeksel = false,
@@ -186,6 +197,10 @@ class Invoer {
       // Gebruiker heeft volledige lusimpedantie upstream opgegeven [mΩ];
       // per-fase equivalent = helft van de lusimpedantie.
       return zUpstreamHandmatigMohm! / 2000.0;
+    }
+    if (zbRxHandmatig) {
+      // Handmatige R + X invoer: |Z| = √(R² + X²)
+      return sqrt(zbROhm * zbROhm + zbXOhm * zbXOhm);
     }
     final zbTrafo = (transformatorUccPct / 100.0) *
         (spanningV * spanningV) /
@@ -286,6 +301,9 @@ class Invoer {
         'skNetOneindig': skNetOneindig,
         'skNetMva': skNetMva,
         'zUpstreamHandmatigMohm': zUpstreamHandmatigMohm,
+        'zbRxHandmatig': zbRxHandmatig,
+        'zbROhm': zbROhm,
+        'zbXOhm': zbXOhm,
         'windkoelingActief': windkoelingActief,
         'windsnelheid': windsnelheid.name,
         'gootMetDeksel': gootMetDeksel,
@@ -354,6 +372,9 @@ class Invoer {
         zUpstreamHandmatigMohm: j['zUpstreamHandmatigMohm'] != null
             ? (j['zUpstreamHandmatigMohm'] as num).toDouble()
             : null,
+        zbRxHandmatig: j['zbRxHandmatig'] as bool? ?? false,
+        zbROhm: j['zbROhm'] != null ? (j['zbROhm'] as num).toDouble() : 0.010,
+        zbXOhm: j['zbXOhm'] != null ? (j['zbXOhm'] as num).toDouble() : 0.038,
         windkoelingActief: j['windkoelingActief'] as bool? ?? false,
         windsnelheid: j['windsnelheid'] != null
             ? Windsnelheid.values.byName(j['windsnelheid'] as String)
@@ -417,6 +438,9 @@ class Invoer {
     double? skNetMva,
     double? zUpstreamHandmatigMohm,
     bool clearZUpstream = false,
+    bool? zbRxHandmatig,
+    double? zbROhm,
+    double? zbXOhm,
     bool? windkoelingActief,
     Windsnelheid? windsnelheid,
     bool? gootMetDeksel,
@@ -469,6 +493,9 @@ class Invoer {
         zUpstreamHandmatigMohm: clearZUpstream
             ? null
             : (zUpstreamHandmatigMohm ?? this.zUpstreamHandmatigMohm),
+        zbRxHandmatig: zbRxHandmatig ?? this.zbRxHandmatig,
+        zbROhm: zbROhm ?? this.zbROhm,
+        zbXOhm: zbXOhm ?? this.zbXOhm,
         windkoelingActief: windkoelingActief ?? this.windkoelingActief,
         windsnelheid: windsnelheid ?? this.windsnelheid,
         gootMetDeksel: gootMetDeksel ?? this.gootMetDeksel,

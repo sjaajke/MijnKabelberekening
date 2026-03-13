@@ -978,6 +978,38 @@ class _InvoerScreenState extends State<InvoerScreen> {
             decimalen: 2,
           ),
         ] else ...[
+          // R + X handmatige invoer toggle
+          SchakelaarRij(
+            label: l10n.lblZbRxHandmatig,
+            waarde: inv.zbRxHandmatig,
+            onChanged: (v) => _update(inv.copyWith(
+              zbRxHandmatig: v,
+              zbROhm: v ? 0.010 : inv.zbROhm,
+              zbXOhm: v ? 0.038 : inv.zbXOhm,
+            )),
+          ),
+          if (inv.zbRxHandmatig) ...[
+            const SizedBox(height: 4),
+            GetalVeld(
+              label: l10n.lblZbR,
+              eenheid: 'mΩ',
+              waarde: inv.zbROhm * 1000,
+              onChanged: (v) => _update(inv.copyWith(zbROhm: v / 1000)),
+              min: 0.01,
+              max: 10000,
+              decimalen: 2,
+            ),
+            const SizedBox(height: 4),
+            GetalVeld(
+              label: l10n.lblZbX,
+              eenheid: 'mΩ',
+              waarde: inv.zbXOhm * 1000,
+              onChanged: (v) => _update(inv.copyWith(zbXOhm: v / 1000)),
+              min: 0.01,
+              max: 10000,
+              decimalen: 2,
+            ),
+          ] else ...[
           // Transformatorselectie toggle
           SchakelaarRij(
             label: l10n.lblTransformatorHandmatig,
@@ -1029,6 +1061,7 @@ class _InvoerScreenState extends State<InvoerScreen> {
               decimalen: 1,
             ),
           ],
+        ],
         ],
 
         const SizedBox(height: 4),

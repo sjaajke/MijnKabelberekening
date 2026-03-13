@@ -705,6 +705,12 @@ class AppLocalizations {
       isNL ? 'Z_b = $zbMohm mΩ (per fase)' : 'Z_b = $zbMohm mΩ (per phase)';
   String ikBronInfo(String ik) =>
       isNL ? 'I_k bron (enkelfasig lus) ≈ $ik A' : 'I_k source (single-phase loop) ≈ $ik A';
+  String get lblZbRxHandmatig =>
+      isNL ? 'Handmatige R + X invoer (transformator/net)' : 'Manual R + X input (transformer/grid)';
+  String get lblZbR =>
+      isNL ? 'Weerstand R (transformator + net)' : 'Resistance R (transformer + grid)';
+  String get lblZbX =>
+      isNL ? 'Reactantie X (transformator + net)' : 'Reactance X (transformer + grid)';
   String get lblZUpstreamHandmatig =>
       isNL ? 'Handmatige Z_upstream (ketenberekening)' : 'Manual Z_upstream (chained calculation)';
   String get lblZUpstreamMohm =>
