@@ -95,6 +95,10 @@ class Resultaten {
   final double? deltaTWindK;   // effectieve ΔT door wind [K]; null = niet actief
   final double? dtZonPvLaagK;  // zonneinstraling ΔT per laagpositie [K]; null = niet actief
 
+  // Bundel zontemperatuur-splitsing
+  // true = centrum zonder zon (afgeschermd), bovenste laag hoek met volle zon
+  final bool bundelZonGesplitst;
+
   // Eindoordeel
   final bool voldoet;
   final List<String> fouten;
@@ -149,6 +153,7 @@ class Resultaten {
     this.ik1fEindA,
     this.deltaTWindK,
     this.dtZonPvLaagK,
+    this.bundelZonGesplitst = false,
     this.voldoet = false,
     this.fouten = const [],
     this.waarschuwingen = const [],

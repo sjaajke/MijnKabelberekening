@@ -240,11 +240,16 @@ class AppLocalizations {
       isNL ? 'Bundel: positievergelijking' : 'Bundle: Position Comparison';
   String get colCentrum => isNL ? 'Centrum\n(warmst)' : 'Centre\n(hottest)';
   String get colHoek => isNL ? 'Hoek\n(koudst)' : 'Corner\n(coolest)';
+  String get colCentrumZon => isNL ? 'Centrum bundel\n(geen zon)' : 'Bundle centre\n(no solar)';
+  String get colBovensteHoek => isNL ? 'Bov. laag, hoek\n(volle zon)' : 'Top layer, corner\n(full solar)';
   String get rowMarge => isNL ? 'Marge' : 'Margin';
   String get rowTGeleider => isNL ? 'T geleider (°C)' : 'T conductor (°C)';
   String get bundelGelijkwaardig =>
       isNL ? 'Bij dit bundelformaat zijn alle posities thermisch gelijkwaardig.'
            : 'For this bundle size, all positions are thermally equivalent.';
+  String get bundelZonSplitsNote =>
+      isNL ? 'Zon alleen op bovenste laag: centrum afgeschermd, bovenste hoek met volle instraling.'
+           : 'Solar on top layer only: centre shielded, top-layer corner gets full irradiance.';
   String get bundelTempIndicatief =>
       isNL ? 'Temperatuur indicatief: T_eff = T_max − (T_max − T_omg)·f_bundel²  +  ΔT_eigen (I²R)'
            : 'Temperature indicative: T_eff = T_max − (T_max − T_amb)·f_bundle²  +  ΔT_own (I²R)';

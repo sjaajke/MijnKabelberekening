@@ -414,8 +414,8 @@ class ResultatenScreen extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(children: [
             const SizedBox(width: 120),
-            kop(l10n.colCentrum),
-            kop(l10n.colHoek),
+            kop(r.bundelZonGesplitst ? l10n.colCentrumZon : l10n.colCentrum),
+            kop(r.bundelZonGesplitst ? l10n.colBovensteHoek : l10n.colHoek),
           ]),
         ),
         const Divider(height: 6),
@@ -446,6 +446,15 @@ class ResultatenScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 6),
             child: Text(
               l10n.bundelGelijkwaardig,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.outline),
+            ),
+          ),
+        if (r.bundelZonGesplitst)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              l10n.bundelZonSplitsNote,
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: theme.colorScheme.outline),
             ),
