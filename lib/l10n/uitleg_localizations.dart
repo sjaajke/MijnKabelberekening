@@ -579,6 +579,38 @@ extension UitlegLocalizations on AppLocalizations {
         'Activeer de toplaag voor het worst-case scenario; gebruik middenlaag voor de gemiddelde kabel.'
       : 'The top layer (top 20 singels in a 20×8 configuration) is governing for design. '
         'Activate top layer for worst-case scenario; use middle layer for the average cable.';
+
+  // ── BUNDEL ZONTEMPERATUUR-SPLITSING ──────────────────────────────────────
+  String get bundelZonSplitsTitel => isNL
+      ? 'Zontemperatuur per laag in een meerlagige bundel'
+      : 'Solar temperature per layer in a multi-layer bundle';
+  String get bundelZonSplitsIntro => isNL
+      ? 'In een gestapelde kabelgoot met meerdere lagen ontvangt alleen de bovenste laag '
+        'directe zonneinstraling. De onderliggende lagen worden afgeschermd door de kabels '
+        'erboven en ontvangen geen noemenswaardig zonlicht. '
+        'De positievergelijking past dit toe op vier karakteristieke posities:'
+      : 'In a stacked cable tray with multiple layers, only the top layer receives direct '
+        'solar irradiance. Lower layers are shielded by the cables above and receive no '
+        'significant sunlight. '
+        'The position comparison applies this to four characteristic positions:';
+  String get bundelZonSplitsVTop => isNL
+      ? 'Verticale bundelingsfactor bovenste laag: fV_top = fV(2)\n'
+        'De bovenste laag heeft alleen de laag direct eronder als thermische buur (Optie B). '
+        'Dit is een conservatieve benadering: de bovenste laag heeft minder wederzijdse '
+        'opwarming dan het centrum van de bundel.'
+      : 'Vertical bundle factor top layer: fV_top = fV(2)\n'
+        'The top layer has only the layer directly below as thermal neighbour (Option B). '
+        'This is a conservative approximation: the top layer has less mutual heating '
+        'than the centre of the bundle.';
+  String get bundelZonSplitsFormule => isNL
+      ? 'θ_cent  = θ_omg + ΔT_wind            (geen zon)\n'
+        'θ_top   = θ_omg + ΔT_zon_top + ΔT_wind  (volle zon, ΔT_zon_top = +25 K)\n'
+        'f_bov_C = fH(nH) × fV(2)  — bovenste laag centrum\n'
+        'f_hoek  = fH(2) × fV(2)   — elke hoekpositie'
+      : 'θ_cent  = θ_amb + ΔT_wind            (no solar)\n'
+        'θ_top   = θ_amb + ΔT_sun_top + ΔT_wind  (full solar, ΔT_sun_top = +25 K)\n'
+        'f_top_C = fH(nH) × fV(2)  — top layer centre\n'
+        'f_corn  = fH(2) × fV(2)   — any corner position';
   String get overzichtWindkoeling => isNL
       ? 'Windkoeling / PV-laag ΔT'
       : 'Wind cooling / PV layer ΔT';

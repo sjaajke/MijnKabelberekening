@@ -98,6 +98,15 @@ class Resultaten {
   // Bundel zontemperatuur-splitsing
   // true = centrum zonder zon (afgeschermd), bovenste laag hoek met volle zon
   final bool bundelZonGesplitst;
+  // Kolom 2 — Bovenste laag centrum (hoogste T bovenste laag): fH(nH)×fV(2), volle zon
+  final double? fBundelBovensteC;
+  final double? izBovensteC;
+  final double? margeBovensteC;
+  final double? geleiderTempBovensteC;
+  // Kolom 4 — Lagere lagen hoek (laagste T rest bundel): fH(2)×fV(2), geen zon
+  final double? izLagereHoek;
+  final double? margeLagereHoek;
+  final double? geleiderTempLagereHoek;
 
   // Eindoordeel
   final bool voldoet;
@@ -154,6 +163,13 @@ class Resultaten {
     this.deltaTWindK,
     this.dtZonPvLaagK,
     this.bundelZonGesplitst = false,
+    this.fBundelBovensteC,
+    this.izBovensteC,
+    this.margeBovensteC,
+    this.geleiderTempBovensteC,
+    this.izLagereHoek,
+    this.margeLagereHoek,
+    this.geleiderTempLagereHoek,
     this.voldoet = false,
     this.fouten = const [],
     this.waarschuwingen = const [],

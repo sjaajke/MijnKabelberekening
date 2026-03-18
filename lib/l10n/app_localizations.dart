@@ -241,7 +241,9 @@ class AppLocalizations {
   String get colCentrum => isNL ? 'Centrum\n(warmst)' : 'Centre\n(hottest)';
   String get colHoek => isNL ? 'Hoek\n(koudst)' : 'Corner\n(coolest)';
   String get colCentrumZon => isNL ? 'Centrum bundel\n(geen zon)' : 'Bundle centre\n(no solar)';
-  String get colBovensteHoek => isNL ? 'Bov. laag, hoek\n(volle zon)' : 'Top layer, corner\n(full solar)';
+  String get colBovensteC => isNL ? 'Bov. laag\ncentrum ☀' : 'Top layer\ncentre ☀';
+  String get colBovensteHoek => isNL ? 'Bov. laag\nhoek ☀' : 'Top layer\ncorner ☀';
+  String get colLagereHoek => isNL ? 'Lagere lagen\nhoek' : 'Lower layers\ncorner';
   String get rowMarge => isNL ? 'Marge' : 'Margin';
   String get rowTGeleider => isNL ? 'T geleider (°C)' : 'T conductor (°C)';
   String get bundelGelijkwaardig =>

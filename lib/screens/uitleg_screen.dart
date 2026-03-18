@@ -564,6 +564,60 @@ class _WindkoelingUitlegSectie extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         _Noot(l10n.pvLaagUitlegNoot),
+        const SizedBox(height: 16),
+
+        // Bundel zontemperatuur-splitsing
+        Text(l10n.bundelZonSplitsTitel,
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 6),
+        Text(l10n.bundelZonSplitsIntro),
+        const SizedBox(height: 8),
+        DataTable(
+          columnSpacing: 12,
+          dataRowMinHeight: 28,
+          dataRowMaxHeight: 28,
+          headingRowHeight: 34,
+          headingRowColor: WidgetStateProperty.all(
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.45),
+          ),
+          columns: const [
+            DataColumn(label: Text('Positie')),
+            DataColumn(label: Text('Zon')),
+            DataColumn(label: Text('fH')),
+            DataColumn(label: Text('fV')),
+          ],
+          rows: const [
+            DataRow(cells: [
+              DataCell(Text('Centrum bundel')),
+              DataCell(Text('Geen')),
+              DataCell(Text('fH(nH)')),
+              DataCell(Text('fV(nV)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Bov. laag, centrum ☀')),
+              DataCell(Text('Vol (+25 K)')),
+              DataCell(Text('fH(nH)')),
+              DataCell(Text('fV(2)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Bov. laag, hoek ☀')),
+              DataCell(Text('Vol (+25 K)')),
+              DataCell(Text('fH(2)')),
+              DataCell(Text('fV(2)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Lagere lagen, hoek')),
+              DataCell(Text('Geen')),
+              DataCell(Text('fH(2)')),
+              DataCell(Text('fV(2)')),
+            ]),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _Formule(
+          l10n.bundelZonSplitsFormule,
+          uitleg: l10n.bundelZonSplitsVTop,
+        ),
       ],
     );
   }

@@ -78,8 +78,25 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     }
   } else {
     rij('Omgevingstemperatuur', '${inv.omgevingstempC.toStringAsFixed(0)} °C');
-    if (inv.zonlichtToeslagK > 0) {
+    if (inv.pvLaagActief) {
+      const laagNamen = {
+        PvLaagPositie.topLaag:    'bovenste laag',
+        PvLaagPositie.tweedeLaag: '2e laag',
+        PvLaagPositie.middenLaag: 'middenlaag',
+        PvLaagPositie.onderLaag:  'onderste laag',
+      };
+      rij('PV-laagpositie ΔT_zon',
+          '+${inv.deltaTZonPvLaag.toStringAsFixed(0)} K'
+          '  (${laagNamen[inv.pvLaagPositie]}  — IEC 60364-5-52)');
+    } else if (inv.zonlichtToeslagK > 0) {
       rij('Zonlichttoeslag', '+${inv.zonlichtToeslagK.toStringAsFixed(0)} K  (NEN 1010)');
+    }
+    if (inv.windkoelingActief) {
+      final dtW = inv.deltaTWindKoeling;
+      rij('Windkoeling ΔT_wind',
+          '${dtW >= 0 ? "+" : ""}${dtW.toStringAsFixed(1)} K'
+          '  (${inv.windsnelheid.label}'
+          '${inv.gootMetDeksel ? ", met deksel" : ""})');
     }
   }
   if (inv.nParallel > 1) {
@@ -143,8 +160,18 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     titel(l10n.rapportCF);
     final tMax = ip.maxTempContinu;
     final tRef = ip.refTempTabel;
-    rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C'
-        '${r.tEffectief > (inv.isGrondkabel ? inv.grondtempC : inv.omgevingstempC) ? "  (incl. zonlicht)" : ""}');
+    // θ_eff opbouw: toon uitsplitsing als zon of wind actief is
+    if (!inv.isGrondkabel && (inv.pvLaagActief || inv.zonlichtToeslagK > 0 || inv.windkoelingActief)) {
+      final tBase = inv.omgevingstempC;
+      final dtZonR = inv.pvLaagActief ? inv.deltaTZonPvLaag : inv.zonlichtToeslagK;
+      final dtWindR = inv.windkoelingActief ? inv.deltaTWindKoeling : 0.0;
+      final delen = <String>['${tBase.toStringAsFixed(1)} °C'];
+      if (dtZonR > 0) delen.add('+${dtZonR.toStringAsFixed(1)} K (zon)');
+      if (dtWindR != 0) delen.add('${dtWindR >= 0 ? "+" : ""}${dtWindR.toStringAsFixed(1)} K (wind)');
+      rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C  = ${delen.join(" ")}');
+    } else {
+      rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C');
+    }
     rij('f_T  (temperatuur)', '${r.fT.toStringAsFixed(4)}'
         '  = √[(${tMax.toInt()}−${r.tEffectief.toStringAsFixed(1)})/(${tMax.toInt()}−${tRef.toInt()})]');
     if (r.bundelPositieWorst != null) {
@@ -248,6 +275,34 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     }
     rij('Veiligheidsmarge', '${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %'
         '  = (${r.iz.toStringAsFixed(1)}/${iGrondslag.toStringAsFixed(2)} − 1) × 100');
+
+    // Bundel positievergelijking
+    if (r.bundelPositieWorst != null) {
+      titel('BUNDEL: POSITIEVERGELIJKING');
+      if (r.bundelZonGesplitst) {
+        // 4 kolommen: centrum (geen zon) | bov.laag centrum ☀ | bov.laag hoek ☀ | lag.lagen hoek
+        String k(String s) => s.padLeft(13);
+        buf.writeln('${''.padRight(26)}${k("Cent.bundel")}${k("Bov.laag ctr")}${k("Bov.laag hoek")}${k("Lag.lag.hoek")}');
+        buf.writeln('${''.padRight(26)}${k("(geen zon)")}${k("(volle zon ☀)")}${k("(volle zon ☀)")}${k("(geen zon)")}');
+        buf.writeln('─' * 64);
+        buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelBovensteC!.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
+        buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izBovensteC!.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}${k(r.izLagereHoek!.toStringAsFixed(1))}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k((r.margeStroomPct >= 0 ? "+" : "") + r.margeStroomPct.toStringAsFixed(1) + " %")}${k((r.margeBovensteC! >= 0 ? "+" : "") + r.margeBovensteC!.toStringAsFixed(1) + " %")}${k((r.margeStroomPctRand >= 0 ? "+" : "") + r.margeStroomPctRand.toStringAsFixed(1) + " %")}${k((r.margeLagereHoek! >= 0 ? "+" : "") + r.margeLagereHoek!.toStringAsFixed(1) + " %")}');
+        buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempBovensteC!.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}${k(r.geleiderTempLagereHoek!.toStringAsFixed(1))}');
+        buf.writeln();
+        buf.writeln('Zon uitsluitend op bovenste laag; lagere lagen afgeschermd.');
+        buf.writeln('fV_top = fV(2): bovenste laag heeft alleen laag direct eronder als thermische buur.');
+      } else {
+        // 2 kolommen: centrum | hoek
+        String k(String s) => s.padLeft(16);
+        buf.writeln('${"".padRight(26)}${k("Centrum")}${k("Hoek")}');
+        buf.writeln('─' * 64);
+        buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
+        buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k((r.margeStroomPct >= 0 ? "+" : "") + r.margeStroomPct.toStringAsFixed(1) + " %")}${k((r.margeStroomPctRand >= 0 ? "+" : "") + r.margeStroomPctRand.toStringAsFixed(1) + " %")}');
+        buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}');
+      }
+    }
 
     titel(l10n.rapportSVNr(5 + sOffset));
     final gelProp = geleiderEigenschappen[k.geleider]!;

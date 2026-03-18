@@ -460,18 +460,30 @@ class KabelOntwerper {
       }
     }
 
-    // 7b. Bundel: centrum bundel (geen zon) vs bovenste laag hoekpositie (volle zon)
+    // 7b. Bundel: positievergelijking (4 posities bij zontemperatuur-splitsing)
     //
     // Zontemperatuur heeft alleen effect op de bovenste laag van een bundel.
-    // Lagere lagen zijn afgeschermd door de kabels erboven.
-    // Splitsing actief wanneer: bovengronds, meerdere lagen (nV > 1) én er een
-    // zoncomponent aanwezig is (pvLaagActief of zonlichtToeslagK > 0).
+    // Lagere lagen zijn afgeschermd door de kabels erboven (Optie B: fV_top = fV(2)).
+    // Splitsing actief wanneer: bovengronds, meerdere lagen (nV > 1) én zoncomponent.
+    //
+    // Kolom 1 — Centrum bundel       : fH(nH)×fV(nV), geen zon
+    // Kolom 2 — Bovenste laag centrum: fH(nH)×fV(2),  volle zon  ← hoogste T bov. laag
+    // Kolom 3 — Bovenste laag hoek   : fH(2)×fV(2),   volle zon  ← laagste T bov. laag
+    // Kolom 4 — Lagere lagen hoek    : fH(2)×fV(2),   geen zon   ← laagste T rest bundel
     double fBundelRand = fBundel;
     double izRand = iz;
     double margeRand = marge;
     double tWarm = geleiderTemp;
     double tKoud = geleiderTemp;
     bool bundelZonGesplitst = false;
+    // Extra posities (alleen gevuld bij bundelZonGesplitst)
+    double? fBundelBovensteC;
+    double? izBovensteC;
+    double? margeBovensteC;
+    double? geleiderTempBovensteC;
+    double? izLagereHoek;
+    double? margeLagereHoek;
+    double? geleiderTempLagereHoek;
 
     if (invoer.bundel != null && invoer.bundel!.totaalKabels > 1) {
       final nH = invoer.bundel!.nHorizontaal;
@@ -488,34 +500,48 @@ class KabelOntwerper {
           : invoer.zonlichtToeslagK > 0;
       bundelZonGesplitst = !invoer.isGrondkabel && nV > 1 && heeftZonComponent;
 
-      // Effectieve omgevingstemperatuur per positie:
-      //   centrum:        geen zon (afgeschermd), volle bundelingsfactor
-      //   bovenste hoek: volle zon (PvLaag.topLaag of zonlichtToeslagK), hoekfactor
-      final tOmgCentrum = bundelZonGesplitst
-          ? tOmgBase + dtWind
-          : tOmg;
+      // Temperatuurbases per laag
+      final tOmgCentrum = bundelZonGesplitst ? tOmgBase + dtWind : tOmg;
       final dtZonTop = invoer.pvLaagActief
           ? PvLaagPositie.topLaag.deltaTK
           : invoer.zonlichtToeslagK;
-      final tOmgTopHoek = bundelZonGesplitst
-          ? tOmgBase + dtZonTop + dtWind
-          : tOmg;
+      final tOmgTopLaag = bundelZonGesplitst ? tOmgBase + dtZonTop + dtWind : tOmg;
 
-      // fT voor hoekpositie kan afwijken door andere tOmg (volle zon)
-      final fTRand = bundelZonGesplitst
+      // fT per temperatuurbasis
+      final fTTopLaag = bundelZonGesplitst
           ? Correctiefactoren.fTemperatuur(
-              tOmgTopHoek, tMax, tReferentie: isolProp.refTempTabel)
+              tOmgTopLaag, tMax, tReferentie: isolProp.refTempTabel)
+          : fT;
+      final fTCentrum = bundelZonGesplitst
+          ? Correctiefactoren.fTemperatuur(
+              tOmgCentrum, tMax, tReferentie: isolProp.refTempTabel)
           : fT;
 
-      izRand = iz0 * fTRand * fLegging * fBundelRand * fGrond * fCyclisch * fHarmonisch;
+      // Kolom 3 — Bovenste laag hoek (volle zon, hoekfactor) — was: izRand
+      izRand = iz0 * fTTopLaag * fLegging * fBundelRand * fGrond * fCyclisch * fHarmonisch;
       margeRand = izRand > 0 ? (izRand / iDesign - 1) * 100 : 0.0;
 
-      // Geleidertemperatuur per positie (IEC correctiefactor omgekeerd):
-      //   fBundel = √[(T_max−T_eff)/(T_max−T_omg)]  →  T_eff = T_max − (T_max−T_omg)·fBundel²
-      final tEffWarm = tMax - (tMax - tOmgCentrum) * fBundel * fBundel;
-      final tEffKoud  = tMax - (tMax - tOmgTopHoek) * fBundelRand * fBundelRand;
-      tWarm = tEffWarm + deltaT;
-      tKoud = tEffKoud + deltaT;
+      // Geleidertemperatuur per positie (IEC: T_eff = T_max − (T_max − T_omg)·f²)
+      final tEffWarm  = tMax - (tMax - tOmgCentrum) * fBundel * fBundel;
+      final tEffKoud  = tMax - (tMax - tOmgTopLaag) * fBundelRand * fBundelRand;
+      tWarm = tEffWarm + deltaT;  // kolom 1
+      tKoud = tEffKoud + deltaT;  // kolom 3
+
+      if (bundelZonGesplitst) {
+        // Kolom 2 — Bovenste laag centrum: fH(nH)×fV(2), volle zon
+        final fVTop = nV >= 2 ? Correctiefactoren.fVerticalStapeling(2) : 1.0;
+        fBundelBovensteC = fH * fVTop;
+        izBovensteC = iz0 * fTTopLaag * fLegging * fBundelBovensteC * fGrond * fCyclisch * fHarmonisch;
+        margeBovensteC = izBovensteC > 0 ? (izBovensteC / iDesign - 1) * 100 : 0.0;
+        final tEffBC = tMax - (tMax - tOmgTopLaag) * fBundelBovensteC * fBundelBovensteC;
+        geleiderTempBovensteC = tEffBC + deltaT;
+
+        // Kolom 4 — Lagere lagen hoek: fH(2)×fV(2), geen zon
+        izLagereHoek = iz0 * fTCentrum * fLegging * fBundelRand * fGrond * fCyclisch * fHarmonisch;
+        margeLagereHoek = izLagereHoek > 0 ? (izLagereHoek / iDesign - 1) * 100 : 0.0;
+        final tEffLH = tMax - (tMax - tOmgCentrum) * fBundelRand * fBundelRand;
+        geleiderTempLagereHoek = tEffLH + deltaT;
+      }
     }
 
     // 8. Eindoordeel
@@ -537,6 +563,11 @@ class KabelOntwerper {
       fBundelRand: fBundelRand, izRand: izRand, margeStroomPctRand: margeRand,
       geleiderTempCWarm: tWarm, geleiderTempCKoud: tKoud,
       bundelZonGesplitst: bundelZonGesplitst,
+      fBundelBovensteC: fBundelBovensteC,
+      izBovensteC: izBovensteC, margeBovensteC: margeBovensteC,
+      geleiderTempBovensteC: geleiderTempBovensteC,
+      izLagereHoek: izLagereHoek, margeLagereHoek: margeLagereHoek,
+      geleiderTempLagereHoek: geleiderTempLagereHoek,
       deltaUV: deltaUV, deltaUPct: deltaUPct, okSpanning: okSpanning,
       i2rVerliesWPerM: pPerM, tempStijgingK: deltaT,
       geleiderTempC: geleiderTemp, maxTempC: tMax, okTemp: okTemp,

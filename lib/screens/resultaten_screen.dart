@@ -365,12 +365,16 @@ class ResultatenScreen extends StatelessWidget {
   // ── BUNDEL POSITIEVERGELIJKING ────────────────────────────────────────────
   Widget _bundelPosities(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
     final theme = Theme.of(ctx);
+    final zon = r.bundelZonGesplitst;
     final hasDiff = (r.fBundelRand - r.fBundel).abs() > 0.001;
 
     String margeStr(double m) =>
         '${m >= 0 ? "+" : ""}${m.toStringAsFixed(1)} %';
     Color margeKleur(double m) =>
         m >= 0 ? Colors.green.shade700 : Colors.red.shade700;
+
+    // Labelbreedte iets smaller bij 4 kolommen zodat kolommen genoeg ruimte hebben
+    final double labelW = zon ? 100 : 120;
 
     Widget kop(String tekst) => Expanded(
           child: Text(tekst,
@@ -388,84 +392,135 @@ class ResultatenScreen extends StatelessWidget {
                   fontWeight: vet ? FontWeight.bold : FontWeight.normal)),
         );
 
-    Widget rij(String label, String warm, String koud,
-        {Color? kleurWarm, Color? kleurKoud, bool vet = false}) {
+    // 2-koloms rij (zonder zon-splitsing)
+    Widget rij2(String label, String k1, String k2,
+        {Color? kleur1, Color? kleur2, bool vet = false}) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(children: [
-          SizedBox(
-            width: 120,
-            child: Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: vet ? FontWeight.bold : FontWeight.normal)),
-          ),
-          cel(warm, kleur: kleurWarm, vet: vet),
-          cel(koud, kleur: kleurKoud, vet: vet),
+          SizedBox(width: labelW,
+              child: Text(label, style: TextStyle(fontSize: 13,
+                  fontWeight: vet ? FontWeight.bold : FontWeight.normal))),
+          cel(k1, kleur: kleur1, vet: vet),
+          cel(k2, kleur: kleur2, vet: vet),
         ]),
       );
     }
+
+    // 4-koloms rij (met zon-splitsing)
+    Widget rij4(String label, String k1, String k2, String k3, String k4,
+        {Color? kleur1, Color? kleur2, Color? kleur3, Color? kleur4,
+         bool vet = false}) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(children: [
+          SizedBox(width: labelW,
+              child: Text(label, style: TextStyle(fontSize: 13,
+                  fontWeight: vet ? FontWeight.bold : FontWeight.normal))),
+          cel(k1, kleur: kleur1, vet: vet),
+          cel(k2, kleur: kleur2, vet: vet),
+          cel(k3, kleur: kleur3, vet: vet),
+          cel(k4, kleur: kleur4, vet: vet),
+        ]),
+      );
+    }
+
+    Color? tempKleur(double t) =>
+        t > r.maxTempC ? Colors.red.shade700 : null;
 
     return SectieCard(
       titel: l10n.sectBundelPosities,
       icoon: Icons.grid_view,
       children: [
+        // Kolomkoppen
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(children: [
-            const SizedBox(width: 120),
-            kop(r.bundelZonGesplitst ? l10n.colCentrumZon : l10n.colCentrum),
-            kop(r.bundelZonGesplitst ? l10n.colBovensteHoek : l10n.colHoek),
+            SizedBox(width: labelW),
+            if (zon) ...[
+              kop(l10n.colCentrumZon),
+              kop(l10n.colBovensteC),
+              kop(l10n.colBovensteHoek),
+              kop(l10n.colLagereHoek),
+            ] else ...[
+              kop(l10n.colCentrum),
+              kop(l10n.colHoek),
+            ],
           ]),
         ),
         const Divider(height: 6),
-        rij('f_bundel',
-            r.fBundel.toStringAsFixed(3),
-            r.fBundelRand.toStringAsFixed(3)),
-        rij('I_z (A)',
-            r.iz.toStringAsFixed(1),
-            r.izRand.toStringAsFixed(1),
-            vet: true),
-        rij(l10n.rowMarge,
-            margeStr(r.margeStroomPct),
-            margeStr(r.margeStroomPctRand),
-            kleurWarm: margeKleur(r.margeStroomPct),
-            kleurKoud: margeKleur(r.margeStroomPctRand),
-            vet: true),
-        rij(l10n.rowTGeleider,
-            r.geleiderTempCWarm.toStringAsFixed(1),
-            r.geleiderTempCKoud.toStringAsFixed(1),
-            kleurWarm: r.geleiderTempCWarm > r.maxTempC
-                ? Colors.red.shade700
-                : null,
-            kleurKoud: r.geleiderTempCKoud > r.maxTempC
-                ? Colors.red.shade700
-                : null),
+
+        if (zon) ...[
+          rij4('f_bundel',
+              r.fBundel.toStringAsFixed(3),
+              r.fBundelBovensteC!.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3)),
+          rij4('I_z (A)',
+              r.iz.toStringAsFixed(1),
+              r.izBovensteC!.toStringAsFixed(1),
+              r.izRand.toStringAsFixed(1),
+              r.izLagereHoek!.toStringAsFixed(1),
+              vet: true),
+          rij4(l10n.rowMarge,
+              margeStr(r.margeStroomPct),
+              margeStr(r.margeBovensteC!),
+              margeStr(r.margeStroomPctRand),
+              margeStr(r.margeLagereHoek!),
+              kleur1: margeKleur(r.margeStroomPct),
+              kleur2: margeKleur(r.margeBovensteC!),
+              kleur3: margeKleur(r.margeStroomPctRand),
+              kleur4: margeKleur(r.margeLagereHoek!),
+              vet: true),
+          rij4(l10n.rowTGeleider,
+              r.geleiderTempCWarm.toStringAsFixed(1),
+              r.geleiderTempBovensteC!.toStringAsFixed(1),
+              r.geleiderTempCKoud.toStringAsFixed(1),
+              r.geleiderTempLagereHoek!.toStringAsFixed(1),
+              kleur1: tempKleur(r.geleiderTempCWarm),
+              kleur2: tempKleur(r.geleiderTempBovensteC!),
+              kleur3: tempKleur(r.geleiderTempCKoud),
+              kleur4: tempKleur(r.geleiderTempLagereHoek!)),
+        ] else ...[
+          rij2('f_bundel',
+              r.fBundel.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3)),
+          rij2('I_z (A)',
+              r.iz.toStringAsFixed(1),
+              r.izRand.toStringAsFixed(1),
+              vet: true),
+          rij2(l10n.rowMarge,
+              margeStr(r.margeStroomPct),
+              margeStr(r.margeStroomPctRand),
+              kleur1: margeKleur(r.margeStroomPct),
+              kleur2: margeKleur(r.margeStroomPctRand),
+              vet: true),
+          rij2(l10n.rowTGeleider,
+              r.geleiderTempCWarm.toStringAsFixed(1),
+              r.geleiderTempCKoud.toStringAsFixed(1),
+              kleur1: tempKleur(r.geleiderTempCWarm),
+              kleur2: tempKleur(r.geleiderTempCKoud)),
+        ],
+
         if (!hasDiff)
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              l10n.bundelGelijkwaardig,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
-            ),
+            child: Text(l10n.bundelGelijkwaardig,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.outline)),
           ),
-        if (r.bundelZonGesplitst)
+        if (zon)
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              l10n.bundelZonSplitsNote,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
-            ),
+            child: Text(l10n.bundelZonSplitsNote,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.outline)),
           ),
         Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: Text(
-            l10n.bundelTempIndicatief,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: theme.colorScheme.outline),
-          ),
+          child: Text(l10n.bundelTempIndicatief,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.outline)),
         ),
       ],
     );
