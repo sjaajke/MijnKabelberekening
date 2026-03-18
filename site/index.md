@@ -75,6 +75,23 @@ and results for future reference or printing.
 Model branching cable networks — calculate multiple branches simultaneously
 in a single overview.
 
+### Bundle Position Comparison
+For cables in cable trays with multiple layers, the app compares four characteristic positions:
+
+| Position | Solar | fH | fV |
+|---|---|---|---|
+| Bundle centre | None (shielded) | fH(nH) | fV(nV) |
+| Top layer, centre ☀ | Full (+25 K) | fH(nH) | fV(2) |
+| Top layer, corner ☀ | Full (+25 K) | fH(2) | fV(2) |
+| Lower layers, corner | None (shielded) | fH(2) | fV(2) |
+
+Solar irradiance only affects the top layer — lower layers are shielded by cables above them.
+
+### Wind Cooling & PV Layer Position
+For PV single-core cables in rooftop cable trays:
+- **Wind cooling** (IEC 60287-2-1): reduces effective ambient temperature by 3–15 K depending on wind speed; steel lid adds +5 K penalty
+- **PV layer position** (IEC 60364-5-52): layer-dependent solar ΔT (+25 K top, +12 K 2nd, +5 K middle, 0 K bottom)
+
 ### Correction Factors
 Interactive table for:
 - Installation method (A1, A2, B1, B2, C, D, E, F, G)
@@ -89,6 +106,7 @@ Interactive table for:
 | Standard | Description |
 |---|---|
 | IEC 60364-5-52 | Selection and erection of electrical equipment — wiring systems |
+| IEC 60287-2-1 | Electric cables — thermal resistance / wind cooling model |
 | NEN 1010 | Safety requirements for low-voltage installations |
 | IEC 60076-5 | Power transformers — ability to withstand short circuit |
 
@@ -105,7 +123,7 @@ Interactive table for:
 
 ---
 
-[Api documentation](./api/)
+[Api documentation](./api/) trakaka
 
 ---
 
