@@ -134,8 +134,14 @@ class ResultatenScreen extends StatelessWidget {
   // ── EINDOORDEEL ────────────────────────────────────────────────────────────
   Widget _eindoordeel(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
     final ok = r.voldoet;
-    final kleur = ok ? Colors.green.shade700 : Colors.red.shade700;
-    final bg = ok ? Colors.green.shade50 : Colors.red.shade50;
+    final cs = Theme.of(ctx).colorScheme;
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+    final kleur = ok
+        ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
+        : cs.onErrorContainer;
+    final bg = ok
+        ? (isDark ? Colors.green.shade900 : Colors.green.shade50)
+        : cs.errorContainer;
     return Card(
       color: bg,
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -159,7 +165,7 @@ class ResultatenScreen extends StatelessWidget {
                 if (r.nParallel > 1)
                   Text(
                     l10n.iPerKabelLabel(r.iPerKabel.toStringAsFixed(1)),
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
               ],
             ]),
@@ -745,9 +751,10 @@ class ResultatenScreen extends StatelessWidget {
   bool isNL(AppLocalizations l10n) => l10n.isNL;
 
   // ── FOUTEN ────────────────────────────────────────────────────────────────
-  Widget _foutMeldingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) =>
-      Card(
-        color: Colors.red.shade50,
+  Widget _foutMeldingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    final cs = Theme.of(ctx).colorScheme;
+    return Card(
+        color: cs.errorContainer,
         margin: const EdgeInsets.symmetric(vertical: 6),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -755,12 +762,12 @@ class ResultatenScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                Icon(Icons.error_outline, color: Colors.red.shade700, size: 18),
+                Icon(Icons.error_outline, color: cs.onErrorContainer, size: 18),
                 const SizedBox(width: 6),
                 Text(l10n.lblFouten,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.red.shade700)),
+                        color: cs.onErrorContainer)),
               ]),
               const SizedBox(height: 6),
               for (final f in r.fouten)
@@ -778,10 +785,14 @@ class ResultatenScreen extends StatelessWidget {
           ),
         ),
       );
+  }
 
-  Widget _waarschuwingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) =>
-      Card(
-        color: Colors.orange.shade50,
+  Widget _waarschuwingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+    final bg = isDark ? Colors.orange.shade900 : Colors.orange.shade50;
+    final fg = isDark ? Colors.orange.shade200 : Colors.orange.shade800;
+    return Card(
+        color: bg,
         margin: const EdgeInsets.symmetric(vertical: 6),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -789,13 +800,12 @@ class ResultatenScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                Icon(Icons.warning_amber_outlined,
-                    color: Colors.orange.shade800, size: 18),
+                Icon(Icons.warning_amber_outlined, color: fg, size: 18),
                 const SizedBox(width: 6),
                 Text(l10n.lblWaarschuwingen,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange.shade800)),
+                        color: fg)),
               ]),
               const SizedBox(height: 6),
               for (final w in r.waarschuwingen)
@@ -813,6 +823,7 @@ class ResultatenScreen extends StatelessWidget {
           ),
         ),
       );
+  }
 
   // ── KOPIEER ───────────────────────────────────────────────────────────────
   Widget _kopieerKnop(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
