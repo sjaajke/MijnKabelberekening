@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../state/gebruikers_provider.dart';
 import '../state/language_provider.dart';
+import '../state/theme_provider.dart';
 import 'boom_screen.dart';
 import 'catalogus_screen.dart';
 import 'correctiefactoren_screen.dart';
@@ -157,6 +158,15 @@ Widget _taalKnop(BuildContext context) {
   );
 }
 
+Widget _themaKnop(BuildContext context) {
+  final theme = context.watch<ThemeProvider>();
+  return IconButton(
+    tooltip: theme.isDark ? 'Licht thema' : 'Donker thema',
+    icon: Icon(theme.isDark ? Icons.light_mode : Icons.dark_mode),
+    onPressed: theme.toggle,
+  );
+}
+
 // ── BREED (iPad landscape / desktop) ─────────────────────────────────────────
 class _BreedLayout extends StatelessWidget {
   const _BreedLayout();
@@ -170,6 +180,7 @@ class _BreedLayout extends StatelessWidget {
         centerTitle: false,
         actions: [
           const _GebruikerKnop(),
+          _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
           _uitlegKnop(context),
@@ -212,6 +223,7 @@ class _SmalLayout extends StatelessWidget {
         centerTitle: false,
         actions: [
           const _GebruikerKnop(),
+          _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
           _uitlegKnop(context),
