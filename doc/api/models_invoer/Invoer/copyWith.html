@@ -100,6 +100,16 @@
 <li><span class="parameter" id="copyWith-param-skNetMva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">skNetMva</span>, </span></li>
 <li><span class="parameter" id="copyWith-param-zUpstreamHandmatigMohm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zUpstreamHandmatigMohm</span>, </span></li>
 <li><span class="parameter" id="copyWith-param-clearZUpstream"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">clearZUpstream</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-zbRxHandmatig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">zbRxHandmatig</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-zbROhm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zbROhm</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-zbXOhm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zbXOhm</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-windkoelingActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">windkoelingActief</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-windsnelheid"><span class="type-annotation"><a href="../../models_enums/Windsnelheid.html">Windsnelheid</a>?</span> <span class="parameter-name">windsnelheid</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-gootMetDeksel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">gootMetDeksel</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-dakOrientatie"><span class="type-annotation"><a href="../../models_enums/DakOrientatie.html">DakOrientatie</a>?</span> <span class="parameter-name">dakOrientatie</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-dakhellingGraden"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">dakhellingGraden</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-pvLaagActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">pvLaagActief</span>, </span></li>
+<li><span class="parameter" id="copyWith-param-pvLaagPositie"><span class="type-annotation"><a href="../../models_enums/PvLaagPositie.html">PvLaagPositie</a>?</span> <span class="parameter-name">pvLaagPositie</span>, </span></li>
 </ol>})
 
       
@@ -157,6 +167,16 @@
   double? skNetMva,
   double? zUpstreamHandmatigMohm,
   bool clearZUpstream = false,
+  bool? zbRxHandmatig,
+  double? zbROhm,
+  double? zbXOhm,
+  bool? windkoelingActief,
+  Windsnelheid? windsnelheid,
+  bool? gootMetDeksel,
+  DakOrientatie? dakOrientatie,
+  double? dakhellingGraden,
+  bool? pvLaagActief,
+  PvLaagPositie? pvLaagPositie,
 }) =&gt;
     Invoer(
       systeem: systeem ?? this.systeem,
@@ -202,6 +222,16 @@
       zUpstreamHandmatigMohm: clearZUpstream
           ? null
           : (zUpstreamHandmatigMohm ?? this.zUpstreamHandmatigMohm),
+      zbRxHandmatig: zbRxHandmatig ?? this.zbRxHandmatig,
+      zbROhm: zbROhm ?? this.zbROhm,
+      zbXOhm: zbXOhm ?? this.zbXOhm,
+      windkoelingActief: windkoelingActief ?? this.windkoelingActief,
+      windsnelheid: windsnelheid ?? this.windsnelheid,
+      gootMetDeksel: gootMetDeksel ?? this.gootMetDeksel,
+      dakOrientatie: dakOrientatie ?? this.dakOrientatie,
+      dakhellingGraden: dakhellingGraden ?? this.dakhellingGraden,
+      pvLaagActief: pvLaagActief ?? this.pvLaagActief,
+      pvLaagPositie: pvLaagPositie ?? this.pvLaagPositie,
     );</code></pre>
 </section>
 
@@ -230,7 +260,7 @@
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>

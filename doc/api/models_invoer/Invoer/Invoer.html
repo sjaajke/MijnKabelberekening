@@ -92,6 +92,16 @@
 <li><span class="parameter" id="-param-skNetOneindig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">skNetOneindig</span> = <span class="default-value">true</span>, </span></li>
 <li><span class="parameter" id="-param-skNetMva"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">skNetMva</span> = <span class="default-value">100.0</span>, </span></li>
 <li><span class="parameter" id="-param-zUpstreamHandmatigMohm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a>?</span> <span class="parameter-name">zUpstreamHandmatigMohm</span>, </span></li>
+<li><span class="parameter" id="-param-zbRxHandmatig"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">zbRxHandmatig</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-zbROhm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">zbROhm</span> = <span class="default-value">0.010</span>, </span></li>
+<li><span class="parameter" id="-param-zbXOhm"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">zbXOhm</span> = <span class="default-value">0.038</span>, </span></li>
+<li><span class="parameter" id="-param-windkoelingActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">windkoelingActief</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-windsnelheid"><span class="type-annotation"><a href="../../models_enums/Windsnelheid.html">Windsnelheid</a></span> <span class="parameter-name">windsnelheid</span> = <span class="default-value">Windsnelheid.matig</span>, </span></li>
+<li><span class="parameter" id="-param-gootMetDeksel"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">gootMetDeksel</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-dakOrientatie"><span class="type-annotation"><a href="../../models_enums/DakOrientatie.html">DakOrientatie</a></span> <span class="parameter-name">dakOrientatie</span> = <span class="default-value">DakOrientatie.z</span>, </span></li>
+<li><span class="parameter" id="-param-dakhellingGraden"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/double-class.html">double</a></span> <span class="parameter-name">dakhellingGraden</span> = <span class="default-value">30</span>, </span></li>
+<li><span class="parameter" id="-param-pvLaagActief"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">pvLaagActief</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="-param-pvLaagPositie"><span class="type-annotation"><a href="../../models_enums/PvLaagPositie.html">PvLaagPositie</a></span> <span class="parameter-name">pvLaagPositie</span> = <span class="default-value">PvLaagPositie.topLaag</span>, </span></li>
 </ol>})
     </section>
     
@@ -139,6 +149,16 @@
   this.skNetOneindig = true,
   this.skNetMva = 100.0,
   this.zUpstreamHandmatigMohm,
+  this.zbRxHandmatig = false,
+  this.zbROhm = 0.010,
+  this.zbXOhm = 0.038,
+  this.windkoelingActief = false,
+  this.windsnelheid = Windsnelheid.matig,
+  this.gootMetDeksel = false,
+  this.dakOrientatie = DakOrientatie.z,
+  this.dakhellingGraden = 30,
+  this.pvLaagActief = false,
+  this.pvLaagPositie = PvLaagPositie.topLaag,
 });</code></pre>
 </section>
 
@@ -167,7 +187,7 @@
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>
