@@ -16,6 +16,7 @@
 // along with MijnKabelberekening. If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/foundation.dart';
+import '../models/gebruiker.dart';
 import '../models/invoer.dart';
 import '../models/resultaten.dart';
 import '../berekening/ontwerper.dart';
@@ -55,6 +56,22 @@ class BerekeningProvider extends ChangeNotifier {
 
   void reset() {
     _invoer = Invoer.standaard();
+    _resultaten = null;
+    notifyListeners();
+  }
+
+  /// Past de preset van de actieve gebruiker toe als startwaarden.
+  void resetMetPreset(GebruikerPreset preset) {
+    _invoer = Invoer.standaard().copyWith(
+      systeem: preset.systeem,
+      spanningV: preset.spanningV,
+      geleider: preset.geleider,
+      isolatie: preset.isolatie,
+      legging: preset.legging,
+      omgevingstempC: preset.omgevingstempC,
+      maxSpanningsvalPct: preset.maxSpanningsvalPct,
+      cosPhi: preset.cosPhi,
+    );
     _resultaten = null;
     notifyListeners();
   }

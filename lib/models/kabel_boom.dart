@@ -27,6 +27,9 @@ class KabelBoom {
   final String naam;
 
   // ── Bronimpedantie (transformator + primair net) ──────────────────────────
+  final bool zbRxHandmatig;   // true = R+X direct invoeren
+  final double zbROhm;        // weerstandsdeel [Ω] (alleen bij zbRxHandmatig)
+  final double zbXOhm;        // reactantiedeel [Ω] (alleen bij zbRxHandmatig)
   final bool transformatorHandmatig;
   final double transformatorKva;
   final double transformatorUccPct;
@@ -40,6 +43,9 @@ class KabelBoom {
   const KabelBoom({
     required this.id,
     required this.naam,
+    this.zbRxHandmatig = false,
+    this.zbROhm = 0.0,
+    this.zbXOhm = 0.0,
     this.transformatorHandmatig = false,
     this.transformatorKva = 250,
     this.transformatorUccPct = 4.0,
@@ -51,6 +57,9 @@ class KabelBoom {
 
   /// Bronimpedantie [Ω] per fase bij de gegeven spanning [V].
   double zbOhm(double spanningV) {
+    if (zbRxHandmatig) {
+      return sqrt(zbROhm * zbROhm + zbXOhm * zbXOhm);
+    }
     final zbTrafo = (transformatorUccPct / 100.0) *
         (spanningV * spanningV) /
         (transformatorKva * 1000.0);
@@ -68,6 +77,9 @@ class KabelBoom {
 
   KabelBoom copyWith({
     String? naam,
+    bool? zbRxHandmatig,
+    double? zbROhm,
+    double? zbXOhm,
     bool? transformatorHandmatig,
     double? transformatorKva,
     double? transformatorUccPct,
@@ -79,6 +91,9 @@ class KabelBoom {
       KabelBoom(
         id: id,
         naam: naam ?? this.naam,
+        zbRxHandmatig: zbRxHandmatig ?? this.zbRxHandmatig,
+        zbROhm: zbROhm ?? this.zbROhm,
+        zbXOhm: zbXOhm ?? this.zbXOhm,
         transformatorHandmatig:
             transformatorHandmatig ?? this.transformatorHandmatig,
         transformatorKva: transformatorKva ?? this.transformatorKva,
@@ -92,6 +107,9 @@ class KabelBoom {
   Map<String, dynamic> toJson() => {
         'id': id,
         'naam': naam,
+        'zbRxHandmatig': zbRxHandmatig,
+        'zbROhm': zbROhm,
+        'zbXOhm': zbXOhm,
         'transformatorHandmatig': transformatorHandmatig,
         'transformatorKva': transformatorKva,
         'transformatorUccPct': transformatorUccPct,
@@ -104,6 +122,9 @@ class KabelBoom {
   factory KabelBoom.fromJson(Map<String, dynamic> j) => KabelBoom(
         id: j['id'] as String,
         naam: j['naam'] as String,
+        zbRxHandmatig: j['zbRxHandmatig'] as bool? ?? false,
+        zbROhm: (j['zbROhm'] as num?)?.toDouble() ?? 0.0,
+        zbXOhm: (j['zbXOhm'] as num?)?.toDouble() ?? 0.0,
         transformatorHandmatig:
             j['transformatorHandmatig'] as bool? ?? false,
         transformatorKva:

@@ -89,6 +89,13 @@ class BoomProvider extends ChangeNotifier {
     await _slaOp();
   }
 
+  Future<void> laadBoom(KabelBoom boom) async {
+    _boom = boom;
+    _actiefNodeId = null;
+    notifyListeners();
+    await _slaOp();
+  }
+
   // ── Nodes beheren ─────────────────────────────────────────────────────────
 
   Future<String> voegNodeToe({String? parentId, String naam = 'Leiding'}) async {

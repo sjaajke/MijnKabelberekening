@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/gebruiker.dart';
+import 'berekening_provider.dart';
 import 'projecten_provider.dart';
 
 class GebruikersProvider extends ChangeNotifier {
@@ -26,8 +27,9 @@ class GebruikersProvider extends ChangeNotifier {
   static const _keyActief = 'actieve_gebruiker';
 
   final ProjectenProvider _projectenProvider;
+  final BerekeningProvider _berekeningProvider;
 
-  GebruikersProvider(this._projectenProvider);
+  GebruikersProvider(this._projectenProvider, this._berekeningProvider);
 
   List<Gebruiker> _gebruikers = [];
   String? _actieveGebruikerId;
@@ -53,6 +55,8 @@ class GebruikersProvider extends ChangeNotifier {
         _actieveGebruikerId = null;
       } else {
         await _projectenProvider.laadVoorGebruiker(_actieveGebruikerId!);
+        final g = _gebruikers.firstWhere((g) => g.id == _actieveGebruikerId);
+        _berekeningProvider.resetMetPreset(g.preset);
       }
     }
     notifyListeners();
@@ -85,6 +89,16 @@ class GebruikersProvider extends ChangeNotifier {
     _actieveGebruikerId = id;
     await _slaOp();
     await _projectenProvider.laadVoorGebruiker(id);
+    final g = _gebruikers.firstWhere((g) => g.id == id);
+    _berekeningProvider.resetMetPreset(g.preset);
+    notifyListeners();
+  }
+
+  Future<void> slaPresetOp(String id, GebruikerPreset preset) async {
+    final idx = _gebruikers.indexWhere((g) => g.id == id);
+    if (idx < 0) return;
+    _gebruikers[idx] = _gebruikers[idx].copyWith(preset: preset);
+    await _slaOp();
     notifyListeners();
   }
 

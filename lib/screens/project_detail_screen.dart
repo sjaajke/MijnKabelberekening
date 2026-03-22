@@ -24,6 +24,7 @@ import '../l10n/app_localizations.dart';
 import '../models/invoer.dart';
 import '../models/project.dart';
 import '../state/berekening_provider.dart';
+import '../state/boom_provider.dart';
 import '../state/projecten_provider.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
@@ -56,7 +57,7 @@ class ProjectDetailScreen extends StatelessWidget {
             ),
         ],
       ),
-      body: project.berekeningen.isEmpty
+      body: (project.berekeningen.isEmpty && project.bomen.isEmpty)
           ? Center(
               child: Text(
                 l10n.berekeningLeeg,
@@ -67,15 +68,26 @@ class ProjectDetailScreen extends StatelessWidget {
                     ?.copyWith(color: Theme.of(context).colorScheme.outline),
               ),
             )
-          : ListView.separated(
+          : ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: project.berekeningen.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, i) => _BerekeningTegel(
-                berekening: project.berekeningen[i],
-                projectId: projectId,
-                l10n: l10n,
-              ),
+              children: [
+                if (project.berekeningen.isNotEmpty) ...[
+                  _SectieKop(titel: l10n.sectBerekeningen),
+                  ...project.berekeningen.map((b) => _BerekeningTegel(
+                        berekening: b,
+                        projectId: projectId,
+                        l10n: l10n,
+                      )),
+                ],
+                if (project.bomen.isNotEmpty) ...[
+                  _SectieKop(titel: l10n.sectKabelnetten),
+                  ...project.bomen.map((b) => _BoomTegel(
+                        opgeslaanBoom: b,
+                        projectId: projectId,
+                        l10n: l10n,
+                      )),
+                ],
+              ],
             ),
     );
   }
@@ -258,6 +270,122 @@ class _BerekeningTegel extends StatelessWidget {
       await context
           .read<ProjectenProvider>()
           .verwijderBerekening(projectId, berekening.id);
+    }
+  }
+
+  String _datumLabel(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inDays == 0) {
+      return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    }
+    return '${dt.day}-${dt.month}-${dt.year}';
+  }
+}
+
+class _SectieKop extends StatelessWidget {
+  const _SectieKop({required this.titel});
+  final String titel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Text(
+        titel,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+    );
+  }
+}
+
+class _BoomTegel extends StatelessWidget {
+  const _BoomTegel({
+    required this.opgeslaanBoom,
+    required this.projectId,
+    required this.l10n,
+  });
+  final OpgeslaanBoom opgeslaanBoom;
+  final String projectId;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final boom = opgeslaanBoom.boom;
+    final datum = _datumLabel(opgeslaanBoom.aangemaakt);
+
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: theme.colorScheme.tertiaryContainer,
+        child: Icon(Icons.account_tree_outlined,
+            color: theme.colorScheme.onTertiaryContainer, size: 20),
+      ),
+      title: Text(opgeslaanBoom.naam,
+          style:
+              theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+      subtitle: Text(
+        '${boom.nodes.length} leidingen  ·  ${boom.transformatorKva.toInt()} kVA  ·  $datum',
+        style:
+            theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.outline),
+      ),
+      trailing: IconButton(
+        icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+        tooltip: l10n.boomVerwijderenUitProject,
+        onPressed: () => _verwijderen(context),
+      ),
+      onTap: () => _laden(context, boom),
+    );
+  }
+
+  Future<void> _laden(BuildContext context, dynamic boom) async {
+    final bevestigd = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.boomLaden),
+        content: Text(l10n.boomLadenVraag),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.btnAnnuleren)),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.boomLaden)),
+        ],
+      ),
+    );
+    if (bevestigd == true && context.mounted) {
+      final boomP = context.read<BoomProvider>();
+      await boomP.laadBoom(opgeslaanBoom.boom);
+      if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
+
+  Future<void> _verwijderen(BuildContext context) async {
+    final bevestigd = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.boomVerwijderenUitProject),
+        content: Text('${opgeslaanBoom.naam}?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.btnAnnuleren)),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(ctx).colorScheme.error),
+            child: Text(l10n.boomVerwijderenUitProject),
+          ),
+        ],
+      ),
+    );
+    if (bevestigd == true && context.mounted) {
+      await context
+          .read<ProjectenProvider>()
+          .verwijderBoom(projectId, opgeslaanBoom.id);
     }
   }
 

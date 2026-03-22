@@ -19,6 +19,8 @@ import 'dart:math';
 import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
 import '../models/invoer.dart';
+import '../models/kabel_boom.dart';
+import '../models/leiding_node.dart';
 import '../models/resultaten.dart';
 import '../data/materiaal_data.dart';
 import '../data/catalogus.dart' show adersLabel;
@@ -287,7 +289,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
         buf.writeln('─' * 64);
         buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelBovensteC!.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
         buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izBovensteC!.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}${k(r.izLagereHoek!.toStringAsFixed(1))}');
-        buf.writeln('${"Marge (%)".padRight(26)}${k((r.margeStroomPct >= 0 ? "+" : "") + r.margeStroomPct.toStringAsFixed(1) + " %")}${k((r.margeBovensteC! >= 0 ? "+" : "") + r.margeBovensteC!.toStringAsFixed(1) + " %")}${k((r.margeStroomPctRand >= 0 ? "+" : "") + r.margeStroomPctRand.toStringAsFixed(1) + " %")}${k((r.margeLagereHoek! >= 0 ? "+" : "") + r.margeLagereHoek!.toStringAsFixed(1) + " %")}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k("${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %")}${k("${r.margeBovensteC! >= 0 ? "+" : ""}${r.margeBovensteC!.toStringAsFixed(1)} %")}${k("${r.margeStroomPctRand >= 0 ? "+" : ""}${r.margeStroomPctRand.toStringAsFixed(1)} %")}${k("${r.margeLagereHoek! >= 0 ? "+" : ""}${r.margeLagereHoek!.toStringAsFixed(1)} %")}');
         buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempBovensteC!.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}${k(r.geleiderTempLagereHoek!.toStringAsFixed(1))}');
         buf.writeln();
         buf.writeln('Zon uitsluitend op bovenste laag; lagere lagen afgeschermd.');
@@ -299,7 +301,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
         buf.writeln('─' * 64);
         buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
         buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}');
-        buf.writeln('${"Marge (%)".padRight(26)}${k((r.margeStroomPct >= 0 ? "+" : "") + r.margeStroomPct.toStringAsFixed(1) + " %")}${k((r.margeStroomPctRand >= 0 ? "+" : "") + r.margeStroomPctRand.toStringAsFixed(1) + " %")}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k("${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %")}${k("${r.margeStroomPctRand >= 0 ? "+" : ""}${r.margeStroomPctRand.toStringAsFixed(1)} %")}');
         buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}');
       }
     }
@@ -407,6 +409,156 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     buf.writeln('\n${l10n.rapportWaarschuwingen}');
     for (final w in r.waarschuwingen) { buf.writeln('  ⚠ $w'); }
   }
+  buf.writeln('\n${l10n.rapportFooter}');
+  return buf.toString();
+}
+
+// ── KABELNET-RAPPORT ──────────────────────────────────────────────────────────
+
+/// Genereert een tekstrapport voor het volledige kabelnet [boom].
+/// Leidingen worden in diepte-eerst volgorde weergegeven (bron → aftakkingen).
+String boomRapportTekst(KabelBoom boom, AppLocalizations l10n) {
+  final buf = StringBuffer();
+  final nu = DateTime.now();
+  final datum =
+      '${nu.day.toString().padLeft(2, '0')}-${nu.month.toString().padLeft(2, '0')}-${nu.year}'
+      '  ${nu.hour.toString().padLeft(2, '0')}:${nu.minute.toString().padLeft(2, '0')}';
+
+  void lijn([int n = 64]) => buf.writeln('─' * n);
+  void rij(String label, String waarde, {int indent = 2}) =>
+      buf.writeln('${' ' * indent}${label.padRight(26 - indent)}$waarde');
+
+  // ── Koptekst ──────────────────────────────────────────────────────────────
+  buf.writeln(l10n.boomRapportTitel);
+  buf.writeln(l10n.rapportNorm);
+  buf.writeln('${l10n.rapportDatum}: $datum');
+  buf.writeln('=' * 64);
+  buf.writeln('Kabelnet : ${boom.naam}');
+
+  final zb = boom.zbOhm(400);
+  if (boom.zbRxHandmatig) {
+    rij('Z_b (R+X handmatig)',
+        '${(zb * 1000).toStringAsFixed(2)} mΩ'
+        '  (R=${(boom.zbROhm * 1000).toStringAsFixed(2)} mΩ'
+        ', X=${(boom.zbXOhm * 1000).toStringAsFixed(2)} mΩ)',
+        indent: 0);
+  } else {
+    rij('Transformator',
+        '${boom.transformatorKva.toInt()} kVA'
+        '  u_cc = ${boom.transformatorUccPct.toStringAsFixed(1)} %',
+        indent: 0);
+    if (!boom.skNetOneindig) {
+      rij('Sk-net', '${boom.skNetMva.toStringAsFixed(1)} MVA', indent: 0);
+    }
+    if (zb > 0) {
+      rij('Z_b', '${(zb * 1000).toStringAsFixed(2)} mΩ', indent: 0);
+    }
+  }
+  rij('Aardingsstelsel', boom.aardingsstelsel.label, indent: 0);
+  if (zb > 0) {
+    rij('I_k3f bron',
+        '${(boom.ik3fBron(400) / 1000).toStringAsFixed(2)} kA', indent: 0);
+  }
+  buf.writeln('=' * 64);
+
+  // ── Leidingen in diepte-eerst volgorde ───────────────────────────────────
+  final nodes = boom.nodes;
+
+  // Bouw opzoektabel id → node voor snelle ouder-lookup.
+  final byId = {for (final n in nodes) n.id: n};
+
+  // Diepte-eerst traversal startend van rootnodes.
+  void schrijfNode(LeidingNode node, int depth) {
+    final indent = '  ' * depth;
+    final r = node.resultaten;
+    final ouder = node.parentId != null ? byId[node.parentId]?.naam : null;
+
+    buf.writeln();
+    lijn();
+    buf.writeln('$indent LEIDING: ${node.naam}');
+    if (ouder != null) {
+      buf.writeln('$indent   Aftakking van: $ouder');
+    } else {
+      buf.writeln('$indent   Verbinding: direct aan bron');
+    }
+
+    // Status
+    final status = r == null
+        ? '─  ${l10n.boomRapportNietBerekend}'
+        : r.voldoet
+            ? '✓  ${l10n.rapportEindVoldoet}'
+            : '✗  ${l10n.rapportEindGefaald}';
+    buf.writeln('$indent   Status: $status');
+
+    // Invoer samenvatting
+    final inv = node.invoer;
+    buf.writeln('$indent   Invoer:');
+    buf.writeln('$indent     ${inv.systeem.label}  ${inv.spanningV.toStringAsFixed(0)} V'
+        '  |  ${adersLabel(inv.aantalAders)}');
+    if (inv.vermogenW != null && inv.vermogenW! > 0) {
+      buf.writeln('$indent     P = ${inv.vermogenW!.toStringAsFixed(0)} W'
+          '  cosφ = ${inv.cosPhi.toStringAsFixed(2)}'
+          '  →  I = ${inv.effectieveStroom.toStringAsFixed(1)} A');
+    } else {
+      buf.writeln('$indent     I = ${inv.stroomA.toStringAsFixed(1)} A');
+    }
+    buf.writeln('$indent     ${inv.geleider.label} ${inv.isolatie.label}'
+        '  |  ${inv.legging.label}'
+        '  |  L = ${inv.lengteM.toStringAsFixed(1)} m');
+    if (inv.forceerDoorsnedemm2 != null) {
+      buf.writeln('$indent     Geforceerde doorsnede: ${inv.forceerDoorsnedemm2} mm²');
+    }
+
+    // Resultaten samenvatting
+    if (r != null && r.kabel != null) {
+      final k = r.kabel!;
+      buf.writeln('$indent   Resultaten:');
+      buf.writeln('$indent     Doorsnede: ${k.doorsnedemm2} mm²'
+          '  |  I_z = ${r.iz.toStringAsFixed(1)} A'
+          '  |  marge: ${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %');
+      buf.writeln('$indent     ΔU = ${r.deltaUPct.toStringAsFixed(2)} %'
+          ' (${r.okSpanning ? "OK" : "OVERSCHREDEN"})'
+          '  |  T_geleider = ${r.geleiderTempC.toStringAsFixed(1)} °C');
+      if (r.ik1fEindA != null) {
+        buf.writeln('$indent     I_k1f eind = ${r.ik1fEindA!.toStringAsFixed(0)} A');
+      }
+      if (r.maxLengteM != null) {
+        buf.writeln('$indent     L_max = ${r.maxLengteM!.toStringAsFixed(1)} m'
+            ' (opgegeven: ${inv.lengteM.toStringAsFixed(1)} m'
+            ' — ${r.okMaxLengte == true ? "OK" : "OVERSCHREDEN"})');
+      }
+      if (r.fouten.isNotEmpty) {
+        buf.writeln('$indent     ${l10n.rapportFouten}');
+        for (final f in r.fouten) {
+          buf.writeln('$indent       • $f');
+        }
+      }
+      if (r.waarschuwingen.isNotEmpty) {
+        for (final w in r.waarschuwingen) {
+          buf.writeln('$indent       ⚠ $w');
+        }
+      }
+    } else if (r != null && r.fouten.isNotEmpty) {
+      buf.writeln('$indent   ${l10n.rapportFouten}');
+      for (final f in r.fouten) {
+        buf.writeln('$indent     • $f');
+      }
+    }
+
+    // Recursief kinderen
+    final kinderen = nodes.where((n) => n.parentId == node.id).toList();
+    for (final kind in kinderen) {
+      schrijfNode(kind, depth + 1);
+    }
+  }
+
+  final roots = nodes.where((n) => n.parentId == null).toList();
+  for (final root in roots) {
+    schrijfNode(root, 0);
+  }
+
+  buf.writeln();
+  buf.writeln('=' * 64);
   buf.writeln('\n${l10n.rapportFooter}');
   return buf.toString();
 }

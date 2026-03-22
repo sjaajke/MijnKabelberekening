@@ -155,36 +155,45 @@ class _InvoerScreenState extends State<InvoerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        children: [
-          if (!context.watch<BerekeningProvider>().isBoomModus)
-            _bronimpedantieToggle(),
-          if (_gebruikBronimpedantie)
-            context.watch<BerekeningProvider>().isBoomModus
-                ? _boomUpstreamInfo()
-                : _bronimpedantieSectie(),
-          _systeemSectie(),
-          _belastingSectie(),
-          _kabelSectie(),
-          _omgevingSectie(),
-          if (_gebruikBundel) _bundelSectie(),
-          if (_gebruikCyclisch && _inv.isGrondkabel) _cyclischSectie(),
-          if (_gebruikHarmonischen &&
-              _inv.systeem == Systeemtype.ac3Fase &&
-              (_inv.aantalAders == 4 || _inv.aantalAders == 5))
-            _harmonischenSectie(),
-          _eisenSectie(),
-          if (_gebruikMaxLengte) _maxLengteSectie(),
-          if (_gebruikKortsluit) _kortsluitSectie(),
-          _windkoelingToggle(),
-          if (_gebruikWindkoeling) _windkoelingsSectie(),
-          const SizedBox(height: 12),
-          _berekenKnop(),
-          const SizedBox(height: 24),
-        ],
-      ),
+    final isBoom = context.watch<BerekeningProvider>().isBoomModus;
+    return Column(
+      children: [
+        // ── Bronimpedantie-toggle: altijd zichtbaar ──────────────────────────
+        if (!isBoom)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: _bronimpedantieToggle(),
+          ),
+        // ── Scrollbare invoer ────────────────────────────────────────────────
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                if (_gebruikBronimpedantie)
+                  isBoom ? _boomUpstreamInfo() : _bronimpedantieSectie(),
+                _systeemSectie(),
+                _belastingSectie(),
+                _kabelSectie(),
+                _omgevingSectie(),
+                if (_gebruikBundel) _bundelSectie(),
+                if (_gebruikCyclisch && _inv.isGrondkabel) _cyclischSectie(),
+                if (_gebruikHarmonischen &&
+                    _inv.systeem == Systeemtype.ac3Fase &&
+                    (_inv.aantalAders == 4 || _inv.aantalAders == 5))
+                  _harmonischenSectie(),
+                _eisenSectie(),
+                if (_gebruikMaxLengte) _maxLengteSectie(),
+                if (_gebruikKortsluit) _kortsluitSectie(),
+                if (_gebruikWindkoeling) _windkoelingsSectie(),
+                const SizedBox(height: 12),
+                _berekenKnop(),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -361,19 +370,33 @@ class _InvoerScreenState extends State<InvoerScreen> {
             ),
           ),
         ],
-        const SizedBox(height: 4),
-        SchakelaarRij(
-          label: l10n.lblDoorsnedeForce,
-          waarde: _gebruikForceer,
-          onChanged: (v) => setState(() {
-            _gebruikForceer = v;
-            if (!v) {
-              _update(_inv.copyWith(clearForceer: true));
-            } else {
-              final eerste = standaardDoorsnedes(_inv.geleider).first;
-              _update(_inv.copyWith(forceerDoorsnedemm2: eerste));
-            }
-          }),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: _gebruikForceer
+                ? Colors.orange.withValues(alpha: 0.08)
+                : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+            border: Border.all(
+              color: _gebruikForceer
+                  ? Colors.orange
+                  : Theme.of(context).colorScheme.outlineVariant,
+              width: _gebruikForceer ? 1.5 : 1.0,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: SchakelaarRij(
+            label: l10n.lblDoorsnedeForce,
+            waarde: _gebruikForceer,
+            onChanged: (v) => setState(() {
+              _gebruikForceer = v;
+              if (!v) {
+                _update(_inv.copyWith(clearForceer: true));
+              } else {
+                final eerste = standaardDoorsnedes(_inv.geleider).first;
+                _update(_inv.copyWith(forceerDoorsnedemm2: eerste));
+              }
+            }),
+          ),
         ),
         if (_gebruikForceer) ...[
           const SizedBox(height: 4),
@@ -502,7 +525,7 @@ class _InvoerScreenState extends State<InvoerScreen> {
           onChanged: (v) => setState(() {
             _gebruikZonlicht = v;
             _update(_inv.copyWith(
-                zonlichtToeslagK: v ? 15.0 : 0.0));
+                zonlichtToeslagK: v ? 40.0 : 0.0));
           }),
         ),
         if (_gebruikZonlicht) ...[
@@ -518,6 +541,15 @@ class _InvoerScreenState extends State<InvoerScreen> {
             decimalen: 0,
           ),
         ],
+        const SizedBox(height: 4),
+        SchakelaarRij(
+          label: l10n.lblWindkoeling,
+          waarde: _gebruikWindkoeling,
+          onChanged: (v) => setState(() {
+            _gebruikWindkoeling = v;
+            _update(_inv.copyWith(windkoelingActief: v));
+          }),
+        ),
         const SizedBox(height: 4),
         SchakelaarRij(
           label: l10n.lblBundel,
@@ -813,7 +845,7 @@ class _InvoerScreenState extends State<InvoerScreen> {
   Widget _bronimpedantieToggle() {
     final l10n = context.l10n;
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: SchakelaarRij(
@@ -1136,24 +1168,6 @@ class _InvoerScreenState extends State<InvoerScreen> {
   }
 
   // ── WINDKOELING ───────────────────────────────────────────────────────────
-  Widget _windkoelingToggle() {
-    final l10n = context.l10n;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: SchakelaarRij(
-          label: l10n.lblWindkoeling,
-          waarde: _gebruikWindkoeling,
-          onChanged: (v) => setState(() {
-            _gebruikWindkoeling = v;
-            _update(_inv.copyWith(windkoelingActief: v));
-          }),
-        ),
-      ),
-    );
-  }
-
   Widget _windkoelingsSectie() {
     final l10n = context.l10n;
     final inv = _inv;

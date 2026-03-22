@@ -33,7 +33,8 @@ void main() async {
   final languageProvider = LanguageProvider();
   final themeProvider = ThemeProvider();
   final projectenProvider = ProjectenProvider();
-  final gebruikersProvider = GebruikersProvider(projectenProvider);
+  final berekeningProvider = BerekeningProvider();
+  final gebruikersProvider = GebruikersProvider(projectenProvider, berekeningProvider);
   final boomProvider = BoomProvider();
   await Future.wait([
     customProvider.laad(),
@@ -43,6 +44,7 @@ void main() async {
     boomProvider.laad(),
   ]);
   runApp(KabelberekeningApp(
+    berekeningProvider: berekeningProvider,
     customProvider: customProvider,
     languageProvider: languageProvider,
     themeProvider: themeProvider,
@@ -55,6 +57,7 @@ void main() async {
 class KabelberekeningApp extends StatelessWidget {
   const KabelberekeningApp({
     super.key,
+    required this.berekeningProvider,
     required this.customProvider,
     required this.languageProvider,
     required this.themeProvider,
@@ -63,6 +66,7 @@ class KabelberekeningApp extends StatelessWidget {
     required this.boomProvider,
   });
 
+  final BerekeningProvider berekeningProvider;
   final CustomCatalogusProvider customProvider;
   final LanguageProvider languageProvider;
   final ThemeProvider themeProvider;
@@ -74,7 +78,7 @@ class KabelberekeningApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => BerekeningProvider()),
+        ChangeNotifierProvider.value(value: berekeningProvider),
         ChangeNotifierProvider.value(value: customProvider),
         ChangeNotifierProvider.value(value: languageProvider),
         ChangeNotifierProvider.value(value: themeProvider),

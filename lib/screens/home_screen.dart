@@ -28,6 +28,7 @@ import 'invoer_screen.dart';
 import 'privacy_screen.dart';
 import 'projecten_screen.dart';
 import 'resultaten_screen.dart';
+import 'handleiding_screen.dart';
 import 'uitleg_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -68,6 +69,15 @@ Widget _correctiefactorenKnop(BuildContext context) => IconButton(
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const CorrectiefactorenScreen()),
+      ),
+    );
+
+Widget _handleidingKnop(BuildContext context) => IconButton(
+      icon: const Icon(Icons.help_outline),
+      tooltip: context.l10n.navHandleiding,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const HandleidingScreen()),
       ),
     );
 
@@ -183,6 +193,7 @@ class _BreedLayout extends StatelessWidget {
           _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
+          _handleidingKnop(context),
           _uitlegKnop(context),
           _correctiefactorenKnop(context),
           _catalogusKnop(context),
@@ -226,6 +237,7 @@ class _SmalLayout extends StatelessWidget {
           _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
+          _handleidingKnop(context),
           _uitlegKnop(context),
           _correctiefactorenKnop(context),
           _catalogusKnop(context),
