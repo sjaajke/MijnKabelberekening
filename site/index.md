@@ -27,9 +27,8 @@ compliant with **IEC 60364-5-52** and **NEN 1010**.
     <span class="badge">Coming soon</span>
   </a>
 
-  <a href="#" class="btn btn-ios">
-    ▶ Apple App Store
-    <span class="badge">Coming soon</span>
+  <a href="https://apps.apple.com/nl/app/mijnkabelberekening/id6760185317MijnKabelberekening" class="btn btn-ios">
+    ⬇ Apple App Store
   </a>
 
 </div>
