@@ -175,7 +175,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
       rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C');
     }
     rij('f_T  (temperatuur)', '${r.fT.toStringAsFixed(4)}'
-        '  = √[(${tMax.toInt()}−${r.tEffectief.toStringAsFixed(1)})/(${tMax.toInt()}−${tRef.toInt()})]');
+        '  = sqrt[(${tMax.toInt()}-${r.tEffectief.toStringAsFixed(1)})/(${tMax.toInt()}-${tRef.toInt()})]');
     if (r.bundelPositieWorst != null) {
       rij('f_bundel', '${r.fBundel.toStringAsFixed(4)}  = f_h × f_v');
       rij('  f_h (horizontaal)', '${r.fHorizontaal.toStringAsFixed(4)}  (IEC tabel B.52.20)');
@@ -207,7 +207,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
 
     if (inv.cyclischProfiel != null) {
       titel(l10n.rapportCyclischNr(4));
-      buf.writeln('Formule: M = 1 / √( Σ Yᵢ·ΔθR(i)  +  μ·(1 − θR(6)) )');
+      buf.writeln('Formule: M = 1 / sqrt( sum Yi*dthR(i)  +  mu*(1 - thR(6)) )');
       rij('Aantal kringen N', '${inv.cyclischNKringen}');
       rij('Ligging kringen', inv.cyclischAanliggend
           ? 'Aanliggend (touching)'
@@ -285,7 +285,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
         // 4 kolommen: centrum (geen zon) | bov.laag centrum ☀ | bov.laag hoek ☀ | lag.lagen hoek
         String k(String s) => s.padLeft(13);
         buf.writeln('${''.padRight(26)}${k("Cent.bundel")}${k("Bov.laag ctr")}${k("Bov.laag hoek")}${k("Lag.lag.hoek")}');
-        buf.writeln('${''.padRight(26)}${k("(geen zon)")}${k("(volle zon ☀)")}${k("(volle zon ☀)")}${k("(geen zon)")}');
+        buf.writeln('${''.padRight(26)}${k("(geen zon)")}${k("(volle zon)")}${k("(volle zon)")}${k("(geen zon)")}');
         buf.writeln('─' * 64);
         buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelBovensteC!.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
         buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izBovensteC!.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}${k(r.izLagereHoek!.toStringAsFixed(1))}');
@@ -321,12 +321,12 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
             ' × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})');
       case Systeemtype.ac3Fase:
         final sinPhi = sqrt(max(0.0, 1 - inv.cosPhi * inv.cosPhi));
-        buf.writeln('Formule:  ΔU = √3 · I · L · (R·cosφ + X·sinφ)');
+        buf.writeln('Formule:  dU = sqrt(3) * I * L * (R*cos(phi) + X*sin(phi))');
         rij('R_AC @ ${tMax.toInt()}°C', '${rAt.toStringAsFixed(6)} Ω/m');
         rij('X', '${xM.toStringAsFixed(6)} Ω/m');
         rij('sin φ', sinPhi.toStringAsFixed(4));
-        buf.writeln('ΔU = √3 × ${r.iPerKabel.toStringAsFixed(2)} × ${inv.lengteM.toStringAsFixed(1)}'
-            ' × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})');
+        buf.writeln('dU = sqrt(3) * ${r.iPerKabel.toStringAsFixed(2)} * ${inv.lengteM.toStringAsFixed(1)}'
+            ' * (${rAt.toStringAsFixed(6)}*${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}*${sinPhi.toStringAsFixed(4)})');
       case Systeemtype.dc2Draad:
         final rDc = gelProp.rDc(k.doorsnedemm2, 1.0, t: tMax);
         buf.writeln('Formule:  ΔU = 2 · I · R_DC · L');
@@ -367,7 +367,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
       final kVal = kWaarden[(k.geleider, k.isolatie)] ?? 0.0;
       final tS = inv.kortsluitduurMs / 1000.0;
       final ikPK = inv.kortsluitstroomA / r.nParallel;
-      buf.writeln('Formule min. doorsnede:  A_min = I_k · √t / k');
+      buf.writeln('Formule min. doorsnede:  A_min = I_k * sqrt(t) / k');
       rij('I_k (per kabel)', '${ikPK.toStringAsFixed(0)} A'
           '${r.nParallel > 1 ? "  = ${inv.kortsluitstroomA.toStringAsFixed(0)}/${r.nParallel}" : ""}');
       rij('t (kortsluitduur)', '${tS.toStringAsFixed(3)} s  (${inv.kortsluitduurMs.toStringAsFixed(0)} ms)');
@@ -403,11 +403,11 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
   buf.writeln('=' * 64);
   if (r.fouten.isNotEmpty) {
     buf.writeln('\n${l10n.rapportFouten}');
-    for (final f in r.fouten) { buf.writeln('  • $f'); }
+    for (final f in r.fouten) { buf.writeln('  - $f'); }
   }
   if (r.waarschuwingen.isNotEmpty) {
     buf.writeln('\n${l10n.rapportWaarschuwingen}');
-    for (final w in r.waarschuwingen) { buf.writeln('  ⚠ $w'); }
+    for (final w in r.waarschuwingen) { buf.writeln('  [!] $w'); }
   }
   buf.writeln('\n${l10n.rapportFooter}');
   return buf.toString();
@@ -484,10 +484,10 @@ String boomRapportTekst(KabelBoom boom, AppLocalizations l10n) {
 
     // Status
     final status = r == null
-        ? '─  ${l10n.boomRapportNietBerekend}'
+        ? '--  ${l10n.boomRapportNietBerekend}'
         : r.voldoet
-            ? '✓  ${l10n.rapportEindVoldoet}'
-            : '✗  ${l10n.rapportEindGefaald}';
+            ? '[OK]  ${l10n.rapportEindVoldoet}'
+            : '[X]   ${l10n.rapportEindGefaald}';
     buf.writeln('$indent   Status: $status');
 
     // Invoer samenvatting
@@ -530,18 +530,18 @@ String boomRapportTekst(KabelBoom boom, AppLocalizations l10n) {
       if (r.fouten.isNotEmpty) {
         buf.writeln('$indent     ${l10n.rapportFouten}');
         for (final f in r.fouten) {
-          buf.writeln('$indent       • $f');
+          buf.writeln('$indent       - $f');
         }
       }
       if (r.waarschuwingen.isNotEmpty) {
         for (final w in r.waarschuwingen) {
-          buf.writeln('$indent       ⚠ $w');
+          buf.writeln('$indent       [!] $w');
         }
       }
     } else if (r != null && r.fouten.isNotEmpty) {
       buf.writeln('$indent   ${l10n.rapportFouten}');
       for (final f in r.fouten) {
-        buf.writeln('$indent     • $f');
+        buf.writeln('$indent     - $f');
       }
     }
 

@@ -18,7 +18,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:printing/printing.dart';
 import '../berekening/rapport.dart';
+import '../berekening/pdf_rapport.dart';
 import '../data/transformatoren.dart';
 import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
@@ -210,6 +212,11 @@ class _BoomScreenState extends State<BoomScreen> {
                 onPressed: () => _kopieerRapport(context, boom),
               ),
               IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                tooltip: l10n.btnRapportPdf,
+                onPressed: () => _pdfRapport(context, boom),
+              ),
+              IconButton(
                 icon: const Icon(Icons.delete_outline),
                 tooltip: l10n.btnVerwijderBoom,
                 onPressed: () async {
@@ -267,6 +274,15 @@ class _BoomScreenState extends State<BoomScreen> {
     if (naam == null || naam.isEmpty) return;
     if (!mounted) return;
     await context.read<BoomProvider>().maakNieuweBoom(naam);
+  }
+
+  Future<void> _pdfRapport(BuildContext ctx, KabelBoom boom) async {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final pdfBytes = await boomRapportPdf(boom, l10n);
+    await Printing.sharePdf(
+      bytes: pdfBytes,
+      filename: '${boom.naam}.pdf',
+    );
   }
 
   void _kopieerRapport(BuildContext ctx, KabelBoom boom) {

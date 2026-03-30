@@ -286,10 +286,11 @@ class AppLocalizations {
   String get lblFouten => isNL ? 'FOUTEN' : 'ERRORS';
   String get lblWaarschuwingen => isNL ? 'WAARSCHUWINGEN' : 'WARNINGS';
 
-  // ── RAPPORT KOPIËREN ─────────────────────────────────────────────────────
+  // ── RAPPORT KOPIËREN / PDF ────────────────────────────────────────────────
   String get btnRapportKopieren => isNL ? 'Rapport kopiëren' : 'Copy Report';
   String get snackRapportGekopieerd =>
       isNL ? 'Rapport gekopieerd naar klembord' : 'Report copied to clipboard';
+  String get btnRapportPdf => isNL ? 'Opslaan als PDF' : 'Save as PDF';
 
   // ── CATALOGUS ────────────────────────────────────────────────────────────
   String get sectCatalogus => isNL ? 'Kabelcatalogus' : 'Cable Catalogue';

@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../state/berekening_provider.dart';
@@ -25,6 +26,7 @@ import '../models/enums.dart';
 import '../models/resultaten.dart';
 import '../data/materiaal_data.dart';
 import '../berekening/rapport.dart';
+import '../berekening/pdf_rapport.dart';
 import '../widgets/sectie_card.dart';
 import '../widgets/invoer_rij.dart';
 
@@ -70,6 +72,7 @@ class ResultatenScreen extends StatelessWidget {
           if (res.waarschuwingen.isNotEmpty) _waarschuwingen(context, res, l10n),
           _opslaanKnop(context, l10n),
           _kopieerKnop(context, res, l10n),
+          _pdfKnop(context, res, l10n),
           const SizedBox(height: 24),
         ],
       ),
@@ -149,7 +152,7 @@ class ResultatenScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(children: [
           Icon(ok ? Icons.check_circle : Icons.cancel, color: kleur, size: 32),
-          const SizedBox(width: 12),
+          const Flexible(child: SizedBox(width: 12)),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(ok ? l10n.eindVoldoet : l10n.eindGefaald,
@@ -593,7 +596,7 @@ class ResultatenScreen extends StatelessWidget {
       icoon: Icons.flash_on,
       children: [
         ResultaatRij(
-            label: 'Min. doorsnede  A = I_k·√t/k',
+            label: 'Min. doorsnede  A = Ik·sqrt(t)/k',
             waarde: '${r.doorsnedeMinKortsluit.toStringAsFixed(2)} mm²'),
         ResultaatRij(
             label: l10n.lblTempStijging,
@@ -838,6 +841,25 @@ class ResultatenScreen extends StatelessWidget {
           Clipboard.setData(ClipboardData(text: tekst));
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(content: Text(l10n.snackRapportGekopieerd)),
+          );
+        },
+      ),
+    );
+  }
+
+  // ── PDF ───────────────────────────────────────────────────────────────────
+  Widget _pdfKnop(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OutlinedButton.icon(
+        icon: const Icon(Icons.picture_as_pdf_outlined),
+        label: Text(l10n.btnRapportPdf),
+        onPressed: () async {
+          final inv = ctx.read<BerekeningProvider>().invoer;
+          final pdfBytes = await berekeningRapportPdf(inv, r, l10n);
+          await Printing.sharePdf(
+            bytes: pdfBytes,
+            filename: 'kabelberekening.pdf',
           );
         },
       ),

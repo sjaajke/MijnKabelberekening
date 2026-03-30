@@ -135,7 +135,7 @@ class Invoer {
     this.nParallel = 1,
     this.aantalAders = 5,
     this.geleidersPerKring = 2,
-    this.diepteM = 0.70,
+    this.diepteM = 0.50,
     this.cyclischProfiel,
     this.cyclischNKringen = 1,
     this.cyclischAanliggend = true,

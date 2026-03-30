@@ -16,21 +16,26 @@
 // along with MijnKabelberekening. If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kabelberekening/main.dart';
-import 'package:kabelberekening/state/custom_catalogus_provider.dart';
-import 'package:kabelberekening/state/gebruikers_provider.dart';
-import 'package:kabelberekening/state/language_provider.dart';
-import 'package:kabelberekening/state/projecten_provider.dart';
-import 'package:kabelberekening/state/boom_provider.dart';
+import 'package:mijnkabelberekening/main.dart';
+import 'package:mijnkabelberekening/state/berekening_provider.dart';
+import 'package:mijnkabelberekening/state/custom_catalogus_provider.dart';
+import 'package:mijnkabelberekening/state/gebruikers_provider.dart';
+import 'package:mijnkabelberekening/state/language_provider.dart';
+import 'package:mijnkabelberekening/state/projecten_provider.dart';
+import 'package:mijnkabelberekening/state/theme_provider.dart';
+import 'package:mijnkabelberekening/state/boom_provider.dart';
 
 void main() {
   testWidgets('App starts without errors', (WidgetTester tester) async {
     final projectenProvider = ProjectenProvider();
+    final berekeningProvider = BerekeningProvider();
     await tester.pumpWidget(KabelberekeningApp(
+      berekeningProvider: berekeningProvider,
       customProvider: CustomCatalogusProvider(),
       languageProvider: LanguageProvider(),
+      themeProvider: ThemeProvider(),
       projectenProvider: projectenProvider,
-      gebruikersProvider: GebruikersProvider(projectenProvider),
+      gebruikersProvider: GebruikersProvider(projectenProvider, berekeningProvider),
       boomProvider: BoomProvider(),
     ));
     expect(find.text('Kabelberekening'), findsWidgets);
