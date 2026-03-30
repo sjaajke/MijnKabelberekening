@@ -40,6 +40,7 @@ class AppLocalizations {
       isNL ? 'Correctiefactoren' : 'Correction Factors';
   String get navBerekeningswijze =>
       isNL ? 'Berekeningswijze' : 'Calculation Method';
+  String get navHandleiding => isNL ? 'Handleiding' : 'User Guide';
   String get navPrivacy => 'Privacy Policy';
   String get tabInvoer => isNL ? 'Invoer' : 'Input';
   String get tabResultaten => isNL ? 'Resultaten' : 'Results';
@@ -240,11 +241,18 @@ class AppLocalizations {
       isNL ? 'Bundel: positievergelijking' : 'Bundle: Position Comparison';
   String get colCentrum => isNL ? 'Centrum\n(warmst)' : 'Centre\n(hottest)';
   String get colHoek => isNL ? 'Hoek\n(koudst)' : 'Corner\n(coolest)';
+  String get colCentrumZon => isNL ? 'Centrum bundel\n(geen zon)' : 'Bundle centre\n(no solar)';
+  String get colBovensteC => isNL ? 'Bov. laag\ncentrum ☀' : 'Top layer\ncentre ☀';
+  String get colBovensteHoek => isNL ? 'Bov. laag\nhoek ☀' : 'Top layer\ncorner ☀';
+  String get colLagereHoek => isNL ? 'Lagere lagen\nhoek' : 'Lower layers\ncorner';
   String get rowMarge => isNL ? 'Marge' : 'Margin';
   String get rowTGeleider => isNL ? 'T geleider (°C)' : 'T conductor (°C)';
   String get bundelGelijkwaardig =>
       isNL ? 'Bij dit bundelformaat zijn alle posities thermisch gelijkwaardig.'
            : 'For this bundle size, all positions are thermally equivalent.';
+  String get bundelZonSplitsNote =>
+      isNL ? 'Zon alleen op bovenste laag: centrum afgeschermd, bovenste hoek met volle instraling.'
+           : 'Solar on top layer only: centre shielded, top-layer corner gets full irradiance.';
   String get bundelTempIndicatief =>
       isNL ? 'Temperatuur indicatief: T_eff = T_max − (T_max − T_omg)·f_bundel²  +  ΔT_eigen (I²R)'
            : 'Temperature indicative: T_eff = T_max − (T_max − T_amb)·f_bundle²  +  ΔT_own (I²R)';
@@ -278,10 +286,11 @@ class AppLocalizations {
   String get lblFouten => isNL ? 'FOUTEN' : 'ERRORS';
   String get lblWaarschuwingen => isNL ? 'WAARSCHUWINGEN' : 'WARNINGS';
 
-  // ── RAPPORT KOPIËREN ─────────────────────────────────────────────────────
+  // ── RAPPORT KOPIËREN / PDF ────────────────────────────────────────────────
   String get btnRapportKopieren => isNL ? 'Rapport kopiëren' : 'Copy Report';
   String get snackRapportGekopieerd =>
       isNL ? 'Rapport gekopieerd naar klembord' : 'Report copied to clipboard';
+  String get btnRapportPdf => isNL ? 'Opslaan als PDF' : 'Save as PDF';
 
   // ── CATALOGUS ────────────────────────────────────────────────────────────
   String get sectCatalogus => isNL ? 'Kabelcatalogus' : 'Cable Catalogue';
@@ -566,6 +575,16 @@ class AppLocalizations {
   String get berekeningVerwijderen => isNL ? 'Berekening verwijderen' : 'Delete calculation';
   String get berekeningToevoegenAan => isNL ? 'Toevoegen aan project' : 'Add to project';
   String get projectKiezen => isNL ? 'Kies een project' : 'Choose a project';
+  String get boomSlaOpInProject => isNL ? 'Kabelnet opslaan in project' : 'Save cable network to project';
+  String get boomLaden => isNL ? 'Kabelnet laden' : 'Load cable network';
+  String get boomLadenVraag => isNL
+      ? 'Het huidige kabelnet wordt vervangen. Doorgaan?'
+      : 'The current cable network will be replaced. Continue?';
+  String get boomVerwijderenUitProject => isNL ? 'Kabelnet verwijderen' : 'Delete cable network';
+  String get bomenLeeg => isNL ? 'Geen kabelnetten opgeslagen.' : 'No cable networks saved.';
+  String bomen(int n) => isNL ? '$n kabelnet${n == 1 ? '' : 'ten'}' : '$n cable network${n == 1 ? '' : 's'}';
+  String get sectKabelnetten => isNL ? 'Kabelnetten' : 'Cable networks';
+  String get sectBerekeningen => isNL ? 'Enkelvoudige berekeningen' : 'Single calculations';
   String berekeningSamenvatting(String systeem, double stroom, double lengte) =>
       '$systeem  ·  ${stroom.toStringAsFixed(1)} A  ·  ${lengte.toStringAsFixed(0)} m';
   String get gewijzigd => isNL ? 'Gewijzigd' : 'Modified';
@@ -583,6 +602,17 @@ class AppLocalizations {
   String get gebruikerNieuw => isNL ? 'Nieuw profiel' : 'New profile';
   String get gebruikerNaam => isNL ? 'Naam' : 'Name';
   String get gebruikerHernoemen => isNL ? 'Hernoemen' : 'Rename';
+  String get gebruikerStandaardwaarden => isNL ? 'Standaardwaarden' : 'Default values';
+  String get presetTitel => isNL ? 'Standaardwaarden bewerken' : 'Edit default values';
+  String get presetSysteem => isNL ? 'Systeemtype' : 'System type';
+  String get presetSpanning => isNL ? 'Spanning' : 'Voltage';
+  String get presetGeleider => isNL ? 'Geleider' : 'Conductor';
+  String get presetIsolatie => isNL ? 'Isolatie' : 'Insulation';
+  String get presetLegging => isNL ? 'Leidingwijze' : 'Installation method';
+  String get presetOmgeving => isNL ? 'Omgevingstemperatuur' : 'Ambient temperature';
+  String get presetMaxSpanning => isNL ? 'Max. spanningsval' : 'Max. voltage drop';
+  String get presetCosPhi => isNL ? 'Vermogensfactor cosφ' : 'Power factor cosφ';
+  String get snackPresetOpgeslagen => isNL ? 'Standaardwaarden opgeslagen' : 'Default values saved';
   String get gebruikerVerwijderen => isNL ? 'Profiel verwijderen' : 'Delete profile';
   String get gebruikerVerwijderenVraag => isNL
       ? 'Weet je zeker dat je dit profiel wilt verwijderen? Alle projecten en berekeningen van dit profiel gaan verloren.'
@@ -637,6 +667,10 @@ class AppLocalizations {
   String get rapportTemp => isNL ? 'TEMPERATUURVERHOGING  (vereenvoudigd model)' : 'TEMPERATURE RISE  (simplified model)';
   String get rapportKortsluit => isNL ? 'KORTSLUITVASTHEID  (IEC 60949)' : 'SHORT-CIRCUIT WITHSTAND  (IEC 60949)';
   String get rapportEindVoldoet => isNL ? 'EINDOORDEEL: VOLDOET AAN ALLE EISEN' : 'FINAL ASSESSMENT: MEETS ALL REQUIREMENTS';
+  String get boomRapportTitel => isNL ? 'KABELNETRAPPORT' : 'CABLE NETWORK REPORT';
+  String get boomRapportNietBerekend => isNL ? 'niet berekend' : 'not calculated';
+  String get snackBoomRapportGekopieerd =>
+      isNL ? 'Kabelnetrapport gekopieerd naar klembord' : 'Cable network report copied to clipboard';
   String get rapportEindGefaald => isNL ? 'EINDOORDEEL: CONTROLES GEFAALD' : 'FINAL ASSESSMENT: CHECKS FAILED';
   String get rapportFooter => isNL
       ? 'Berekend met: Kabelberekening — IEC 60364-5-52 / IEC 60949 / NEN 1010'
@@ -705,6 +739,12 @@ class AppLocalizations {
       isNL ? 'Z_b = $zbMohm mΩ (per fase)' : 'Z_b = $zbMohm mΩ (per phase)';
   String ikBronInfo(String ik) =>
       isNL ? 'I_k bron (enkelfasig lus) ≈ $ik A' : 'I_k source (single-phase loop) ≈ $ik A';
+  String get lblZbRxHandmatig =>
+      isNL ? 'Handmatige R + X invoer (transformator/net)' : 'Manual R + X input (transformer/grid)';
+  String get lblZbR =>
+      isNL ? 'Weerstand R (transformator + net)' : 'Resistance R (transformer + grid)';
+  String get lblZbX =>
+      isNL ? 'Reactantie X (transformator + net)' : 'Reactance X (transformer + grid)';
   String get lblZUpstreamHandmatig =>
       isNL ? 'Handmatige Z_upstream (ketenberekening)' : 'Manual Z_upstream (chained calculation)';
   String get lblZUpstreamMohm =>
@@ -819,4 +859,29 @@ class AppLocalizations {
       isNL ? 'Nog geen kabelnet aangemaakt.' : 'No cable network yet.';
   String ikEindInfo(String ik) =>
       isNL ? 'I_k1f einde = $ik A' : 'I_k1f end = $ik A';
+
+  // ── WINDKOELING (IEC 60287-2-1) ──────────────────────────────────────────
+  String get lblWindkoeling =>
+      isNL ? 'Windkoeling goot (IEC 60287-2-1)' : 'Wind Cooling Tray (IEC 60287-2-1)';
+  String get sectWindkoeling =>
+      isNL ? 'Windkoeling  (IEC 60287-2-1 / NEN 1010)' : 'Wind Cooling  (IEC 60287-2-1 / NEN 1010)';
+  String get lblWindsnelheid =>
+      isNL ? 'Windsnelheid op dakoppervlak' : 'Wind Speed at Roof Surface';
+  String get lblGootMetDeksel =>
+      isNL ? 'Stalen deksel op kabelgoot' : 'Steel Lid on Cable Tray';
+  String get lblDakOrientatie =>
+      isNL ? 'Dakoriëntatie' : 'Roof Orientation';
+  String get lblDakhelling =>
+      isNL ? 'Dakhelling' : 'Roof Slope';
+  String windkoelingInfo(String dtK, String tEffC) => isNL
+      ? 'ΔT_wind = $dtK K  →  T_effectief = $tEffC °C  (IEC 60287-2-1 convectie-correctie)'
+      : 'ΔT_wind = $dtK K  →  T_effective = $tEffC °C  (IEC 60287-2-1 convection correction)';
+
+  String get lblPvLaagModel =>
+      isNL ? 'PV-laagpositie zonneinstraling (IEC 60364-5-52)' : 'PV Layer Position Solar Irradiance (IEC 60364-5-52)';
+  String get lblPvLaagPositie =>
+      isNL ? 'Positie maatgevende kabel in stapel' : 'Position of determining cable in stack';
+  String pvLaagHint(String dtK) => isNL
+      ? 'Zoninstralingstoeslag: +$dtK K op omgevingstemperatuur  (vervangt handmatige zonlicht-ΔT)'
+      : 'Solar irradiance correction: +$dtK K above ambient  (replaces manual sunlight ΔT)';
 }

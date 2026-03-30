@@ -16,15 +16,21 @@
 // along with MijnKabelberekening. If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:printing/printing.dart';
+import '../berekening/rapport.dart';
+import '../berekening/pdf_rapport.dart';
 import '../data/transformatoren.dart';
 import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
+import '../models/project.dart';
 import '../state/language_provider.dart';
 import '../models/kabel_boom.dart';
 import '../models/leiding_node.dart';
 import '../state/berekening_provider.dart';
 import '../state/boom_provider.dart';
+import '../state/projecten_provider.dart';
 import '../widgets/invoer_rij.dart';
 import '../widgets/sectie_card.dart';
 import 'invoer_screen.dart';
@@ -39,25 +45,36 @@ class BoomScreen extends StatefulWidget {
 
 class _BoomScreenState extends State<BoomScreen> {
   late void Function() _berekeningListener;
+  late BerekeningProvider _berekeningProvider;
 
   /// l10n veilig vanuit event handlers (listen: false — geen abonnement).
   AppLocalizations get _l10n =>
       AppLocalizations(context.read<LanguageProvider>().locale);
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _berekeningProvider = context.read<BerekeningProvider>();
+  }
+
+  @override
   void initState() {
     super.initState();
     _berekeningListener = _onBerekeningChange;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BerekeningProvider>().addListener(_berekeningListener);
-      context.read<BerekeningProvider>().setIsBoomModus(true);
+      _berekeningProvider.addListener(_berekeningListener);
+      _berekeningProvider.setIsBoomModus(true);
     });
   }
 
   @override
   void dispose() {
-    context.read<BerekeningProvider>().removeListener(_berekeningListener);
-    context.read<BerekeningProvider>().setIsBoomModus(false);
+    _berekeningProvider.removeListener(_berekeningListener);
+    // setIsBoomModus roept notifyListeners aan — uitstellen tot na het frame
+    // om "widget tree locked" te voorkomen tijdens unmount.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _berekeningProvider.setIsBoomModus(false);
+    });
     super.dispose();
   }
 
@@ -185,9 +202,19 @@ class _BoomScreenState extends State<BoomScreen> {
                 onPressed: () => boomP.herberekenAlles(),
               ),
               IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                tooltip: l10n.lblBoomTransformator,
-                onPressed: () => _toonBronConfigDialog(context, boom),
+                icon: const Icon(Icons.save_outlined),
+                tooltip: l10n.boomSlaOpInProject,
+                onPressed: () => _slaOpInProject(context, boom),
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy_outlined),
+                tooltip: l10n.btnRapportKopieren,
+                onPressed: () => _kopieerRapport(context, boom),
+              ),
+              IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                tooltip: l10n.btnRapportPdf,
+                onPressed: () => _pdfRapport(context, boom),
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline),
@@ -249,6 +276,64 @@ class _BoomScreenState extends State<BoomScreen> {
     await context.read<BoomProvider>().maakNieuweBoom(naam);
   }
 
+  Future<void> _pdfRapport(BuildContext ctx, KabelBoom boom) async {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final pdfBytes = await boomRapportPdf(boom, l10n);
+    await Printing.sharePdf(
+      bytes: pdfBytes,
+      filename: '${boom.naam}.pdf',
+    );
+  }
+
+  void _kopieerRapport(BuildContext ctx, KabelBoom boom) {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final tekst = boomRapportTekst(boom, l10n);
+    Clipboard.setData(ClipboardData(text: tekst));
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(
+        content: Text(l10n.snackBoomRapportGekopieerd),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _slaOpInProject(BuildContext ctx, KabelBoom boom) async {
+    final projectenP = context.read<ProjectenProvider>();
+    final projecten = projectenP.projecten;
+    if (projecten.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_l10n.projectenLeeg)),
+        );
+      }
+      return;
+    }
+
+    final gekozen = await showDialog<Project>(
+      context: ctx,
+      builder: (dlgCtx) => SimpleDialog(
+        title: Text(_l10n.boomSlaOpInProject),
+        children: projecten
+            .map((p) => SimpleDialogOption(
+                  onPressed: () => Navigator.pop(dlgCtx, p),
+                  child: Text(p.naam),
+                ))
+            .toList(),
+      ),
+    );
+    if (gekozen == null || !mounted) return;
+
+    await projectenP.voegBoomToe(gekozen.id, boom.naam, boom);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${boom.naam} → ${gekozen.naam}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   Widget _boomLayout(
       BuildContext context, BoomProvider boomP, KabelBoom boom) {
     final actiefId = boomP.actiefNodeId;
@@ -260,33 +345,30 @@ class _BoomScreenState extends State<BoomScreen> {
           width: 280,
           child: Material(
             elevation: 1,
-            child: Column(
-              children: [
-                // Bron-info header
-                _bronHeader(context, boom),
-                const Divider(height: 1),
-                // Boom-nodes
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    children: [
-                      ...boomP
-                          .rootNodes()
-                          .map((n) => _nodeItem(context, boomP, n, 0)),
-                      const SizedBox(height: 4),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 4),
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.add, size: 16),
-                          label: Text(context.l10n.btnVoegLeidingToe),
-                          onPressed: _voegRootToe,
-                        ),
-                      ),
-                    ],
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Bron-instellingen inline
+                  _BronImpedantiePaneel(boom: boom),
+                  const Divider(height: 1),
+                  // Boom-nodes
+                  ...boomP
+                      .rootNodes()
+                      .map((n) => _nodeItem(context, boomP, n, 0)),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 4),
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.add, size: 16),
+                      label: Text(context.l10n.btnVoegLeidingToe),
+                      onPressed: _voegRootToe,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
           ),
         ),
@@ -309,43 +391,6 @@ class _BoomScreenState extends State<BoomScreen> {
     );
   }
 
-  Widget _bronHeader(BuildContext context, KabelBoom boom) {
-    final l10n = context.l10n;
-    final zb = boom.zbOhm(400);
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            const Icon(Icons.bolt, size: 18),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                l10n.lblBoomTransformator,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ]),
-          const SizedBox(height: 4),
-          Text(
-            '${boom.transformatorKva.toInt()} kVA  —  '
-            'u_cc = ${boom.transformatorUccPct.toStringAsFixed(0)}%  —  '
-            '${boom.aardingsstelsel.code}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (zb > 0)
-            Text(
-              'Z_b = ${(zb * 1000).toStringAsFixed(2)} mΩ'
-              '  |  I_k3f = ${(boom.ik3fBron(400) / 1000).toStringAsFixed(1)} kA',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-            ),
-        ],
-      ),
-    );
-  }
 
   Widget _nodeItem(
       BuildContext context, BoomProvider boomP, LeidingNode node, int depth) {
@@ -420,28 +465,23 @@ class _BoomScreenState extends State<BoomScreen> {
         ),
       );
 
-  // ── Bron-config dialoog ───────────────────────────────────────────────────
-
-  void _toonBronConfigDialog(BuildContext context, KabelBoom boom) {
-    showDialog(
-      context: context,
-      builder: (ctx) => _BronConfigDialog(boom: boom),
-    );
-  }
 }
 
-// ── Dialoog: bronimpedantie-instellingen voor de boom ─────────────────────────
+// ── Inline bronimpedantie-paneel voor de kabelnet-boom ────────────────────────
 
-class _BronConfigDialog extends StatefulWidget {
-  const _BronConfigDialog({required this.boom});
+class _BronImpedantiePaneel extends StatefulWidget {
+  const _BronImpedantiePaneel({required this.boom});
   final KabelBoom boom;
 
   @override
-  State<_BronConfigDialog> createState() => _BronConfigDialogState();
+  State<_BronImpedantiePaneel> createState() => _BronImpedantiePaneelState();
 }
 
-class _BronConfigDialogState extends State<_BronConfigDialog> {
-  late bool _handmatig;
+class _BronImpedantiePaneelState extends State<_BronImpedantiePaneel> {
+  late bool _rxHandmatig;
+  late double _zbR;
+  late double _zbX;
+  late bool _trafoHandmatig;
   late double _kva;
   late double _ucc;
   late Aardingsstelsel _stelsel;
@@ -452,8 +492,23 @@ class _BronConfigDialogState extends State<_BronConfigDialog> {
   @override
   void initState() {
     super.initState();
-    final b = widget.boom;
-    _handmatig = b.transformatorHandmatig;
+    _initVanBoom(widget.boom);
+  }
+
+  @override
+  void didUpdateWidget(_BronImpedantiePaneel old) {
+    super.didUpdateWidget(old);
+    // Herinitialiseer alleen bij een ander kabelnet (ander id).
+    if (old.boom.id != widget.boom.id) {
+      _initVanBoom(widget.boom);
+    }
+  }
+
+  void _initVanBoom(KabelBoom b) {
+    _rxHandmatig = b.zbRxHandmatig;
+    _zbR = b.zbROhm;
+    _zbX = b.zbXOhm;
+    _trafoHandmatig = b.transformatorHandmatig;
     _kva = b.transformatorKva;
     _ucc = b.transformatorUccPct;
     _stelsel = b.aardingsstelsel;
@@ -464,118 +519,184 @@ class _BronConfigDialogState extends State<_BronConfigDialog> {
     if (_dbIndex < 0) _dbIndex = 3;
   }
 
+  void _bewaar() {
+    final nieuw = widget.boom.copyWith(
+      zbRxHandmatig: _rxHandmatig,
+      zbROhm: _zbR,
+      zbXOhm: _zbX,
+      transformatorHandmatig: _trafoHandmatig,
+      transformatorKva: _kva,
+      transformatorUccPct: _ucc,
+      aardingsstelsel: _stelsel,
+      skNetOneindig: _skOneindig,
+      skNetMva: _skMva,
+    );
+    context.read<BoomProvider>().updateBoomConfig(nieuw);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AlertDialog(
-      title: Text(l10n.lblBoomTransformator),
-      content: SingleChildScrollView(
-        child: SizedBox(
-          width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SectieCard(
-                titel: l10n.sectBronimpedantie,
-                icoon: Icons.transform,
-                children: [
-                  SchakelaarRij(
-                    label: l10n.lblTransformatorHandmatig,
-                    waarde: _handmatig,
-                    onChanged: (v) => setState(() {
-                      _handmatig = v;
-                      if (!v) {
-                        _kva = transformatorDatabase[_dbIndex].vermogenKva;
-                        _ucc = transformatorDatabase[_dbIndex].uccPct;
-                      }
-                    }),
-                  ),
-                  const SizedBox(height: 4),
-                  if (!_handmatig)
-                    DropdownRij<TransformatorSpec>(
-                      label: l10n.lblTransformatorSelectie,
-                      waarde: transformatorDatabase[_dbIndex],
-                      opties: transformatorDatabase,
-                      display: (t) => t.naam,
-                      onChanged: (t) => setState(() {
-                        _dbIndex = transformatorDatabase.indexOf(t);
-                        _kva = t.vermogenKva;
-                        _ucc = t.uccPct;
-                      }),
-                    )
-                  else ...[
-                    GetalVeld(
-                      label: l10n.lblTransformatorKva,
-                      eenheid: 'kVA',
-                      waarde: _kva,
-                      onChanged: (v) => setState(() => _kva = v),
-                      min: 10,
-                      max: 10000,
-                      decimalen: 0,
-                    ),
-                    const SizedBox(height: 4),
-                    GetalVeld(
-                      label: l10n.lblTransformatorUcc,
-                      eenheid: '%',
-                      waarde: _ucc,
-                      onChanged: (v) => setState(() => _ucc = v),
-                      min: 0.5,
-                      max: 20,
-                      decimalen: 1,
-                    ),
-                  ],
-                  const SizedBox(height: 4),
-                  DropdownRij<Aardingsstelsel>(
-                    label: l10n.lblAardingsstelsel,
-                    waarde: _stelsel,
-                    opties: Aardingsstelsel.values,
-                    display: (s) => s.label,
-                    onChanged: (v) => setState(() => _stelsel = v),
-                  ),
-                  const SizedBox(height: 4),
-                  SchakelaarRij(
-                    label: l10n.lblSkNetOneindig,
-                    waarde: _skOneindig,
-                    onChanged: (v) => setState(() => _skOneindig = v),
-                  ),
-                  if (!_skOneindig) ...[
-                    const SizedBox(height: 4),
-                    GetalVeld(
-                      label: l10n.lblSkNetAangepast,
-                      eenheid: 'MVA',
-                      waarde: _skMva,
-                      onChanged: (v) => setState(() => _skMva = v),
-                      min: 0.1,
-                      max: 10000,
-                      decimalen: 1,
-                    ),
-                  ],
-                ],
-              ),
-            ],
+    final boom = widget.boom;
+    final zb = boom.zbOhm(400);
+
+    return SectieCard(
+      titel: l10n.sectBronimpedantie,
+      icoon: Icons.transform,
+      children: [
+        // R + X handmatige invoer toggle
+        SchakelaarRij(
+          label: l10n.lblZbRxHandmatig,
+          waarde: _rxHandmatig,
+          onChanged: (v) {
+            setState(() {
+              _rxHandmatig = v;
+              if (v) { _zbR = 0.010; _zbX = 0.038; }
+            });
+            _bewaar();
+          },
+        ),
+        if (_rxHandmatig) ...[
+          const SizedBox(height: 4),
+          GetalVeld(
+            label: l10n.lblZbR,
+            eenheid: 'mΩ',
+            waarde: _zbR * 1000,
+            onChanged: (v) { setState(() => _zbR = v / 1000); _bewaar(); },
+            min: 0.01,
+            max: 10000,
+            decimalen: 2,
+          ),
+          const SizedBox(height: 4),
+          GetalVeld(
+            label: l10n.lblZbX,
+            eenheid: 'mΩ',
+            waarde: _zbX * 1000,
+            onChanged: (v) { setState(() => _zbX = v / 1000); _bewaar(); },
+            min: 0.01,
+            max: 10000,
+            decimalen: 2,
+          ),
+        ] else ...[
+          const SizedBox(height: 4),
+          // Transformatorselectie toggle
+          SchakelaarRij(
+            label: l10n.lblTransformatorHandmatig,
+            waarde: _trafoHandmatig,
+            onChanged: (v) {
+              setState(() {
+                _trafoHandmatig = v;
+                if (!v) {
+                  _kva = transformatorDatabase[_dbIndex].vermogenKva;
+                  _ucc = transformatorDatabase[_dbIndex].uccPct;
+                }
+              });
+              _bewaar();
+            },
+          ),
+          const SizedBox(height: 4),
+          if (!_trafoHandmatig)
+            DropdownRij<TransformatorSpec>(
+              label: l10n.lblTransformatorSelectie,
+              waarde: transformatorDatabase[_dbIndex],
+              opties: transformatorDatabase,
+              display: (t) => t.naam,
+              onChanged: (t) {
+                setState(() {
+                  _dbIndex = transformatorDatabase.indexOf(t);
+                  _kva = t.vermogenKva;
+                  _ucc = t.uccPct;
+                });
+                _bewaar();
+              },
+            )
+          else ...[
+            GetalVeld(
+              label: l10n.lblTransformatorKva,
+              eenheid: 'kVA',
+              waarde: _kva,
+              onChanged: (v) { setState(() => _kva = v); _bewaar(); },
+              min: 10,
+              max: 10000,
+              decimalen: 0,
+            ),
+            const SizedBox(height: 4),
+            GetalVeld(
+              label: l10n.lblTransformatorUcc,
+              eenheid: '%',
+              waarde: _ucc,
+              onChanged: (v) { setState(() => _ucc = v); _bewaar(); },
+              min: 0.5,
+              max: 20,
+              decimalen: 1,
+            ),
+          ],
+        ],
+
+        const SizedBox(height: 4),
+
+        // Aardingsstelsel
+        DropdownRij<Aardingsstelsel>(
+          label: l10n.lblAardingsstelsel,
+          waarde: _stelsel,
+          opties: Aardingsstelsel.values,
+          display: (s) => s.label,
+          onChanged: (v) { setState(() => _stelsel = v); _bewaar(); },
+        ),
+
+        // NEN 1010 hint per stelsel
+        Padding(
+          padding: const EdgeInsets.only(top: 4, left: 2, bottom: 4),
+          child: Text(
+            l10n.aardingsstelselHint(_stelsel.code),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: _stelsel == Aardingsstelsel.it ||
+                          _stelsel == Aardingsstelsel.tt
+                      ? Colors.orange.shade800
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Annuleren'),
+
+        // Netwerk kortsluitvermogen
+        SchakelaarRij(
+          label: l10n.lblSkNetOneindig,
+          waarde: _skOneindig,
+          onChanged: (v) { setState(() => _skOneindig = v); _bewaar(); },
         ),
-        FilledButton(
-          onPressed: () {
-            final nieuw = widget.boom.copyWith(
-              transformatorHandmatig: _handmatig,
-              transformatorKva: _kva,
-              transformatorUccPct: _ucc,
-              aardingsstelsel: _stelsel,
-              skNetOneindig: _skOneindig,
-              skNetMva: _skMva,
-            );
-            context.read<BoomProvider>().updateBoomConfig(nieuw);
-            Navigator.pop(context);
-          },
-          child: const Text('Opslaan'),
-        ),
+        if (!_skOneindig) ...[
+          const SizedBox(height: 4),
+          GetalVeld(
+            label: l10n.lblSkNetAangepast,
+            eenheid: 'MVA',
+            waarde: _skMva,
+            onChanged: (v) { setState(() => _skMva = v); _bewaar(); },
+            min: 0.1,
+            max: 10000,
+            decimalen: 1,
+          ),
+        ],
+
+        // Zb en Ik_bron samenvatting
+        if (zb > 0) ...[
+          const Divider(height: 12),
+          Padding(
+            padding: const EdgeInsets.only(left: 2),
+            child: Text(
+              l10n.zbBerekend((zb * 1000).toStringAsFixed(2)),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 2, top: 2),
+            child: Text(
+              l10n.ikBronInfo(boom.ik3fBron(400).toStringAsFixed(0)),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -16,6 +16,7 @@
 // along with MijnKabelberekening. If not, see <https://www.gnu.org/licenses/>.
 
 import 'invoer.dart';
+import 'kabel_boom.dart';
 
 /// Een opgeslagen berekening binnen een project (snapshot van invoer).
 class OpgeslaanBerekening {
@@ -49,13 +50,45 @@ class OpgeslaanBerekening {
       );
 }
 
-/// Een project dat meerdere berekeningen groepeert.
+/// Een opgeslagen kabelnet (boom) binnen een project.
+class OpgeslaanBoom {
+  final String id;
+  final String naam;
+  final DateTime aangemaakt;
+  final Map<String, dynamic> boomData;
+
+  const OpgeslaanBoom({
+    required this.id,
+    required this.naam,
+    required this.aangemaakt,
+    required this.boomData,
+  });
+
+  KabelBoom get boom => KabelBoom.fromJson(boomData);
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'naam': naam,
+        'aangemaakt': aangemaakt.toIso8601String(),
+        'boomData': boomData,
+      };
+
+  factory OpgeslaanBoom.fromJson(Map<String, dynamic> j) => OpgeslaanBoom(
+        id: j['id'] as String,
+        naam: j['naam'] as String,
+        aangemaakt: DateTime.parse(j['aangemaakt'] as String),
+        boomData: Map<String, dynamic>.from(j['boomData'] as Map),
+      );
+}
+
+/// Een project dat meerdere berekeningen en kabelnetten groepeert.
 class Project {
   final String id;
   final String naam;
   final DateTime aangemaakt;
   final DateTime gewijzigd;
   final List<OpgeslaanBerekening> berekeningen;
+  final List<OpgeslaanBoom> bomen;
 
   const Project({
     required this.id,
@@ -63,11 +96,13 @@ class Project {
     required this.aangemaakt,
     required this.gewijzigd,
     required this.berekeningen,
+    this.bomen = const [],
   });
 
   Project copyWith({
     String? naam,
     List<OpgeslaanBerekening>? berekeningen,
+    List<OpgeslaanBoom>? bomen,
     DateTime? gewijzigd,
   }) =>
       Project(
@@ -76,6 +111,7 @@ class Project {
         aangemaakt: aangemaakt,
         gewijzigd: gewijzigd ?? this.gewijzigd,
         berekeningen: berekeningen ?? this.berekeningen,
+        bomen: bomen ?? this.bomen,
       );
 
   Map<String, dynamic> toJson() => {
@@ -84,6 +120,7 @@ class Project {
         'aangemaakt': aangemaakt.toIso8601String(),
         'gewijzigd': gewijzigd.toIso8601String(),
         'berekeningen': berekeningen.map((b) => b.toJson()).toList(),
+        'bomen': bomen.map((b) => b.toJson()).toList(),
       };
 
   factory Project.fromJson(Map<String, dynamic> j) => Project(
@@ -93,6 +130,9 @@ class Project {
         gewijzigd: DateTime.parse(j['gewijzigd'] as String),
         berekeningen: (j['berekeningen'] as List)
             .map((b) => OpgeslaanBerekening.fromJson(b as Map<String, dynamic>))
+            .toList(),
+        bomen: (j['bomen'] as List? ?? [])
+            .map((b) => OpgeslaanBoom.fromJson(b as Map<String, dynamic>))
             .toList(),
       );
 }

@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../state/gebruikers_provider.dart';
 import '../state/language_provider.dart';
+import '../state/theme_provider.dart';
 import 'boom_screen.dart';
 import 'catalogus_screen.dart';
 import 'correctiefactoren_screen.dart';
@@ -27,6 +28,7 @@ import 'invoer_screen.dart';
 import 'privacy_screen.dart';
 import 'projecten_screen.dart';
 import 'resultaten_screen.dart';
+import 'handleiding_screen.dart';
 import 'uitleg_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -67,6 +69,15 @@ Widget _correctiefactorenKnop(BuildContext context) => IconButton(
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const CorrectiefactorenScreen()),
+      ),
+    );
+
+Widget _handleidingKnop(BuildContext context) => IconButton(
+      icon: const Icon(Icons.help_outline),
+      tooltip: context.l10n.navHandleiding,
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const HandleidingScreen()),
       ),
     );
 
@@ -157,6 +168,15 @@ Widget _taalKnop(BuildContext context) {
   );
 }
 
+Widget _themaKnop(BuildContext context) {
+  final theme = context.watch<ThemeProvider>();
+  return IconButton(
+    tooltip: theme.isDark ? 'Licht thema' : 'Donker thema',
+    icon: Icon(theme.isDark ? Icons.light_mode : Icons.dark_mode),
+    onPressed: theme.toggle,
+  );
+}
+
 // ── BREED (iPad landscape / desktop) ─────────────────────────────────────────
 class _BreedLayout extends StatelessWidget {
   const _BreedLayout();
@@ -170,8 +190,10 @@ class _BreedLayout extends StatelessWidget {
         centerTitle: false,
         actions: [
           const _GebruikerKnop(),
+          _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
+          _handleidingKnop(context),
           _uitlegKnop(context),
           _correctiefactorenKnop(context),
           _catalogusKnop(context),
@@ -212,8 +234,10 @@ class _SmalLayout extends StatelessWidget {
         centerTitle: false,
         actions: [
           const _GebruikerKnop(),
+          _themaKnop(context),
           _taalKnop(context),
           _privacyKnop(context),
+          _handleidingKnop(context),
           _uitlegKnop(context),
           _correctiefactorenKnop(context),
           _catalogusKnop(context),

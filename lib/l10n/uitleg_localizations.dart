@@ -531,6 +531,93 @@ extension UitlegLocalizations on AppLocalizations {
         'disconnection on indirect contact. MCB values per IEC 60898-1; '
         'gG values per IEC 60269-1 time-current characteristic.';
 
+  // ── WINDKOELING & PV LAAGPOSITIE ─────────────────────────────────────────
+  String get windkoelingUitlegTitel => isNL
+      ? 'Stap 2c — Windkoeling & PV-zonneinstraling  (IEC 60287-2-1 / IEC 60364-5-52)'
+      : 'Step 2c — Wind Cooling & PV Solar Irradiance  (IEC 60287-2-1 / IEC 60364-5-52)';
+  String get windkoelingUitlegIntro => isNL
+      ? 'Voor PV-singels in kabelgoten op daken zijn twee extra thermische correcties '
+        'beschikbaar: windkoeling (vermindert effectieve omgevingstemperatuur) en '
+        'PV-laagpositie (vervangt de vlakke zonlichttoeslag met een laagafhankelijke ΔT).'
+      : 'For PV single-core cables in cable trays on roofs, two additional thermal '
+        'corrections are available: wind cooling (reduces effective ambient temperature) '
+        'and PV layer position (replaces the flat solar supplement with a layer-dependent ΔT).';
+  String get windkoelingUitlegModelTitel => isNL
+      ? 'Windkoelingsmodel  (IEC 60287-2-1 convectiecoëfficiënt)'
+      : 'Wind cooling model  (IEC 60287-2-1 convection coefficient)';
+  String get windkoelingUitlegModelIntro => isNL
+      ? 'Wind vergroot de convectiecoëfficiënt h [W/m²·K] van het kabeloppervlak naar de omgeving. '
+        'Dit verlaagt de effectieve omgevingstemperatuur θ_eff, waardoor f_T stijgt en meer stroom '
+        'toelaatbaar is. Modellering als temperatuuroffset ΔT_wind:'
+      : 'Wind increases the convection coefficient h [W/m²·K] from cable surface to ambient. '
+        'This lowers the effective ambient temperature θ_eff, raising f_T and allowing more current. '
+        'Modelled as a temperature offset ΔT_wind:';
+  String get windkoelingUitlegFormule =>
+      'θ_eff = θ_omg + ΔT_zon + ΔT_wind\n'
+      'ΔT_wind = ΔT_deksel − ΔT_wind_afkoeling';
+  String get windkoelingUitlegTabelTitel => isNL
+      ? 'ΔT-waarden per windsnelheid (IEC 60287-2-1 indicatief):'
+      : 'ΔT values per wind speed (IEC 60287-2-1 indicative):';
+  String get windkoelingUitlegDekselTitel => isNL
+      ? 'Stalen deksel op goot:'
+      : 'Steel lid on cable tray:';
+  String get windkoelingUitlegDekselSub => isNL
+      ? 'Stalen deksel beperkt convectie: penalty +5 K op effectieve omgevingstemperatuur'
+      : 'Steel lid restricts convection: +5 K penalty on effective ambient temperature';
+  String get pvLaagUitlegTitel => isNL
+      ? 'PV-laagpositie zonneinstraling  (IEC 60364-5-52 / IEC 60287)'
+      : 'PV layer position solar irradiance  (IEC 60364-5-52 / IEC 60287)';
+  String get pvLaagUitlegIntro => isNL
+      ? 'In een gestapelde PV-kabelgoot ontvangen niet alle lagen evenveel zonneinstraling. '
+        'Wanneer het laagpositiemodel actief is, vervangt het de handmatige zonlicht-ΔT '
+        'met een preset per positie in de stapel:'
+      : 'In a stacked PV cable tray, not all layers receive the same solar irradiance. '
+        'When the layer position model is active, it replaces the manual sunlight ΔT '
+        'with a preset per position in the stack:';
+  String get pvLaagUitlegNoot => isNL
+      ? 'Maatgevend voor het ontwerp is de toplaag (bovenste 20 singels bij 20×8 configuratie). '
+        'Activeer de toplaag voor het worst-case scenario; gebruik middenlaag voor de gemiddelde kabel.'
+      : 'The top layer (top 20 singels in a 20×8 configuration) is governing for design. '
+        'Activate top layer for worst-case scenario; use middle layer for the average cable.';
+
+  // ── BUNDEL ZONTEMPERATUUR-SPLITSING ──────────────────────────────────────
+  String get bundelZonSplitsTitel => isNL
+      ? 'Zontemperatuur per laag in een meerlagige bundel'
+      : 'Solar temperature per layer in a multi-layer bundle';
+  String get bundelZonSplitsIntro => isNL
+      ? 'In een gestapelde kabelgoot met meerdere lagen ontvangt alleen de bovenste laag '
+        'directe zonneinstraling. De onderliggende lagen worden afgeschermd door de kabels '
+        'erboven en ontvangen geen noemenswaardig zonlicht. '
+        'De positievergelijking past dit toe op vier karakteristieke posities:'
+      : 'In a stacked cable tray with multiple layers, only the top layer receives direct '
+        'solar irradiance. Lower layers are shielded by the cables above and receive no '
+        'significant sunlight. '
+        'The position comparison applies this to four characteristic positions:';
+  String get bundelZonSplitsVTop => isNL
+      ? 'Verticale bundelingsfactor bovenste laag: fV_top = fV(2)\n'
+        'De bovenste laag heeft alleen de laag direct eronder als thermische buur (Optie B). '
+        'Dit is een conservatieve benadering: de bovenste laag heeft minder wederzijdse '
+        'opwarming dan het centrum van de bundel.'
+      : 'Vertical bundle factor top layer: fV_top = fV(2)\n'
+        'The top layer has only the layer directly below as thermal neighbour (Option B). '
+        'This is a conservative approximation: the top layer has less mutual heating '
+        'than the centre of the bundle.';
+  String get bundelZonSplitsFormule => isNL
+      ? 'θ_cent  = θ_omg + ΔT_wind            (geen zon)\n'
+        'θ_top   = θ_omg + ΔT_zon_top + ΔT_wind  (volle zon, ΔT_zon_top = +25 K)\n'
+        'f_bov_C = fH(nH) × fV(2)  — bovenste laag centrum\n'
+        'f_hoek  = fH(2) × fV(2)   — elke hoekpositie'
+      : 'θ_cent  = θ_amb + ΔT_wind            (no solar)\n'
+        'θ_top   = θ_amb + ΔT_sun_top + ΔT_wind  (full solar, ΔT_sun_top = +25 K)\n'
+        'f_top_C = fH(nH) × fV(2)  — top layer centre\n'
+        'f_corn  = fH(2) × fV(2)   — any corner position';
+  String get overzichtWindkoeling => isNL
+      ? 'Windkoeling / PV-laag ΔT'
+      : 'Wind cooling / PV layer ΔT';
+  String get overzichtWindkoelingSub => isNL
+      ? 'θ_eff = θ_omg + ΔT_zon + ΔT_wind  (IEC 60287-2-1)'
+      : 'θ_eff = θ_amb + ΔT_sun + ΔT_wind  (IEC 60287-2-1)';
+
   // ── EINDOORDEEL ──────────────────────────────────────────────────────────
   String get eindoordeelTitel => isNL ? 'Stap 8 — Eindoordeel' : 'Step 8 — Final Assessment';
   String get eindoordeelIntro => isNL

@@ -122,6 +122,24 @@
       zUpstreamHandmatigMohm: j[&#39;zUpstreamHandmatigMohm&#39;] != null
           ? (j[&#39;zUpstreamHandmatigMohm&#39;] as num).toDouble()
           : null,
+      zbRxHandmatig: j[&#39;zbRxHandmatig&#39;] as bool? ?? false,
+      zbROhm: j[&#39;zbROhm&#39;] != null ? (j[&#39;zbROhm&#39;] as num).toDouble() : 0.010,
+      zbXOhm: j[&#39;zbXOhm&#39;] != null ? (j[&#39;zbXOhm&#39;] as num).toDouble() : 0.038,
+      windkoelingActief: j[&#39;windkoelingActief&#39;] as bool? ?? false,
+      windsnelheid: j[&#39;windsnelheid&#39;] != null
+          ? Windsnelheid.values.byName(j[&#39;windsnelheid&#39;] as String)
+          : Windsnelheid.matig,
+      gootMetDeksel: j[&#39;gootMetDeksel&#39;] as bool? ?? false,
+      dakOrientatie: j[&#39;dakOrientatie&#39;] != null
+          ? DakOrientatie.values.byName(j[&#39;dakOrientatie&#39;] as String)
+          : DakOrientatie.z,
+      dakhellingGraden: j[&#39;dakhellingGraden&#39;] != null
+          ? (j[&#39;dakhellingGraden&#39;] as num).toDouble()
+          : 30.0,
+      pvLaagActief: j[&#39;pvLaagActief&#39;] as bool? ?? false,
+      pvLaagPositie: j[&#39;pvLaagPositie&#39;] != null
+          ? PvLaagPositie.values.byName(j[&#39;pvLaagPositie&#39;] as String)
+          : PvLaagPositie.topLaag,
     );</code></pre>
 </section>
 
@@ -150,7 +168,7 @@
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>

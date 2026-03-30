@@ -19,6 +19,8 @@ import 'dart:math';
 import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
 import '../models/invoer.dart';
+import '../models/kabel_boom.dart';
+import '../models/leiding_node.dart';
 import '../models/resultaten.dart';
 import '../data/materiaal_data.dart';
 import '../data/catalogus.dart' show adersLabel;
@@ -78,8 +80,25 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     }
   } else {
     rij('Omgevingstemperatuur', '${inv.omgevingstempC.toStringAsFixed(0)} °C');
-    if (inv.zonlichtToeslagK > 0) {
+    if (inv.pvLaagActief) {
+      const laagNamen = {
+        PvLaagPositie.topLaag:    'bovenste laag',
+        PvLaagPositie.tweedeLaag: '2e laag',
+        PvLaagPositie.middenLaag: 'middenlaag',
+        PvLaagPositie.onderLaag:  'onderste laag',
+      };
+      rij('PV-laagpositie ΔT_zon',
+          '+${inv.deltaTZonPvLaag.toStringAsFixed(0)} K'
+          '  (${laagNamen[inv.pvLaagPositie]}  — IEC 60364-5-52)');
+    } else if (inv.zonlichtToeslagK > 0) {
       rij('Zonlichttoeslag', '+${inv.zonlichtToeslagK.toStringAsFixed(0)} K  (NEN 1010)');
+    }
+    if (inv.windkoelingActief) {
+      final dtW = inv.deltaTWindKoeling;
+      rij('Windkoeling ΔT_wind',
+          '${dtW >= 0 ? "+" : ""}${dtW.toStringAsFixed(1)} K'
+          '  (${inv.windsnelheid.label}'
+          '${inv.gootMetDeksel ? ", met deksel" : ""})');
     }
   }
   if (inv.nParallel > 1) {
@@ -143,10 +162,20 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     titel(l10n.rapportCF);
     final tMax = ip.maxTempContinu;
     final tRef = ip.refTempTabel;
-    rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C'
-        '${r.tEffectief > (inv.isGrondkabel ? inv.grondtempC : inv.omgevingstempC) ? "  (incl. zonlicht)" : ""}');
+    // θ_eff opbouw: toon uitsplitsing als zon of wind actief is
+    if (!inv.isGrondkabel && (inv.pvLaagActief || inv.zonlichtToeslagK > 0 || inv.windkoelingActief)) {
+      final tBase = inv.omgevingstempC;
+      final dtZonR = inv.pvLaagActief ? inv.deltaTZonPvLaag : inv.zonlichtToeslagK;
+      final dtWindR = inv.windkoelingActief ? inv.deltaTWindKoeling : 0.0;
+      final delen = <String>['${tBase.toStringAsFixed(1)} °C'];
+      if (dtZonR > 0) delen.add('+${dtZonR.toStringAsFixed(1)} K (zon)');
+      if (dtWindR != 0) delen.add('${dtWindR >= 0 ? "+" : ""}${dtWindR.toStringAsFixed(1)} K (wind)');
+      rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C  = ${delen.join(" ")}');
+    } else {
+      rij('θ_eff (omgeving)', '${r.tEffectief.toStringAsFixed(1)} °C');
+    }
     rij('f_T  (temperatuur)', '${r.fT.toStringAsFixed(4)}'
-        '  = √[(${tMax.toInt()}−${r.tEffectief.toStringAsFixed(1)})/(${tMax.toInt()}−${tRef.toInt()})]');
+        '  = sqrt[(${tMax.toInt()}-${r.tEffectief.toStringAsFixed(1)})/(${tMax.toInt()}-${tRef.toInt()})]');
     if (r.bundelPositieWorst != null) {
       rij('f_bundel', '${r.fBundel.toStringAsFixed(4)}  = f_h × f_v');
       rij('  f_h (horizontaal)', '${r.fHorizontaal.toStringAsFixed(4)}  (IEC tabel B.52.20)');
@@ -178,7 +207,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
 
     if (inv.cyclischProfiel != null) {
       titel(l10n.rapportCyclischNr(4));
-      buf.writeln('Formule: M = 1 / √( Σ Yᵢ·ΔθR(i)  +  μ·(1 − θR(6)) )');
+      buf.writeln('Formule: M = 1 / sqrt( sum Yi*dthR(i)  +  mu*(1 - thR(6)) )');
       rij('Aantal kringen N', '${inv.cyclischNKringen}');
       rij('Ligging kringen', inv.cyclischAanliggend
           ? 'Aanliggend (touching)'
@@ -249,6 +278,34 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
     rij('Veiligheidsmarge', '${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %'
         '  = (${r.iz.toStringAsFixed(1)}/${iGrondslag.toStringAsFixed(2)} − 1) × 100');
 
+    // Bundel positievergelijking
+    if (r.bundelPositieWorst != null) {
+      titel('BUNDEL: POSITIEVERGELIJKING');
+      if (r.bundelZonGesplitst) {
+        // 4 kolommen: centrum (geen zon) | bov.laag centrum ☀ | bov.laag hoek ☀ | lag.lagen hoek
+        String k(String s) => s.padLeft(13);
+        buf.writeln('${''.padRight(26)}${k("Cent.bundel")}${k("Bov.laag ctr")}${k("Bov.laag hoek")}${k("Lag.lag.hoek")}');
+        buf.writeln('${''.padRight(26)}${k("(geen zon)")}${k("(volle zon)")}${k("(volle zon)")}${k("(geen zon)")}');
+        buf.writeln('─' * 64);
+        buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelBovensteC!.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
+        buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izBovensteC!.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}${k(r.izLagereHoek!.toStringAsFixed(1))}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k("${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %")}${k("${r.margeBovensteC! >= 0 ? "+" : ""}${r.margeBovensteC!.toStringAsFixed(1)} %")}${k("${r.margeStroomPctRand >= 0 ? "+" : ""}${r.margeStroomPctRand.toStringAsFixed(1)} %")}${k("${r.margeLagereHoek! >= 0 ? "+" : ""}${r.margeLagereHoek!.toStringAsFixed(1)} %")}');
+        buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempBovensteC!.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}${k(r.geleiderTempLagereHoek!.toStringAsFixed(1))}');
+        buf.writeln();
+        buf.writeln('Zon uitsluitend op bovenste laag; lagere lagen afgeschermd.');
+        buf.writeln('fV_top = fV(2): bovenste laag heeft alleen laag direct eronder als thermische buur.');
+      } else {
+        // 2 kolommen: centrum | hoek
+        String k(String s) => s.padLeft(16);
+        buf.writeln('${"".padRight(26)}${k("Centrum")}${k("Hoek")}');
+        buf.writeln('─' * 64);
+        buf.writeln('${"f_bundel".padRight(26)}${k(r.fBundel.toStringAsFixed(3))}${k(r.fBundelRand.toStringAsFixed(3))}');
+        buf.writeln('${"I_z (A)".padRight(26)}${k(r.iz.toStringAsFixed(1))}${k(r.izRand.toStringAsFixed(1))}');
+        buf.writeln('${"Marge (%)".padRight(26)}${k("${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %")}${k("${r.margeStroomPctRand >= 0 ? "+" : ""}${r.margeStroomPctRand.toStringAsFixed(1)} %")}');
+        buf.writeln('${"T geleider (°C)".padRight(26)}${k(r.geleiderTempCWarm.toStringAsFixed(1))}${k(r.geleiderTempCKoud.toStringAsFixed(1))}');
+      }
+    }
+
     titel(l10n.rapportSVNr(5 + sOffset));
     final gelProp = geleiderEigenschappen[k.geleider]!;
     final rAt = k.rAcPerKm20C * (1 + gelProp.alpha20 * (tMax - 20)) / 1000;
@@ -264,12 +321,12 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
             ' × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})');
       case Systeemtype.ac3Fase:
         final sinPhi = sqrt(max(0.0, 1 - inv.cosPhi * inv.cosPhi));
-        buf.writeln('Formule:  ΔU = √3 · I · L · (R·cosφ + X·sinφ)');
+        buf.writeln('Formule:  dU = sqrt(3) * I * L * (R*cos(phi) + X*sin(phi))');
         rij('R_AC @ ${tMax.toInt()}°C', '${rAt.toStringAsFixed(6)} Ω/m');
         rij('X', '${xM.toStringAsFixed(6)} Ω/m');
         rij('sin φ', sinPhi.toStringAsFixed(4));
-        buf.writeln('ΔU = √3 × ${r.iPerKabel.toStringAsFixed(2)} × ${inv.lengteM.toStringAsFixed(1)}'
-            ' × (${rAt.toStringAsFixed(6)}×${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}×${sinPhi.toStringAsFixed(4)})');
+        buf.writeln('dU = sqrt(3) * ${r.iPerKabel.toStringAsFixed(2)} * ${inv.lengteM.toStringAsFixed(1)}'
+            ' * (${rAt.toStringAsFixed(6)}*${inv.cosPhi.toStringAsFixed(3)} + ${xM.toStringAsFixed(6)}*${sinPhi.toStringAsFixed(4)})');
       case Systeemtype.dc2Draad:
         final rDc = gelProp.rDc(k.doorsnedemm2, 1.0, t: tMax);
         buf.writeln('Formule:  ΔU = 2 · I · R_DC · L');
@@ -310,7 +367,7 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
       final kVal = kWaarden[(k.geleider, k.isolatie)] ?? 0.0;
       final tS = inv.kortsluitduurMs / 1000.0;
       final ikPK = inv.kortsluitstroomA / r.nParallel;
-      buf.writeln('Formule min. doorsnede:  A_min = I_k · √t / k');
+      buf.writeln('Formule min. doorsnede:  A_min = I_k * sqrt(t) / k');
       rij('I_k (per kabel)', '${ikPK.toStringAsFixed(0)} A'
           '${r.nParallel > 1 ? "  = ${inv.kortsluitstroomA.toStringAsFixed(0)}/${r.nParallel}" : ""}');
       rij('t (kortsluitduur)', '${tS.toStringAsFixed(3)} s  (${inv.kortsluitduurMs.toStringAsFixed(0)} ms)');
@@ -346,12 +403,162 @@ String berekeningRapportTekst(Invoer inv, Resultaten r, AppLocalizations l10n) {
   buf.writeln('=' * 64);
   if (r.fouten.isNotEmpty) {
     buf.writeln('\n${l10n.rapportFouten}');
-    for (final f in r.fouten) { buf.writeln('  • $f'); }
+    for (final f in r.fouten) { buf.writeln('  - $f'); }
   }
   if (r.waarschuwingen.isNotEmpty) {
     buf.writeln('\n${l10n.rapportWaarschuwingen}');
-    for (final w in r.waarschuwingen) { buf.writeln('  ⚠ $w'); }
+    for (final w in r.waarschuwingen) { buf.writeln('  [!] $w'); }
   }
+  buf.writeln('\n${l10n.rapportFooter}');
+  return buf.toString();
+}
+
+// ── KABELNET-RAPPORT ──────────────────────────────────────────────────────────
+
+/// Genereert een tekstrapport voor het volledige kabelnet [boom].
+/// Leidingen worden in diepte-eerst volgorde weergegeven (bron → aftakkingen).
+String boomRapportTekst(KabelBoom boom, AppLocalizations l10n) {
+  final buf = StringBuffer();
+  final nu = DateTime.now();
+  final datum =
+      '${nu.day.toString().padLeft(2, '0')}-${nu.month.toString().padLeft(2, '0')}-${nu.year}'
+      '  ${nu.hour.toString().padLeft(2, '0')}:${nu.minute.toString().padLeft(2, '0')}';
+
+  void lijn([int n = 64]) => buf.writeln('─' * n);
+  void rij(String label, String waarde, {int indent = 2}) =>
+      buf.writeln('${' ' * indent}${label.padRight(26 - indent)}$waarde');
+
+  // ── Koptekst ──────────────────────────────────────────────────────────────
+  buf.writeln(l10n.boomRapportTitel);
+  buf.writeln(l10n.rapportNorm);
+  buf.writeln('${l10n.rapportDatum}: $datum');
+  buf.writeln('=' * 64);
+  buf.writeln('Kabelnet : ${boom.naam}');
+
+  final zb = boom.zbOhm(400);
+  if (boom.zbRxHandmatig) {
+    rij('Z_b (R+X handmatig)',
+        '${(zb * 1000).toStringAsFixed(2)} mΩ'
+        '  (R=${(boom.zbROhm * 1000).toStringAsFixed(2)} mΩ'
+        ', X=${(boom.zbXOhm * 1000).toStringAsFixed(2)} mΩ)',
+        indent: 0);
+  } else {
+    rij('Transformator',
+        '${boom.transformatorKva.toInt()} kVA'
+        '  u_cc = ${boom.transformatorUccPct.toStringAsFixed(1)} %',
+        indent: 0);
+    if (!boom.skNetOneindig) {
+      rij('Sk-net', '${boom.skNetMva.toStringAsFixed(1)} MVA', indent: 0);
+    }
+    if (zb > 0) {
+      rij('Z_b', '${(zb * 1000).toStringAsFixed(2)} mΩ', indent: 0);
+    }
+  }
+  rij('Aardingsstelsel', boom.aardingsstelsel.label, indent: 0);
+  if (zb > 0) {
+    rij('I_k3f bron',
+        '${(boom.ik3fBron(400) / 1000).toStringAsFixed(2)} kA', indent: 0);
+  }
+  buf.writeln('=' * 64);
+
+  // ── Leidingen in diepte-eerst volgorde ───────────────────────────────────
+  final nodes = boom.nodes;
+
+  // Bouw opzoektabel id → node voor snelle ouder-lookup.
+  final byId = {for (final n in nodes) n.id: n};
+
+  // Diepte-eerst traversal startend van rootnodes.
+  void schrijfNode(LeidingNode node, int depth) {
+    final indent = '  ' * depth;
+    final r = node.resultaten;
+    final ouder = node.parentId != null ? byId[node.parentId]?.naam : null;
+
+    buf.writeln();
+    lijn();
+    buf.writeln('$indent LEIDING: ${node.naam}');
+    if (ouder != null) {
+      buf.writeln('$indent   Aftakking van: $ouder');
+    } else {
+      buf.writeln('$indent   Verbinding: direct aan bron');
+    }
+
+    // Status
+    final status = r == null
+        ? '--  ${l10n.boomRapportNietBerekend}'
+        : r.voldoet
+            ? '[OK]  ${l10n.rapportEindVoldoet}'
+            : '[X]   ${l10n.rapportEindGefaald}';
+    buf.writeln('$indent   Status: $status');
+
+    // Invoer samenvatting
+    final inv = node.invoer;
+    buf.writeln('$indent   Invoer:');
+    buf.writeln('$indent     ${inv.systeem.label}  ${inv.spanningV.toStringAsFixed(0)} V'
+        '  |  ${adersLabel(inv.aantalAders)}');
+    if (inv.vermogenW != null && inv.vermogenW! > 0) {
+      buf.writeln('$indent     P = ${inv.vermogenW!.toStringAsFixed(0)} W'
+          '  cosφ = ${inv.cosPhi.toStringAsFixed(2)}'
+          '  →  I = ${inv.effectieveStroom.toStringAsFixed(1)} A');
+    } else {
+      buf.writeln('$indent     I = ${inv.stroomA.toStringAsFixed(1)} A');
+    }
+    buf.writeln('$indent     ${inv.geleider.label} ${inv.isolatie.label}'
+        '  |  ${inv.legging.label}'
+        '  |  L = ${inv.lengteM.toStringAsFixed(1)} m');
+    if (inv.forceerDoorsnedemm2 != null) {
+      buf.writeln('$indent     Geforceerde doorsnede: ${inv.forceerDoorsnedemm2} mm²');
+    }
+
+    // Resultaten samenvatting
+    if (r != null && r.kabel != null) {
+      final k = r.kabel!;
+      buf.writeln('$indent   Resultaten:');
+      buf.writeln('$indent     Doorsnede: ${k.doorsnedemm2} mm²'
+          '  |  I_z = ${r.iz.toStringAsFixed(1)} A'
+          '  |  marge: ${r.margeStroomPct >= 0 ? "+" : ""}${r.margeStroomPct.toStringAsFixed(1)} %');
+      buf.writeln('$indent     ΔU = ${r.deltaUPct.toStringAsFixed(2)} %'
+          ' (${r.okSpanning ? "OK" : "OVERSCHREDEN"})'
+          '  |  T_geleider = ${r.geleiderTempC.toStringAsFixed(1)} °C');
+      if (r.ik1fEindA != null) {
+        buf.writeln('$indent     I_k1f eind = ${r.ik1fEindA!.toStringAsFixed(0)} A');
+      }
+      if (r.maxLengteM != null) {
+        buf.writeln('$indent     L_max = ${r.maxLengteM!.toStringAsFixed(1)} m'
+            ' (opgegeven: ${inv.lengteM.toStringAsFixed(1)} m'
+            ' — ${r.okMaxLengte == true ? "OK" : "OVERSCHREDEN"})');
+      }
+      if (r.fouten.isNotEmpty) {
+        buf.writeln('$indent     ${l10n.rapportFouten}');
+        for (final f in r.fouten) {
+          buf.writeln('$indent       - $f');
+        }
+      }
+      if (r.waarschuwingen.isNotEmpty) {
+        for (final w in r.waarschuwingen) {
+          buf.writeln('$indent       [!] $w');
+        }
+      }
+    } else if (r != null && r.fouten.isNotEmpty) {
+      buf.writeln('$indent   ${l10n.rapportFouten}');
+      for (final f in r.fouten) {
+        buf.writeln('$indent     - $f');
+      }
+    }
+
+    // Recursief kinderen
+    final kinderen = nodes.where((n) => n.parentId == node.id).toList();
+    for (final kind in kinderen) {
+      schrijfNode(kind, depth + 1);
+    }
+  }
+
+  final roots = nodes.where((n) => n.parentId == null).toList();
+  for (final root in roots) {
+    schrijfNode(root, 0);
+  }
+
+  buf.writeln();
+  buf.writeln('=' * 64);
   buf.writeln('\n${l10n.rapportFooter}');
   return buf.toString();
 }

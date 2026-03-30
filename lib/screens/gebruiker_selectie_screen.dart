@@ -18,8 +18,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
+import '../models/enums.dart';
 import '../models/gebruiker.dart';
 import '../state/gebruikers_provider.dart';
+import '../widgets/invoer_rij.dart';
 
 class GebruikerSelectieScreen extends StatelessWidget {
   const GebruikerSelectieScreen({super.key});
@@ -145,6 +147,8 @@ class _MenuKnop extends StatelessWidget {
         switch (actie) {
           case _MenuActie.hernoemen:
             await _hernoemen(context);
+          case _MenuActie.standaardwaarden:
+            await _bewerkenPreset(context);
           case _MenuActie.verwijderen:
             await _verwijderen(context);
         }
@@ -155,6 +159,14 @@ class _MenuKnop extends StatelessWidget {
           child: ListTile(
             leading: const Icon(Icons.drive_file_rename_outline),
             title: Text(l10n.gebruikerHernoemen),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        PopupMenuItem(
+          value: _MenuActie.standaardwaarden,
+          child: ListTile(
+            leading: const Icon(Icons.tune_outlined),
+            title: Text(l10n.gebruikerStandaardwaarden),
             contentPadding: EdgeInsets.zero,
           ),
         ),
@@ -206,6 +218,21 @@ class _MenuKnop extends StatelessWidget {
     }
   }
 
+  Future<void> _bewerkenPreset(BuildContext context) async {
+    final nieuw = await showDialog<GebruikerPreset>(
+      context: context,
+      builder: (ctx) => _PresetDialog(preset: gebruiker.preset, l10n: l10n),
+    );
+    if (nieuw != null && context.mounted) {
+      await context.read<GebruikersProvider>().slaPresetOp(gebruiker.id, nieuw);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.snackPresetOpgeslagen)),
+        );
+      }
+    }
+  }
+
   Future<void> _verwijderen(BuildContext context) async {
     final bevestigd = await showDialog<bool>(
       context: context,
@@ -233,4 +260,124 @@ class _MenuKnop extends StatelessWidget {
   }
 }
 
-enum _MenuActie { hernoemen, verwijderen }
+enum _MenuActie { hernoemen, standaardwaarden, verwijderen }
+
+// ── Preset-dialoog ────────────────────────────────────────────────────────────
+
+class _PresetDialog extends StatefulWidget {
+  const _PresetDialog({required this.preset, required this.l10n});
+  final GebruikerPreset preset;
+  final AppLocalizations l10n;
+
+  @override
+  State<_PresetDialog> createState() => _PresetDialogState();
+}
+
+class _PresetDialogState extends State<_PresetDialog> {
+  late GebruikerPreset _p;
+
+  @override
+  void initState() {
+    super.initState();
+    _p = widget.preset;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+    return AlertDialog(
+      title: Text(l10n.presetTitel),
+      content: SingleChildScrollView(
+        child: SizedBox(
+          width: 380,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownRij<Systeemtype>(
+                label: l10n.presetSysteem,
+                waarde: _p.systeem,
+                opties: Systeemtype.values,
+                display: (s) => s.label,
+                onChanged: (v) => setState(() => _p = _p.copyWith(systeem: v)),
+              ),
+              const SizedBox(height: 4),
+              GetalVeld(
+                label: l10n.presetSpanning,
+                eenheid: 'V',
+                waarde: _p.spanningV,
+                onChanged: (v) => setState(() => _p = _p.copyWith(spanningV: v)),
+                min: 12,
+                max: 1000,
+                decimalen: 0,
+              ),
+              const SizedBox(height: 4),
+              DropdownRij<Geleidermateriaal>(
+                label: l10n.presetGeleider,
+                waarde: _p.geleider,
+                opties: Geleidermateriaal.values,
+                display: (g) => g.label,
+                onChanged: (v) => setState(() => _p = _p.copyWith(geleider: v)),
+              ),
+              const SizedBox(height: 4),
+              DropdownRij<Isolatiemateriaal>(
+                label: l10n.presetIsolatie,
+                waarde: _p.isolatie,
+                opties: Isolatiemateriaal.values,
+                display: (i) => i.label,
+                onChanged: (v) => setState(() => _p = _p.copyWith(isolatie: v)),
+              ),
+              const SizedBox(height: 4),
+              DropdownRij<Leggingswijze>(
+                label: l10n.presetLegging,
+                waarde: _p.legging,
+                opties: Leggingswijze.values,
+                display: (l) => l.label,
+                onChanged: (v) => setState(() => _p = _p.copyWith(legging: v)),
+              ),
+              const SizedBox(height: 4),
+              GetalVeld(
+                label: l10n.presetOmgeving,
+                eenheid: '°C',
+                waarde: _p.omgevingstempC,
+                onChanged: (v) => setState(() => _p = _p.copyWith(omgevingstempC: v)),
+                min: -40,
+                max: 60,
+                decimalen: 0,
+              ),
+              const SizedBox(height: 4),
+              GetalVeld(
+                label: l10n.presetMaxSpanning,
+                eenheid: '%',
+                waarde: _p.maxSpanningsvalPct,
+                onChanged: (v) => setState(() => _p = _p.copyWith(maxSpanningsvalPct: v)),
+                min: 0.5,
+                max: 10,
+                decimalen: 1,
+              ),
+              const SizedBox(height: 4),
+              GetalVeld(
+                label: l10n.presetCosPhi,
+                eenheid: '',
+                waarde: _p.cosPhi,
+                onChanged: (v) => setState(() => _p = _p.copyWith(cosPhi: v)),
+                min: 0.5,
+                max: 1.0,
+                decimalen: 2,
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.btnAnnuleren),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _p),
+          child: Text(l10n.btnOpslaan),
+        ),
+      ],
+    );
+  }
+}

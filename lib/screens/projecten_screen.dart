@@ -117,7 +117,7 @@ class _ProjectTegel extends StatelessWidget {
           style: theme.textTheme.titleMedium
               ?.copyWith(fontWeight: FontWeight.w600)),
       subtitle: Text(
-        '${l10n.berekeningen(project.berekeningen.length)}  ·  ${l10n.gewijzigd}: $gewijzigd',
+        '${l10n.berekeningen(project.berekeningen.length)}  ·  ${l10n.bomen(project.bomen.length)}  ·  ${l10n.gewijzigd}: $gewijzigd',
         style: theme.textTheme.bodySmall
             ?.copyWith(color: theme.colorScheme.outline),
       ),

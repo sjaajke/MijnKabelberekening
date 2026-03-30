@@ -19,6 +19,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/invoer.dart';
+import '../models/kabel_boom.dart';
 import '../models/project.dart';
 
 class ProjectenProvider extends ChangeNotifier {
@@ -116,6 +117,38 @@ class ProjectenProvider extends ChangeNotifier {
         .toList();
     _projecten[idx] = _projecten[idx].copyWith(
       berekeningen: nieuw,
+      gewijzigd: DateTime.now(),
+    );
+    notifyListeners();
+    await _slaOp();
+  }
+
+  Future<void> voegBoomToe(
+      String projectId, String naam, KabelBoom boom) async {
+    final idx = _projecten.indexWhere((p) => p.id == projectId);
+    if (idx < 0) return;
+    final now = DateTime.now();
+    final opgeslaanBoom = OpgeslaanBoom(
+      id: now.microsecondsSinceEpoch.toString(),
+      naam: naam.trim(),
+      aangemaakt: now,
+      boomData: boom.toJson(),
+    );
+    _projecten[idx] = _projecten[idx].copyWith(
+      bomen: [..._projecten[idx].bomen, opgeslaanBoom],
+      gewijzigd: now,
+    );
+    notifyListeners();
+    await _slaOp();
+  }
+
+  Future<void> verwijderBoom(String projectId, String boomId) async {
+    final idx = _projecten.indexWhere((p) => p.id == projectId);
+    if (idx < 0) return;
+    final nieuw =
+        _projecten[idx].bomen.where((b) => b.id != boomId).toList();
+    _projecten[idx] = _projecten[idx].copyWith(
+      bomen: nieuw,
       gewijzigd: DateTime.now(),
     );
     notifyListeners();

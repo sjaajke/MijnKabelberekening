@@ -46,6 +46,8 @@ class UitlegScreen extends StatelessWidget {
             const SizedBox(height: 8),
             _HarmonischenSectie(),
             const SizedBox(height: 8),
+            _WindkoelingUitlegSectie(),
+            const SizedBox(height: 8),
             _KortsluitMinSectie(),
             const SizedBox(height: 8),
             _KabelkeuzeSectie(),
@@ -188,6 +190,7 @@ class _OverzichtSectie extends StatelessWidget {
       ('2', l10n.overzichtCF, l10n.overzichtCFSub),
       ('2a', l10n.overzichtCyclisch, l10n.overzichtCyclischSub),
       ('2b', l10n.overzichtHarm, l10n.overzichtHarmSub),
+      ('2c', l10n.overzichtWindkoeling, l10n.overzichtWindkoelingSub),
       ('3', l10n.overzichtMinDoorsnede, l10n.overzichtMinDoorsnedeFormule),
       ('4', l10n.overzichtKabelkeuze, l10n.overzichtKabelkeuzeSub),
       ('5', l10n.overzichtSpanningsval, l10n.overzichtSpanningsvalSub),
@@ -470,6 +473,151 @@ class _HarmonischenSectie extends StatelessWidget {
         _Rij('h₃ = 33–45%:', l10n.harmZone2.replaceAll('\n', ' ')),
         _Rij('h₃ > 45%:', l10n.harmZone3.replaceAll('\n', ' ')),
         _Noot(l10n.harmToepassingsgebied),
+      ],
+    );
+  }
+}
+
+// ── Sectie 2c: Windkoeling & PV-laagpositie ───────────────────────────────────
+
+class _WindkoelingUitlegSectie extends StatelessWidget {
+  const _WindkoelingUitlegSectie();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return SectieCard(
+      titel: l10n.windkoelingUitlegTitel,
+      icoon: Icons.air,
+      children: [
+        Text(l10n.windkoelingUitlegIntro),
+        const SizedBox(height: 12),
+
+        // Windkoelingsmodel
+        Text(l10n.windkoelingUitlegModelTitel,
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 6),
+        Text(l10n.windkoelingUitlegModelIntro),
+        const SizedBox(height: 4),
+        _Formule(
+          'θ_eff = θ_omg + ΔT_zon + ΔT_wind',
+          uitleg: 'ΔT_wind = ΔT_deksel − ΔT_afkoeling  (negatief = koeling verbetert)',
+        ),
+        const SizedBox(height: 8),
+        Text(l10n.windkoelingUitlegTabelTitel,
+            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        DataTable(
+          columnSpacing: 16,
+          dataRowMinHeight: 28,
+          dataRowMaxHeight: 28,
+          headingRowHeight: 34,
+          headingRowColor: WidgetStateProperty.all(
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.45),
+          ),
+          columns: const [
+            DataColumn(label: Text('Windsnelheid')),
+            DataColumn(label: Text('ΔT_wind'), numeric: true),
+            DataColumn(label: Text('h_conv (W/m²K)'), numeric: true),
+          ],
+          rows: const [
+            DataRow(cells: [DataCell(Text('0 m/s  (windstil)')),   DataCell(Text('0 K')),   DataCell(Text('~6'))]),
+            DataRow(cells: [DataCell(Text('1–2 m/s  (zwak)')),     DataCell(Text('−3 K')),  DataCell(Text('~7'))]),
+            DataRow(cells: [DataCell(Text('3–5 m/s  (matig)')),    DataCell(Text('−6 K')),  DataCell(Text('~10'))]),
+            DataRow(cells: [DataCell(Text('5–10 m/s  (sterk)')),   DataCell(Text('−10 K')), DataCell(Text('~15'))]),
+            DataRow(cells: [DataCell(Text('10+ m/s  (storm)')),    DataCell(Text('−15 K')), DataCell(Text('~18'))]),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(l10n.windkoelingUitlegDekselTitel,
+            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        _Noot(l10n.windkoelingUitlegDekselSub),
+        const SizedBox(height: 12),
+
+        // PV-laagpositie model
+        Text(l10n.pvLaagUitlegTitel,
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 6),
+        Text(l10n.pvLaagUitlegIntro),
+        const SizedBox(height: 4),
+        DataTable(
+          columnSpacing: 16,
+          dataRowMinHeight: 28,
+          dataRowMaxHeight: 28,
+          headingRowHeight: 34,
+          headingRowColor: WidgetStateProperty.all(
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.45),
+          ),
+          columns: const [
+            DataColumn(label: Text('Laagpositie')),
+            DataColumn(label: Text('ΔT_zon'), numeric: true),
+            DataColumn(label: Text('Scenario')),
+          ],
+          rows: const [
+            DataRow(cells: [DataCell(Text('Bovenste laag')),  DataCell(Text('+25 K')), DataCell(Text('Directe volle zon'))]),
+            DataRow(cells: [DataCell(Text('2e laag')),        DataCell(Text('+12 K')), DataCell(Text('Indirect / reflectie'))]),
+            DataRow(cells: [DataCell(Text('Middenlaag')),     DataCell(Text('+5 K')),  DataCell(Text('Minimale indirecte warmte'))]),
+            DataRow(cells: [DataCell(Text('Onderste laag')),  DataCell(Text('0 K')),   DataCell(Text('Volledig beschaduwd'))]),
+          ],
+        ),
+        const SizedBox(height: 6),
+        _Noot(l10n.pvLaagUitlegNoot),
+        const SizedBox(height: 16),
+
+        // Bundel zontemperatuur-splitsing
+        Text(l10n.bundelZonSplitsTitel,
+            style: theme.textTheme.titleSmall),
+        const SizedBox(height: 6),
+        Text(l10n.bundelZonSplitsIntro),
+        const SizedBox(height: 8),
+        DataTable(
+          columnSpacing: 12,
+          dataRowMinHeight: 28,
+          dataRowMaxHeight: 28,
+          headingRowHeight: 34,
+          headingRowColor: WidgetStateProperty.all(
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.45),
+          ),
+          columns: const [
+            DataColumn(label: Text('Positie')),
+            DataColumn(label: Text('Zon')),
+            DataColumn(label: Text('fH')),
+            DataColumn(label: Text('fV')),
+          ],
+          rows: const [
+            DataRow(cells: [
+              DataCell(Text('Centrum bundel')),
+              DataCell(Text('Geen')),
+              DataCell(Text('fH(nH)')),
+              DataCell(Text('fV(nV)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Bov. laag, centrum ☀')),
+              DataCell(Text('Vol (+25 K)')),
+              DataCell(Text('fH(nH)')),
+              DataCell(Text('fV(2)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Bov. laag, hoek ☀')),
+              DataCell(Text('Vol (+25 K)')),
+              DataCell(Text('fH(2)')),
+              DataCell(Text('fV(2)')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Lagere lagen, hoek')),
+              DataCell(Text('Geen')),
+              DataCell(Text('fH(2)')),
+              DataCell(Text('fV(2)')),
+            ]),
+          ],
+        ),
+        const SizedBox(height: 8),
+        _Formule(
+          l10n.bundelZonSplitsFormule,
+          uitleg: l10n.bundelZonSplitsVTop,
+        ),
       ],
     );
   }

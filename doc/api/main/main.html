@@ -70,18 +70,21 @@
   WidgetsFlutterBinding.ensureInitialized();
   final customProvider = CustomCatalogusProvider();
   final languageProvider = LanguageProvider();
+  final themeProvider = ThemeProvider();
   final projectenProvider = ProjectenProvider();
   final gebruikersProvider = GebruikersProvider(projectenProvider);
   final boomProvider = BoomProvider();
   await Future.wait([
     customProvider.laad(),
     languageProvider.laad(),
+    themeProvider.laad(),
     gebruikersProvider.laad(),
     boomProvider.laad(),
   ]);
   runApp(KabelberekeningApp(
     customProvider: customProvider,
     languageProvider: languageProvider,
+    themeProvider: themeProvider,
     projectenProvider: projectenProvider,
     gebruikersProvider: gebruikersProvider,
     boomProvider: boomProvider,
@@ -113,7 +116,7 @@
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>

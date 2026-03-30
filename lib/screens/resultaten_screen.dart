@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../state/berekening_provider.dart';
@@ -25,6 +26,7 @@ import '../models/enums.dart';
 import '../models/resultaten.dart';
 import '../data/materiaal_data.dart';
 import '../berekening/rapport.dart';
+import '../berekening/pdf_rapport.dart';
 import '../widgets/sectie_card.dart';
 import '../widgets/invoer_rij.dart';
 
@@ -70,6 +72,7 @@ class ResultatenScreen extends StatelessWidget {
           if (res.waarschuwingen.isNotEmpty) _waarschuwingen(context, res, l10n),
           _opslaanKnop(context, l10n),
           _kopieerKnop(context, res, l10n),
+          _pdfKnop(context, res, l10n),
           const SizedBox(height: 24),
         ],
       ),
@@ -134,8 +137,14 @@ class ResultatenScreen extends StatelessWidget {
   // ── EINDOORDEEL ────────────────────────────────────────────────────────────
   Widget _eindoordeel(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
     final ok = r.voldoet;
-    final kleur = ok ? Colors.green.shade700 : Colors.red.shade700;
-    final bg = ok ? Colors.green.shade50 : Colors.red.shade50;
+    final cs = Theme.of(ctx).colorScheme;
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+    final kleur = ok
+        ? (isDark ? Colors.green.shade300 : Colors.green.shade700)
+        : cs.onErrorContainer;
+    final bg = ok
+        ? (isDark ? Colors.green.shade900 : Colors.green.shade50)
+        : cs.errorContainer;
     return Card(
       color: bg,
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -143,7 +152,7 @@ class ResultatenScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Row(children: [
           Icon(ok ? Icons.check_circle : Icons.cancel, color: kleur, size: 32),
-          const SizedBox(width: 12),
+          const Flexible(child: SizedBox(width: 12)),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(ok ? l10n.eindVoldoet : l10n.eindGefaald,
@@ -159,7 +168,7 @@ class ResultatenScreen extends StatelessWidget {
                 if (r.nParallel > 1)
                   Text(
                     l10n.iPerKabelLabel(r.iPerKabel.toStringAsFixed(1)),
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
               ],
             ]),
@@ -285,6 +294,25 @@ class ResultatenScreen extends StatelessWidget {
                   ? l10n.grondslagNulpuntsstroom
                   : l10n.grondslagFasestroom),
         ],
+        if (r.deltaTWindK != null) ...[
+          ResultaatRij(
+            label: 'ΔT_wind  (windkoeling)',
+            waarde: '${r.deltaTWindK! >= 0 ? "+" : ""}${r.deltaTWindK!.toStringAsFixed(1)} K',
+            kleur: r.deltaTWindK! < 0 ? Colors.green.shade700 : Colors.orange.shade800,
+            vet: true,
+          ),
+          ResultaatRij(
+            label: l10n.lblThetaEff,
+            waarde: '${r.tEffectief.toStringAsFixed(1)} °C  (incl. wind)',
+          ),
+        ],
+        if (r.dtZonPvLaagK != null)
+          ResultaatRij(
+            label: 'ΔT_zon  (PV-laagpositie, IEC 60364)',
+            waarde: '+${r.dtZonPvLaagK!.toStringAsFixed(1)} K',
+            kleur: r.dtZonPvLaagK! > 10 ? Colors.orange.shade800 : Colors.blue.shade700,
+            vet: true,
+          ),
         const Divider(height: 10),
         ResultaatRij(
             label: 'f_TOTAAL',
@@ -346,12 +374,16 @@ class ResultatenScreen extends StatelessWidget {
   // ── BUNDEL POSITIEVERGELIJKING ────────────────────────────────────────────
   Widget _bundelPosities(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
     final theme = Theme.of(ctx);
+    final zon = r.bundelZonGesplitst;
     final hasDiff = (r.fBundelRand - r.fBundel).abs() > 0.001;
 
     String margeStr(double m) =>
         '${m >= 0 ? "+" : ""}${m.toStringAsFixed(1)} %';
     Color margeKleur(double m) =>
         m >= 0 ? Colors.green.shade700 : Colors.red.shade700;
+
+    // Labelbreedte iets smaller bij 4 kolommen zodat kolommen genoeg ruimte hebben
+    final double labelW = zon ? 100 : 120;
 
     Widget kop(String tekst) => Expanded(
           child: Text(tekst,
@@ -369,75 +401,135 @@ class ResultatenScreen extends StatelessWidget {
                   fontWeight: vet ? FontWeight.bold : FontWeight.normal)),
         );
 
-    Widget rij(String label, String warm, String koud,
-        {Color? kleurWarm, Color? kleurKoud, bool vet = false}) {
+    // 2-koloms rij (zonder zon-splitsing)
+    Widget rij2(String label, String k1, String k2,
+        {Color? kleur1, Color? kleur2, bool vet = false}) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(children: [
-          SizedBox(
-            width: 120,
-            child: Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: vet ? FontWeight.bold : FontWeight.normal)),
-          ),
-          cel(warm, kleur: kleurWarm, vet: vet),
-          cel(koud, kleur: kleurKoud, vet: vet),
+          SizedBox(width: labelW,
+              child: Text(label, style: TextStyle(fontSize: 13,
+                  fontWeight: vet ? FontWeight.bold : FontWeight.normal))),
+          cel(k1, kleur: kleur1, vet: vet),
+          cel(k2, kleur: kleur2, vet: vet),
         ]),
       );
     }
+
+    // 4-koloms rij (met zon-splitsing)
+    Widget rij4(String label, String k1, String k2, String k3, String k4,
+        {Color? kleur1, Color? kleur2, Color? kleur3, Color? kleur4,
+         bool vet = false}) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(children: [
+          SizedBox(width: labelW,
+              child: Text(label, style: TextStyle(fontSize: 13,
+                  fontWeight: vet ? FontWeight.bold : FontWeight.normal))),
+          cel(k1, kleur: kleur1, vet: vet),
+          cel(k2, kleur: kleur2, vet: vet),
+          cel(k3, kleur: kleur3, vet: vet),
+          cel(k4, kleur: kleur4, vet: vet),
+        ]),
+      );
+    }
+
+    Color? tempKleur(double t) =>
+        t > r.maxTempC ? Colors.red.shade700 : null;
 
     return SectieCard(
       titel: l10n.sectBundelPosities,
       icoon: Icons.grid_view,
       children: [
+        // Kolomkoppen
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Row(children: [
-            const SizedBox(width: 120),
-            kop(l10n.colCentrum),
-            kop(l10n.colHoek),
+            SizedBox(width: labelW),
+            if (zon) ...[
+              kop(l10n.colCentrumZon),
+              kop(l10n.colBovensteC),
+              kop(l10n.colBovensteHoek),
+              kop(l10n.colLagereHoek),
+            ] else ...[
+              kop(l10n.colCentrum),
+              kop(l10n.colHoek),
+            ],
           ]),
         ),
         const Divider(height: 6),
-        rij('f_bundel',
-            r.fBundel.toStringAsFixed(3),
-            r.fBundelRand.toStringAsFixed(3)),
-        rij('I_z (A)',
-            r.iz.toStringAsFixed(1),
-            r.izRand.toStringAsFixed(1),
-            vet: true),
-        rij(l10n.rowMarge,
-            margeStr(r.margeStroomPct),
-            margeStr(r.margeStroomPctRand),
-            kleurWarm: margeKleur(r.margeStroomPct),
-            kleurKoud: margeKleur(r.margeStroomPctRand),
-            vet: true),
-        rij(l10n.rowTGeleider,
-            r.geleiderTempCWarm.toStringAsFixed(1),
-            r.geleiderTempCKoud.toStringAsFixed(1),
-            kleurWarm: r.geleiderTempCWarm > r.maxTempC
-                ? Colors.red.shade700
-                : null,
-            kleurKoud: r.geleiderTempCKoud > r.maxTempC
-                ? Colors.red.shade700
-                : null),
+
+        if (zon) ...[
+          rij4('f_bundel',
+              r.fBundel.toStringAsFixed(3),
+              r.fBundelBovensteC!.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3)),
+          rij4('I_z (A)',
+              r.iz.toStringAsFixed(1),
+              r.izBovensteC!.toStringAsFixed(1),
+              r.izRand.toStringAsFixed(1),
+              r.izLagereHoek!.toStringAsFixed(1),
+              vet: true),
+          rij4(l10n.rowMarge,
+              margeStr(r.margeStroomPct),
+              margeStr(r.margeBovensteC!),
+              margeStr(r.margeStroomPctRand),
+              margeStr(r.margeLagereHoek!),
+              kleur1: margeKleur(r.margeStroomPct),
+              kleur2: margeKleur(r.margeBovensteC!),
+              kleur3: margeKleur(r.margeStroomPctRand),
+              kleur4: margeKleur(r.margeLagereHoek!),
+              vet: true),
+          rij4(l10n.rowTGeleider,
+              r.geleiderTempCWarm.toStringAsFixed(1),
+              r.geleiderTempBovensteC!.toStringAsFixed(1),
+              r.geleiderTempCKoud.toStringAsFixed(1),
+              r.geleiderTempLagereHoek!.toStringAsFixed(1),
+              kleur1: tempKleur(r.geleiderTempCWarm),
+              kleur2: tempKleur(r.geleiderTempBovensteC!),
+              kleur3: tempKleur(r.geleiderTempCKoud),
+              kleur4: tempKleur(r.geleiderTempLagereHoek!)),
+        ] else ...[
+          rij2('f_bundel',
+              r.fBundel.toStringAsFixed(3),
+              r.fBundelRand.toStringAsFixed(3)),
+          rij2('I_z (A)',
+              r.iz.toStringAsFixed(1),
+              r.izRand.toStringAsFixed(1),
+              vet: true),
+          rij2(l10n.rowMarge,
+              margeStr(r.margeStroomPct),
+              margeStr(r.margeStroomPctRand),
+              kleur1: margeKleur(r.margeStroomPct),
+              kleur2: margeKleur(r.margeStroomPctRand),
+              vet: true),
+          rij2(l10n.rowTGeleider,
+              r.geleiderTempCWarm.toStringAsFixed(1),
+              r.geleiderTempCKoud.toStringAsFixed(1),
+              kleur1: tempKleur(r.geleiderTempCWarm),
+              kleur2: tempKleur(r.geleiderTempCKoud)),
+        ],
+
         if (!hasDiff)
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              l10n.bundelGelijkwaardig,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
-            ),
+            child: Text(l10n.bundelGelijkwaardig,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.outline)),
+          ),
+        if (zon)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(l10n.bundelZonSplitsNote,
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.outline)),
           ),
         Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: Text(
-            l10n.bundelTempIndicatief,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: theme.colorScheme.outline),
-          ),
+          child: Text(l10n.bundelTempIndicatief,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.outline)),
         ),
       ],
     );
@@ -504,7 +596,7 @@ class ResultatenScreen extends StatelessWidget {
       icoon: Icons.flash_on,
       children: [
         ResultaatRij(
-            label: 'Min. doorsnede  A = I_k·√t/k',
+            label: 'Min. doorsnede  A = Ik·sqrt(t)/k',
             waarde: '${r.doorsnedeMinKortsluit.toStringAsFixed(2)} mm²'),
         ResultaatRij(
             label: l10n.lblTempStijging,
@@ -662,9 +754,10 @@ class ResultatenScreen extends StatelessWidget {
   bool isNL(AppLocalizations l10n) => l10n.isNL;
 
   // ── FOUTEN ────────────────────────────────────────────────────────────────
-  Widget _foutMeldingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) =>
-      Card(
-        color: Colors.red.shade50,
+  Widget _foutMeldingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    final cs = Theme.of(ctx).colorScheme;
+    return Card(
+        color: cs.errorContainer,
         margin: const EdgeInsets.symmetric(vertical: 6),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -672,12 +765,12 @@ class ResultatenScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                Icon(Icons.error_outline, color: Colors.red.shade700, size: 18),
+                Icon(Icons.error_outline, color: cs.onErrorContainer, size: 18),
                 const SizedBox(width: 6),
                 Text(l10n.lblFouten,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.red.shade700)),
+                        color: cs.onErrorContainer)),
               ]),
               const SizedBox(height: 6),
               for (final f in r.fouten)
@@ -695,10 +788,14 @@ class ResultatenScreen extends StatelessWidget {
           ),
         ),
       );
+  }
 
-  Widget _waarschuwingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) =>
-      Card(
-        color: Colors.orange.shade50,
+  Widget _waarschuwingen(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+    final bg = isDark ? Colors.orange.shade900 : Colors.orange.shade50;
+    final fg = isDark ? Colors.orange.shade200 : Colors.orange.shade800;
+    return Card(
+        color: bg,
         margin: const EdgeInsets.symmetric(vertical: 6),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -706,13 +803,12 @@ class ResultatenScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                Icon(Icons.warning_amber_outlined,
-                    color: Colors.orange.shade800, size: 18),
+                Icon(Icons.warning_amber_outlined, color: fg, size: 18),
                 const SizedBox(width: 6),
                 Text(l10n.lblWaarschuwingen,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange.shade800)),
+                        color: fg)),
               ]),
               const SizedBox(height: 6),
               for (final w in r.waarschuwingen)
@@ -730,6 +826,7 @@ class ResultatenScreen extends StatelessWidget {
           ),
         ),
       );
+  }
 
   // ── KOPIEER ───────────────────────────────────────────────────────────────
   Widget _kopieerKnop(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
@@ -744,6 +841,25 @@ class ResultatenScreen extends StatelessWidget {
           Clipboard.setData(ClipboardData(text: tekst));
           ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(content: Text(l10n.snackRapportGekopieerd)),
+          );
+        },
+      ),
+    );
+  }
+
+  // ── PDF ───────────────────────────────────────────────────────────────────
+  Widget _pdfKnop(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OutlinedButton.icon(
+        icon: const Icon(Icons.picture_as_pdf_outlined),
+        label: Text(l10n.btnRapportPdf),
+        onPressed: () async {
+          final inv = ctx.read<BerekeningProvider>().invoer;
+          final pdfBytes = await berekeningRapportPdf(inv, r, l10n);
+          await Printing.sharePdf(
+            bytes: pdfBytes,
+            filename: 'kabelberekening.pdf',
           );
         },
       ),

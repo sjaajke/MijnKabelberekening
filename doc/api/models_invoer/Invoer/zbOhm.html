@@ -82,6 +82,10 @@ Geeft 0 terug als bronimpedantie niet actief is.</p>
     &#47;&#47; per-fase equivalent = helft van de lusimpedantie.
     return zUpstreamHandmatigMohm! &#47; 2000.0;
   }
+  if (zbRxHandmatig) {
+    &#47;&#47; Handmatige R + X invoer: |Z| = √(R² + X²)
+    return sqrt(zbROhm * zbROhm + zbXOhm * zbXOhm);
+  }
   final zbTrafo = (transformatorUccPct &#47; 100.0) *
       (spanningV * spanningV) &#47;
       (transformatorKva * 1000.0);
@@ -118,7 +122,7 @@ Geeft 0 terug als bronimpedantie niet actief is.</p>
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>

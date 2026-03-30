@@ -114,17 +114,26 @@ Widget build(BuildContext context) {
       ChangeNotifierProvider(create: (_) =&gt; BerekeningProvider()),
       ChangeNotifierProvider.value(value: customProvider),
       ChangeNotifierProvider.value(value: languageProvider),
+      ChangeNotifierProvider.value(value: themeProvider),
       ChangeNotifierProvider.value(value: projectenProvider),
       ChangeNotifierProvider.value(value: gebruikersProvider),
       ChangeNotifierProvider.value(value: boomProvider),
     ],
-    child: Consumer&lt;LanguageProvider&gt;(
-      builder: (_, lang, _) =&gt; MaterialApp(
+    child: Consumer2&lt;LanguageProvider, ThemeProvider&gt;(
+      builder: (_, lang, theme, _) =&gt; MaterialApp(
         title: &#39;Kabelberekening&#39;,
         debugShowCheckedModeBanner: false,
         locale: lang.locale,
+        themeMode: theme.mode,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.dark,
+          ),
           useMaterial3: true,
         ),
         home: const _AppRouter(),
@@ -159,7 +168,7 @@ Widget build(BuildContext context) {
 <footer>
   <span class="no-break">
     mijnkabelberekening
-      1.0.0+1
+      1.0.1+2
   </span>
   
 </footer>

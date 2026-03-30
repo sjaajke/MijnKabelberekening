@@ -83,6 +83,32 @@ class Invoer {
   /// Vul hier Z_totaal_lus in van de bovenliggende kabel om te ketenen.
   final double? zUpstreamHandmatigMohm;
 
+  // ── Bronimpedantie R + X handmatig ────────────────────────────────────────
+  /// true = gebruik handmatig ingevoerde R en X i.p.v. Ucc/transformatordatabank.
+  final bool zbRxHandmatig;
+  /// Weerstandscomponent van bronimpedantie [Ω] per fase (handmatig).
+  final double zbROhm;
+  /// Reactantiecomponent van bronimpedantie [Ω] per fase (handmatig).
+  final double zbXOhm;
+
+  // ── Windkoeling (IEC 60287-2-1 / NEN 1010) ────────────────────────────────
+  /// Windkoeling-sectie ingeschakeld (PV-singels in goot op dak).
+  final bool windkoelingActief;
+  /// Windsnelheid op het dakoppervlak (beïnvloedt convectiecoëfficiënt).
+  final Windsnelheid windsnelheid;
+  /// true = stalen deksel op goot (vermindert convectie, penalty +5 K).
+  final bool gootMetDeksel;
+  /// Dakoriëntatie (informatief; toekomstige zonnestraling-integratie).
+  final DakOrientatie dakOrientatie;
+  /// Dakhelling [°] (informatief; toekomstige zonnestraling-integratie).
+  final double dakhellingGraden;
+
+  // ── PV-zonneinstraling per kabellaag (IEC 60364-5-52 / IEC 60287) ─────────
+  /// Laagpositie-model actief: vervangt zonlichtToeslagK met laag-afhankelijke ΔT.
+  final bool pvLaagActief;
+  /// Positie van de maatgevende kabel in de stapel (bepaalt zoninstralingsΔT).
+  final PvLaagPositie pvLaagPositie;
+
   const Invoer({
     required this.systeem,
     required this.spanningV,
@@ -109,7 +135,7 @@ class Invoer {
     this.nParallel = 1,
     this.aantalAders = 5,
     this.geleidersPerKring = 2,
-    this.diepteM = 0.70,
+    this.diepteM = 0.50,
     this.cyclischProfiel,
     this.cyclischNKringen = 1,
     this.cyclischAanliggend = true,
@@ -122,6 +148,16 @@ class Invoer {
     this.skNetOneindig = true,
     this.skNetMva = 100.0,
     this.zUpstreamHandmatigMohm,
+    this.zbRxHandmatig = false,
+    this.zbROhm = 0.010,
+    this.zbXOhm = 0.038,
+    this.windkoelingActief = false,
+    this.windsnelheid = Windsnelheid.matig,
+    this.gootMetDeksel = false,
+    this.dakOrientatie = DakOrientatie.z,
+    this.dakhellingGraden = 30,
+    this.pvLaagActief = false,
+    this.pvLaagPositie = PvLaagPositie.topLaag,
   });
 
   /// Standaard-invoer voor nieuwe berekening.
@@ -162,6 +198,10 @@ class Invoer {
       // per-fase equivalent = helft van de lusimpedantie.
       return zUpstreamHandmatigMohm! / 2000.0;
     }
+    if (zbRxHandmatig) {
+      // Handmatige R + X invoer: |Z| = √(R² + X²)
+      return sqrt(zbROhm * zbROhm + zbXOhm * zbXOhm);
+    }
     final zbTrafo = (transformatorUccPct / 100.0) *
         (spanningV * spanningV) /
         (transformatorKva * 1000.0);
@@ -198,6 +238,29 @@ class Invoer {
       systeem == Systeemtype.ac3Fase &&
       (aantalAders == 4 || aantalAders == 5) &&
       derdeHarmonischePct > 0;
+
+  /// Effectieve temperatuurcorrectie [K] door windkoeling (IEC 60287-2-1).
+  /// Negatief = wind verbetert koeling; positief = deksel-penalty.
+  /// Alleen van toepassing bij bovengrondse leidingen.
+  double get deltaTWindKoeling {
+    if (!windkoelingActief) return 0.0;
+    final dtWind = switch (windsnelheid) {
+      Windsnelheid.windstil => 0.0,
+      Windsnelheid.zwak     => 3.0,
+      Windsnelheid.matig    => 6.0,
+      Windsnelheid.sterk    => 10.0,
+      Windsnelheid.storm    => 15.0,
+    };
+    final dtDeksel = gootMetDeksel ? 5.0 : 0.0;
+    return dtDeksel - dtWind;
+  }
+
+  /// Effectieve ΔT [K] door zonneinstraling per laagpositie (IEC 60364-5-52).
+  /// Vervangt zonlichtToeslagK wanneer pvLaagActief = true.
+  double get deltaTZonPvLaag {
+    if (!pvLaagActief) return 0.0;
+    return pvLaagPositie.deltaTK;
+  }
 
   Map<String, dynamic> toJson() => {
         'systeem': systeem.name,
@@ -238,6 +301,16 @@ class Invoer {
         'skNetOneindig': skNetOneindig,
         'skNetMva': skNetMva,
         'zUpstreamHandmatigMohm': zUpstreamHandmatigMohm,
+        'zbRxHandmatig': zbRxHandmatig,
+        'zbROhm': zbROhm,
+        'zbXOhm': zbXOhm,
+        'windkoelingActief': windkoelingActief,
+        'windsnelheid': windsnelheid.name,
+        'gootMetDeksel': gootMetDeksel,
+        'dakOrientatie': dakOrientatie.name,
+        'dakhellingGraden': dakhellingGraden,
+        'pvLaagActief': pvLaagActief,
+        'pvLaagPositie': pvLaagPositie.name,
       };
 
   factory Invoer.fromJson(Map<String, dynamic> j) => Invoer(
@@ -299,6 +372,24 @@ class Invoer {
         zUpstreamHandmatigMohm: j['zUpstreamHandmatigMohm'] != null
             ? (j['zUpstreamHandmatigMohm'] as num).toDouble()
             : null,
+        zbRxHandmatig: j['zbRxHandmatig'] as bool? ?? false,
+        zbROhm: j['zbROhm'] != null ? (j['zbROhm'] as num).toDouble() : 0.010,
+        zbXOhm: j['zbXOhm'] != null ? (j['zbXOhm'] as num).toDouble() : 0.038,
+        windkoelingActief: j['windkoelingActief'] as bool? ?? false,
+        windsnelheid: j['windsnelheid'] != null
+            ? Windsnelheid.values.byName(j['windsnelheid'] as String)
+            : Windsnelheid.matig,
+        gootMetDeksel: j['gootMetDeksel'] as bool? ?? false,
+        dakOrientatie: j['dakOrientatie'] != null
+            ? DakOrientatie.values.byName(j['dakOrientatie'] as String)
+            : DakOrientatie.z,
+        dakhellingGraden: j['dakhellingGraden'] != null
+            ? (j['dakhellingGraden'] as num).toDouble()
+            : 30.0,
+        pvLaagActief: j['pvLaagActief'] as bool? ?? false,
+        pvLaagPositie: j['pvLaagPositie'] != null
+            ? PvLaagPositie.values.byName(j['pvLaagPositie'] as String)
+            : PvLaagPositie.topLaag,
       );
 
   Invoer copyWith({
@@ -347,6 +438,16 @@ class Invoer {
     double? skNetMva,
     double? zUpstreamHandmatigMohm,
     bool clearZUpstream = false,
+    bool? zbRxHandmatig,
+    double? zbROhm,
+    double? zbXOhm,
+    bool? windkoelingActief,
+    Windsnelheid? windsnelheid,
+    bool? gootMetDeksel,
+    DakOrientatie? dakOrientatie,
+    double? dakhellingGraden,
+    bool? pvLaagActief,
+    PvLaagPositie? pvLaagPositie,
   }) =>
       Invoer(
         systeem: systeem ?? this.systeem,
@@ -392,5 +493,15 @@ class Invoer {
         zUpstreamHandmatigMohm: clearZUpstream
             ? null
             : (zUpstreamHandmatigMohm ?? this.zUpstreamHandmatigMohm),
+        zbRxHandmatig: zbRxHandmatig ?? this.zbRxHandmatig,
+        zbROhm: zbROhm ?? this.zbROhm,
+        zbXOhm: zbXOhm ?? this.zbXOhm,
+        windkoelingActief: windkoelingActief ?? this.windkoelingActief,
+        windsnelheid: windsnelheid ?? this.windsnelheid,
+        gootMetDeksel: gootMetDeksel ?? this.gootMetDeksel,
+        dakOrientatie: dakOrientatie ?? this.dakOrientatie,
+        dakhellingGraden: dakhellingGraden ?? this.dakhellingGraden,
+        pvLaagActief: pvLaagActief ?? this.pvLaagActief,
+        pvLaagPositie: pvLaagPositie ?? this.pvLaagPositie,
       );
 }

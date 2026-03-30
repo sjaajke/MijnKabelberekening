@@ -41,7 +41,7 @@ class SectieCard extends StatelessWidget {
           children: [
             Row(children: [
               Icon(icoon, size: 18, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
+              const Flexible(child: SizedBox(width: 8)),
               Expanded(
                 child: Text(titel,
                     style: theme.textTheme.titleSmall?.copyWith(
