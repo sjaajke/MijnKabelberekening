@@ -43,6 +43,8 @@ extension UitlegLocalizations on AppLocalizations {
       : 'smallest A where I_z0·f_total ≥ I_design';
   String get overzichtSpanningsval => isNL ? 'Spanningsval' : 'Voltage Drop';
   String get overzichtSpanningsvalSub => isNL ? 'ΔU ≤ max. %' : 'ΔU ≤ max. %';
+  String get overzichtSpanningsvalBoom => isNL ? 'Cumulatief spanningsverlies kabelnet' : 'Cumulative voltage drop — cable network';
+  String get overzichtSpanningsvalBoomSub => isNL ? 'ΔU_cum ≤ 5%  (bron → eindpunt)' : 'ΔU_cum ≤ 5%  (source → endpoint)';
   String get overzichtTemp => isNL ? 'Temperatuurstijging' : 'Temperature Rise';
   String get overzichtTempSub => isNL ? 'I²R-verlies → geleidertemp' : 'I²R loss → conductor temp';
   String get overzichtKortsluit => isNL ? 'Kortsluittoets' : 'Short-circuit Check';
@@ -412,6 +414,46 @@ extension UitlegLocalizations on AppLocalizations {
   String get svParallel => isNL
       ? 'Bij parallelle kabels: I per kabel = I/n. De spanningsval is gelijk voor alle parallelle kabels (aanname: gelijke impedantie en lengte).'
       : 'For parallel cables: I per cable = I/n. The voltage drop is equal for all parallel cables (assumption: equal impedance and length).';
+
+  // ── SPANNINGSVERLIES KABELNET ─────────────────────────────────────────────
+  String get svBoomTitel => isNL
+      ? 'Stap 5a — Cumulatief spanningsverlies kabelnet  (NEN 1010 §5.2.5 / IEC 60364-5-52 §525)'
+      : 'Step 5a — Cumulative Voltage Drop — Cable Network  (NEN 1010 §5.2.5 / IEC 60364-5-52 §525)';
+  String get svBoomIntro => isNL
+      ? 'In een kabelnet (boomstructuur) telt het spanningsverlies van alle segmenten op het pad van de bron naar het eindpunt op. '
+        'De maximale cumulatieve spanningsval is 5% van de nominale spanning.'
+      : 'In a cable network (tree structure), the voltage drops of all segments on the path from source to endpoint are summed. '
+        'The maximum cumulative voltage drop is 5% of the nominal voltage.';
+  String get svBoomFormuleTitel => isNL
+      ? 'Cumulatief spanningsverlies in volt (bron → eindpunt):'
+      : 'Cumulative voltage drop in volts (source → endpoint):';
+  String get svBoomPctTitel => isNL
+      ? 'Cumulatieve procentuele spanningsval — multiplicatieve methode:'
+      : 'Cumulative voltage drop percentage — multiplicative method:';
+  String get svBoomPctUitleg => isNL
+      ? 'Elke ΔU% is relatief aan de spanning aan het begin van dát segment (niet aan U_nom). '
+        'Na segment 1 resteert nog (1 − ΔU%₁/100) × U_nom. '
+        'Segment 2 trekt daar opnieuw ΔU%₂ van af — ook van een al verlaagde spanning. '
+        'Optellen van percentages geeft daardoor een kleine overschatting.'
+      : 'Each ΔU% is relative to the voltage at the start of that segment (not U_nom). '
+        'After segment 1, only (1 − ΔU%₁/100) × U_nom remains. '
+        'Segment 2 drops ΔU%₂ from that already-reduced voltage. '
+        'Simply adding percentages therefore slightly overestimates the total drop.';
+  String get svBoomGrens => isNL
+      ? 'Grenswaarden per NEN 1010 / IEC 60364-5-52:'
+      : 'Limits per NEN 1010 / IEC 60364-5-52:';
+  String get svBoomNoot => isNL
+      ? 'Het maximale spanningsverlies van 5% geldt per volledig pad van bron tot eindpunt. '
+        'Tussenliggende aftakkingen kunnen een lager cumulatief verlies hebben; '
+        'de strengste eis geldt voor de langste of zwaarst belaste tak.'
+      : 'The maximum voltage drop of 5% applies per complete path from source to endpoint. '
+        'Intermediate branches may have a lower cumulative drop; '
+        'the strictest requirement applies to the longest or most heavily loaded branch.';
+  String get svBoomLimietNorm => isNL
+      ? 'NEN 1010 §5.2.5 stelt een grens van 5% op de totale spanningsval in een laagspanningsinstallatie, '
+        'gemeten van het aansluitpunt van de netbeheerder tot het verst verwijderde verbruikspunt.'
+      : 'NEN 1010 §5.2.5 sets a limit of 5% on the total voltage drop in a low-voltage installation, '
+        'measured from the network operator connection point to the furthest point of use.';
 
   // ── TEMPERATUURSTIJGING ──────────────────────────────────────────────────
   String get tempStijgingTitel => isNL

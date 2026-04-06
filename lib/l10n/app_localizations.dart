@@ -860,6 +860,22 @@ class AppLocalizations {
   String ikEindInfo(String ik) =>
       isNL ? 'I_k1f einde = $ik A' : 'I_k1f end = $ik A';
 
+  // ── SPANNINGSVERLIES OVERZICHT ────────────────────────────────────────────
+  String get titSpanningsverliesOverzicht =>
+      isNL ? 'Spanningsverlies overzicht' : 'Voltage drop overview';
+  String get lblSegment =>
+      isNL ? 'Segment' : 'Segment';
+  String get lblCumulatief =>
+      isNL ? 'Cumulatief' : 'Cumulative';
+  String get tooltipSpanningsverliesOverzicht =>
+      isNL ? 'Spanningsverlies per leiding' : 'Voltage drop per cable';
+  String get lblMaxSpanningsverliesBoom =>
+      isNL ? 'Max. toelaatbaar: 5%' : 'Max. allowed: 5%';
+  String get lblAlleLeidingenOk =>
+      isNL ? 'Alle leidingen voldoen aan de 5%-grens.' : 'All cables comply with the 5% limit.';
+  String get lblNietAlleBerekend =>
+      isNL ? 'Niet alle leidingen zijn berekend.' : 'Not all cables have been calculated.';
+
   // ── WINDKOELING (IEC 60287-2-1) ──────────────────────────────────────────
   String get lblWindkoeling =>
       isNL ? 'Windkoeling goot (IEC 60287-2-1)' : 'Wind Cooling Tray (IEC 60287-2-1)';

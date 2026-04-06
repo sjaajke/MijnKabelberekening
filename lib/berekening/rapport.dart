@@ -557,6 +557,106 @@ String boomRapportTekst(KabelBoom boom, AppLocalizations l10n) {
     schrijfNode(root, 0);
   }
 
+  // ── Spanningsverlies overzicht ────────────────────────────────────────────
+  buf.writeln();
+  lijn(64);
+  buf.writeln(l10n.titSpanningsverliesOverzicht.toUpperCase());
+  buf.writeln(l10n.lblMaxSpanningsverliesBoom);
+  lijn(64);
+
+  // Kolomkoppen
+  buf.writeln(
+    '${'Leiding'.padRight(30)}'
+    '${'Seg.ΔU'.padLeft(8)}'
+    '${'Seg.%'.padLeft(7)}'
+    '${'Cum.ΔU'.padLeft(9)}'
+    '${'Cum.%'.padLeft(7)}'
+    '  Status',
+  );
+  lijn(64);
+
+  bool eersteGroep = true;
+
+  // Multiplicatieve aanpak: U_rest = U_rest × (1 − ΔU%/100) per segment.
+  // Cumulatief verlies = (1 − U_rest) × 100%.
+  void schrijfSpanningsrij(LeidingNode node, double cumV, double uRest,
+      int depth, bool isNieuweGroep) {
+    final r = node.resultaten;
+    final nodeURest = uRest * (1.0 - (r?.deltaUPct ?? 0.0) / 100.0);
+    final nodeCumV = cumV + (r?.deltaUV ?? 0.0);
+    final nodeCumPct = (1.0 - nodeURest) * 100.0;
+
+    if (isNieuweGroep && !eersteGroep) {
+      lijn(64);
+    }
+    eersteGroep = false;
+
+    final prefix = '  ' * depth;
+    final naam = '$prefix${node.naam}';
+    final naamKolom = naam.length > 30 ? '${naam.substring(0, 28)}..' : naam;
+
+    if (r == null) {
+      buf.writeln(
+        '${naamKolom.padRight(30)}'
+        '${'—'.padLeft(8)}'
+        '${'—'.padLeft(7)}'
+        '${'—'.padLeft(9)}'
+        '${'—'.padLeft(7)}'
+        '  ${l10n.lblNietBerekend}',
+      );
+    } else {
+      final status = nodeCumPct > 5.0
+          ? '!!! OVERSCHREDEN'
+          : nodeCumPct > 4.0
+              ? '[!] Let op'
+              : 'OK';
+      buf.writeln(
+        '${naamKolom.padRight(30)}'
+        '${'${r.deltaUV.toStringAsFixed(1)} V'.padLeft(8)}'
+        '${'${r.deltaUPct.toStringAsFixed(2)}%'.padLeft(7)}'
+        '${'${nodeCumV.toStringAsFixed(1)} V'.padLeft(9)}'
+        '${'${nodeCumPct.toStringAsFixed(2)}%'.padLeft(7)}'
+        '  $status',
+      );
+    }
+
+    for (final kind in nodes.where((n) => n.parentId == node.id)) {
+      schrijfSpanningsrij(kind, nodeCumV, nodeURest, depth + 1, false);
+    }
+  }
+
+  for (var i = 0; i < roots.length; i++) {
+    schrijfSpanningsrij(roots[i], 0.0, 1.0, 0, i > 0);
+  }
+
+  lijn(64);
+
+  // Samenvattingsregel
+  final alleBerekend = nodes.every((n) => n.resultaten != null);
+  if (!alleBerekend) {
+    buf.writeln(l10n.lblNietAlleBerekend);
+  } else {
+    // Overtredingen tellen via dezelfde multiplicatieve methode
+    final overtredingen = <String>[];
+    void telOvertredingen(LeidingNode node, double uRest) {
+      final r = node.resultaten;
+      final nodeURest = uRest * (1.0 - (r?.deltaUPct ?? 0.0) / 100.0);
+      final nodeCumPct = (1.0 - nodeURest) * 100.0;
+      if (r != null && nodeCumPct > 5.0) overtredingen.add(node.naam);
+      for (final kind in nodes.where((n) => n.parentId == node.id)) {
+        telOvertredingen(kind, nodeURest);
+      }
+    }
+    for (final root in roots) {
+      telOvertredingen(root, 1.0);
+    }
+    if (overtredingen.isEmpty) {
+      buf.writeln(l10n.lblAlleLeidingenOk);
+    } else {
+      buf.writeln('OVERSCHREDEN (>5%): ${overtredingen.join(', ')}');
+    }
+  }
+
   buf.writeln();
   buf.writeln('=' * 64);
   buf.writeln('\n${l10n.rapportFooter}');

@@ -197,6 +197,11 @@ class _BoomScreenState extends State<BoomScreen> {
           actions: [
             if (boom != null) ...[
               IconButton(
+                icon: const Icon(Icons.stacked_bar_chart),
+                tooltip: l10n.tooltipSpanningsverliesOverzicht,
+                onPressed: () => _toonSpanningsverliesOverzicht(context, boomP),
+              ),
+              IconButton(
                 icon: const Icon(Icons.refresh),
                 tooltip: l10n.btnHerberekenAlles,
                 onPressed: () => boomP.herberekenAlles(),
@@ -454,6 +459,260 @@ class _BoomScreenState extends State<BoomScreen> {
     );
   }
 
+  // ── Spanningsverlies overzicht ────────────────────────────────────────────
+
+  /// Berekent cumulatief spanningsverlies (V en %) voor elke node via DFS,
+  /// zodat elke root zijn subtree aaneengesloten toont.
+  /// [isNieuweGroep] is true voor elke root behalve de eerste — voor visuele scheiding.
+  List<_SpanningsVerliesRij> _cumulatiefVerlies(BoomProvider boomP) {
+    final result = <_SpanningsVerliesRij>[];
+    if (boomP.boom == null) return result;
+
+    // Multiplicatieve aanpak: U_rest = U_rest × (1 − ΔU%/100) per segment.
+    // Cumulatief verlies = (1 − U_rest) × 100%.
+    // Dit is correct omdat elke ΔU% relatief is aan de spanning aan het begin
+    // van dat segment, niet aan de nominale spanning.
+    void dfs(LeidingNode node, double cumV, double uRest, int depth,
+        bool isNieuweGroep) {
+      final res = node.resultaten;
+      final nodeURest = uRest * (1.0 - (res?.deltaUPct ?? 0.0) / 100.0);
+      final nodeCumV = cumV + (res?.deltaUV ?? 0.0);
+      final nodeCumPct = (1.0 - nodeURest) * 100.0;
+      result.add(_SpanningsVerliesRij(
+        node: node,
+        segmentV: res?.deltaUV,
+        segmentPct: res?.deltaUPct,
+        cumulatiefV: res != null ? nodeCumV : null,
+        cumulatiefPct: res != null ? nodeCumPct : null,
+        depth: depth,
+        isNieuweGroep: isNieuweGroep,
+      ));
+      for (final kind in boomP.childrenVan(node.id)) {
+        dfs(kind, nodeCumV, nodeURest, depth + 1, false);
+      }
+    }
+
+    final roots = boomP.rootNodes();
+    for (var i = 0; i < roots.length; i++) {
+      dfs(roots[i], 0.0, 1.0, 0, i > 0);
+    }
+    return result;
+  }
+
+  void _toonSpanningsverliesOverzicht(BuildContext ctx, BoomProvider boomP) {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final rijen = _cumulatiefVerlies(boomP);
+    const limietPct = 5.0;
+
+    showDialog<void>(
+      context: ctx,
+      builder: (dlgCtx) => Dialog(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 620, maxHeight: 560),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.stacked_bar_chart),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.titSpanningsverliesOverzicht,
+                        style: Theme.of(dlgCtx).textTheme.titleMedium,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(dlgCtx),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, bottom: 8),
+                child: Text(
+                  l10n.lblMaxSpanningsverliesBoom,
+                  style: Theme.of(dlgCtx).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(dlgCtx).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ),
+              const Divider(height: 1),
+              // Kolomkoppen
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 5,
+                      child: Text('Leiding',
+                          style: Theme.of(dlgCtx).textTheme.labelSmall),
+                    ),
+                    SizedBox(
+                      width: 90,
+                      child: Text(l10n.lblSegment,
+                          style: Theme.of(dlgCtx).textTheme.labelSmall,
+                          textAlign: TextAlign.right),
+                    ),
+                    SizedBox(
+                      width: 110,
+                      child: Text(l10n.lblCumulatief,
+                          style: Theme.of(dlgCtx)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              // Rijen
+              Flexible(
+                child: rijen.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(l10n.lblNietAlleBerekend,
+                              style: const TextStyle(color: Colors.grey)),
+                        ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: rijen.length,
+                        separatorBuilder: (_, __) =>
+                            const Divider(height: 1, indent: 16),
+                        itemBuilder: (_, i) {
+                          final rij = rijen[i];
+                          final cumPct = rij.cumulatiefPct;
+                          final cumV = rij.cumulatiefV;
+                          final segPct = rij.segmentPct;
+                          final segV = rij.segmentV;
+                          final heeftData = cumPct != null;
+
+                          Color statusKleur;
+                          if (!heeftData) {
+                            statusKleur = Colors.grey;
+                          } else if (cumPct > limietPct) {
+                            statusKleur = Colors.red.shade700;
+                          } else if (cumPct > limietPct * 0.8) {
+                            statusKleur = Colors.orange.shade700;
+                          } else {
+                            statusKleur = Colors.green.shade700;
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (rij.isNieuweGroep)
+                                const Divider(height: 12, thickness: 2, indent: 0, endIndent: 0),
+                              Padding(
+                            padding: EdgeInsets.only(
+                              left: 16.0 + rij.depth * 16,
+                              right: 16,
+                              top: 6,
+                              bottom: 6,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  heeftData
+                                      ? (cumPct > limietPct
+                                          ? Icons.warning_amber_outlined
+                                          : Icons.check_circle_outline)
+                                      : Icons.help_outline,
+                                  size: 16,
+                                  color: statusKleur,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  flex: 5,
+                                  child: Text(
+                                    rij.node.naam,
+                                    style: const TextStyle(fontSize: 13),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 90,
+                                  child: heeftData && segV != null && segPct != null
+                                      ? Text(
+                                          '${segV.toStringAsFixed(1)} V\n${segPct.toStringAsFixed(2)} %',
+                                          style: const TextStyle(fontSize: 11),
+                                          textAlign: TextAlign.right,
+                                        )
+                                      : Text(
+                                          '—',
+                                          style: const TextStyle(
+                                              fontSize: 11, color: Colors.grey),
+                                          textAlign: TextAlign.right,
+                                        ),
+                                ),
+                                SizedBox(
+                                  width: 110,
+                                  child: heeftData
+                                      ? RichText(
+                                          textAlign: TextAlign.right,
+                                          text: TextSpan(
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: statusKleur),
+                                            children: [
+                                              TextSpan(
+                                                  text:
+                                                      '${cumV!.toStringAsFixed(1)} V\n'),
+                                              TextSpan(
+                                                  text:
+                                                      '${cumPct.toStringAsFixed(2)} %'),
+                                            ],
+                                          ),
+                                        )
+                                      : Text(
+                                          '—',
+                                          style: const TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                          textAlign: TextAlign.right,
+                                        ),
+                                ),
+                              ],
+                            ),
+                          ),
+                            ],
+                          );
+                        },
+                      ),
+              ),
+              const Divider(height: 1),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Text(
+                  rijen.any((r) => r.cumulatiefPct == null)
+                      ? l10n.lblNietAlleBerekend
+                      : rijen.any((r) => (r.cumulatiefPct ?? 0) > limietPct)
+                          ? '⚠ ${rijen.where((r) => (r.cumulatiefPct ?? 0) > limietPct).length} leiding(en) overschrijden de 5%-grens.'
+                          : l10n.lblAlleLeidingenOk,
+                  style: Theme.of(dlgCtx).textTheme.bodySmall?.copyWith(
+                        color: rijen.any((r) => (r.cumulatiefPct ?? 0) > limietPct)
+                            ? Colors.red.shade700
+                            : Colors.green.shade700,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _geenSelectie(AppLocalizations l10n) => Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -465,6 +724,28 @@ class _BoomScreenState extends State<BoomScreen> {
         ),
       );
 
+}
+
+// ── Hulpklasse voor het spanningsverlies-overzicht ────────────────────────────
+
+class _SpanningsVerliesRij {
+  final LeidingNode node;
+  final double? segmentV;
+  final double? segmentPct;
+  final double? cumulatiefV;
+  final double? cumulatiefPct;
+  final int depth;
+  final bool isNieuweGroep;
+
+  const _SpanningsVerliesRij({
+    required this.node,
+    required this.segmentV,
+    required this.segmentPct,
+    required this.cumulatiefV,
+    required this.cumulatiefPct,
+    required this.depth,
+    this.isNieuweGroep = false,
+  });
 }
 
 // ── Inline bronimpedantie-paneel voor de kabelnet-boom ────────────────────────

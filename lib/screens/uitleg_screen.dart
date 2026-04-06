@@ -58,6 +58,8 @@ class UitlegScreen extends StatelessWidget {
             const SizedBox(height: 8),
             _SpanningsvalSectie(),
             const SizedBox(height: 8),
+            _SpanningsverliesBoomSectie(),
+            const SizedBox(height: 8),
             _TemperatuurSectie(),
             const SizedBox(height: 8),
             _KortsluitToetsSectie(),
@@ -194,6 +196,7 @@ class _OverzichtSectie extends StatelessWidget {
       ('3', l10n.overzichtMinDoorsnede, l10n.overzichtMinDoorsnedeFormule),
       ('4', l10n.overzichtKabelkeuze, l10n.overzichtKabelkeuzeSub),
       ('5', l10n.overzichtSpanningsval, l10n.overzichtSpanningsvalSub),
+      ('5a', l10n.overzichtSpanningsvalBoom, l10n.overzichtSpanningsvalBoomSub),
       ('6', l10n.overzichtTemp, l10n.overzichtTempSub),
       ('7', l10n.overzichtKortsluit, l10n.overzichtKortsluitFormule),
       ('7b', l10n.overzichtMaxLengte, l10n.overzichtMaxLengteSub),
@@ -1023,6 +1026,106 @@ class _SpanningsvalSectie extends StatelessWidget {
         const _Rij('α₂₀ Al:', '0,00403 K⁻¹'),
         const _Rij('% spanningsval:', 'ΔU% = 100 · ΔU / U_nominaal'),
         _Noot(l10n.svParallel),
+      ],
+    );
+  }
+}
+
+// ── Sectie 5a: Cumulatief spanningsverlies kabelnet ───────────────────────────
+
+class _SpanningsverliesBoomSectie extends StatelessWidget {
+  const _SpanningsverliesBoomSectie();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    return SectieCard(
+      titel: l10n.svBoomTitel,
+      icoon: Icons.account_tree_outlined,
+      children: [
+        Text(l10n.svBoomIntro),
+        const SizedBox(height: 10),
+
+        // Cumulatieve V-formule
+        Text(l10n.svBoomFormuleTitel,
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        const _Formule(
+          'ΔU_cum = ΔU₁ + ΔU₂ + … + ΔUₙ  [V]',
+          uitleg:
+              'ΔU₁ = segment bron → verdeelkast,  ΔU₂ = verdeelkast → groep,  enz.',
+        ),
+        const SizedBox(height: 6),
+
+        // Procentuele formule — multiplicatief
+        Text(l10n.svBoomPctTitel,
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        const _Formule(
+          'U_rest = 1,0\n'
+          'U_rest = U_rest × (1 − ΔU%₁/100)\n'
+          'U_rest = U_rest × (1 − ΔU%₂/100)\n'
+          '…\n'
+          'ΔU%_cum = (1 − U_rest) × 100 %',
+          uitleg: 'Begin: U_rest = 1,0 (= 100% nominale spanning)',
+        ),
+        const SizedBox(height: 4),
+        const _Formule(
+          'Voorbeeld: 3,89% → 3,45% → 4,19%\n'
+          '  U_rest = 1,000 × 0,9611 = 0,9611\n'
+          '  U_rest = 0,9611 × 0,9655 = 0,9279\n'
+          '  U_rest = 0,9279 × 0,9581 = 0,8891\n'
+          '  ΔU%_cum = (1 − 0,8891) × 100 = 11,1 %',
+          uitleg: 'Optelling zou geven: 3,89+3,45+4,19 = 11,53% — kleine overschatting',
+        ),
+        const SizedBox(height: 4),
+        Text(l10n.svBoomPctUitleg,
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: theme.colorScheme.outline)),
+        const SizedBox(height: 10),
+
+        // Grenswaardentabel
+        Text(l10n.svBoomGrens,
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 4),
+        DataTable(
+          columnSpacing: 20,
+          dataRowMinHeight: 28,
+          dataRowMaxHeight: 28,
+          headingRowHeight: 34,
+          headingRowColor: WidgetStateProperty.all(
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.45),
+          ),
+          columns: const [
+            DataColumn(label: Text('Situatie')),
+            DataColumn(label: Text('Max. ΔU%')),
+          ],
+          rows: const [
+            DataRow(cells: [
+              DataCell(Text('Verlichting')),
+              DataCell(Text('3 %')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Overige verbruikers')),
+              DataCell(Text('5 %')),
+            ]),
+            DataRow(cells: [
+              DataCell(Text('Tijdelijke installaties')),
+              DataCell(Text('8 %')),
+            ]),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text('NEN 1010:2015 tabel 52J / IEC 60364-5-52 tabel 52.K',
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: theme.colorScheme.outline)),
+        const SizedBox(height: 8),
+        _Noot(l10n.svBoomNoot),
+        _Noot(l10n.svBoomLimietNorm, waarschuwing: false),
       ],
     );
   }
