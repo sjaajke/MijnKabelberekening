@@ -55,6 +55,17 @@ class KabelOntwerper {
     final catAders = invoer.aantalAders;        // altijd het werkelijke adertal
     // Singel in 3-fase circuit: gebruik izC3/izE3 (3 belaste aders) i.p.v. izC/izE (2 belaste aders)
     final singelIn3Fase = invoer.aantalAders == 1 && invoer.systeem == Systeemtype.ac3Fase;
+    // Selecteer de juiste basisstroom per leggingswijze
+    double iz0VanKabel(KabelSpec k) {
+      switch (invoer.legging) {
+        case Leggingswijze.d1:
+          return singelIn3Fase ? k.izD13 : k.izD1;
+        case Leggingswijze.d2:
+          return singelIn3Fase ? k.izD23 : k.izD2;
+        default:
+          return singelIn3Fase ? k.izC3  : k.izC;
+      }
+    }
     final iPerKabel = I / n;                    // stroom per kabel
     if (n > 1 && !invoer.systeem.isAC) {
       waarschuwingen.add(
@@ -84,10 +95,14 @@ class KabelOntwerper {
     final tOmg = tOmgBase + (invoer.isGrondkabel
         ? 0.0
         : dtZon + invoer.deltaTWindKoeling);
+    // Referentietemperatuur: D1/D2 gebruiken 20°C (grond), overige methoden 30°C (lucht)
+    final tRef = invoer.isGrondkabel
+        ? isolProp.refTempGrond
+        : isolProp.refTempTabel;
     final fT = Correctiefactoren.fTemperatuur(
       tOmg,
       isolProp.maxTempContinu,
-      tReferentie: isolProp.refTempTabel,
+      tReferentie: tRef,
     );
 
     double fH = 1.0, fV = 1.0, fBundel = 1.0;
@@ -212,7 +227,7 @@ class KabelOntwerper {
       }
       kabel = k;
       fCyclisch = mVoorKabel(k);
-      iz0 = singelIn3Fase ? k.izC3 : k.izC;
+      iz0 = iz0VanKabel(k);
       iz = iz0 * fBase * fCyclisch * fHarmonisch;
       if (iz < iDesign) {
         final grondslag = harmonischOpNul ? 'I_N' : 'I_per_kabel';
@@ -237,7 +252,7 @@ class KabelOntwerper {
         final k = kabelCatalogus[(invoer.geleider, invoer.isolatie, A, catAders)];
         if (k == null) continue;
 
-        iz0 = singelIn3Fase ? k.izC3 : k.izC;
+        iz0 = iz0VanKabel(k);
         if (iz0 <= 0) continue;
 
         final m = mVoorKabel(k);

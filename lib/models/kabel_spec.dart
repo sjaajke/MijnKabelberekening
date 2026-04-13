@@ -18,7 +18,8 @@
 import 'enums.dart';
 
 /// Kabelspecificatie uit catalogus.
-/// Stroomwaarden gelden voor θ_amb = 30°C.
+/// Methode C/E stroomwaarden: θ_ref = 30°C (in lucht).
+/// Methode D1/D2 stroomwaarden: θ_ref = 20°C (in grond) — NEN 1010 tabel 52.B.2–52.B.5.
 /// Belaste aders: 1–2 aderige kabels → 2 belaste aders; ≥3 aderige → 3 belaste aders.
 class KabelSpec {
   final String naam;
@@ -29,12 +30,20 @@ class KabelSpec {
   final double buitendiameter; // mm
   final double rAcPerKm20C;   // Ω/km per fase @ 20°C (AC, incl. skin)
   final double xAcPerKm;      // Ω/km per fase @ 50 Hz
-  final double izC;           // A — methode C, 30°C
-  final double izE;           // A — methode E (vrije lucht), 30°C
+  final double izC;           // A — methode C, θ_ref=30°C
+  final double izE;           // A — methode E (vrije lucht), θ_ref=30°C
   /// Iz voor 1-aderig singel in 3-fase circuit (3 belaste aders).
   /// Alleen zinvol voor aantalAders == 1; 0 voor overige adertallen.
-  final double izC3;          // A — methode C, 3 belaste aders, 30°C
-  final double izE3;          // A — methode E, 3 belaste aders, 30°C
+  final double izC3;          // A — methode C, 3 belaste aders, θ_ref=30°C
+  final double izE3;          // A — methode E, 3 belaste aders, θ_ref=30°C
+
+  // Grondlegging — NEN 1010 tabel 52.B.2/52.B.3 (2 aders) en 52.B.4/52.B.5 (3 aders)
+  // θ_ref = 20°C, λ_grond = 1,0 K·m/W (referentie bodemweerstand)
+  final double izD1;          // A — methode D1 (in buis ingegraven)
+  final double izD2;          // A — methode D2 (direct ingegraven)
+  /// Singel in 3-fase circuit voor D1/D2 (3 belaste aders).
+  final double izD13;         // A — methode D1, singel in 3-fase, θ_ref=20°C
+  final double izD23;         // A — methode D2, singel in 3-fase, θ_ref=20°C
 
   const KabelSpec({
     required this.naam,
@@ -49,6 +58,10 @@ class KabelSpec {
     required this.izE,
     this.izC3 = 0,
     this.izE3 = 0,
+    this.izD1 = 0,
+    this.izD2 = 0,
+    this.izD13 = 0,
+    this.izD23 = 0,
   });
 
   factory KabelSpec.fromJson(Map<String, dynamic> j) => KabelSpec(
@@ -66,6 +79,10 @@ class KabelSpec {
         izE: (j['izE'] as num).toDouble(),
         izC3: (j['izC3'] as num?)?.toDouble() ?? 0,
         izE3: (j['izE3'] as num?)?.toDouble() ?? 0,
+        izD1:  (j['izD1']  as num?)?.toDouble() ?? 0,
+        izD2:  (j['izD2']  as num?)?.toDouble() ?? 0,
+        izD13: (j['izD13'] as num?)?.toDouble() ?? 0,
+        izD23: (j['izD23'] as num?)?.toDouble() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,5 +98,9 @@ class KabelSpec {
         'izE': izE,
         'izC3': izC3,
         'izE3': izE3,
+        'izD1': izD1,
+        'izD2': izD2,
+        'izD13': izD13,
+        'izD23': izD23,
       };
 }

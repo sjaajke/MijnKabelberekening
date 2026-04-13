@@ -95,7 +95,7 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
     150.0: 1.02, 185.0: 1.02, 240.0: 1.03, 300.0: 1.03, 400.0: 1.05,
   };
 
-  // ── Cu PVC — IEC 60364-5-52 Tabel B.52.4, Methode C, 30 °C ──────────────
+  // ── Cu PVC — NEN 1010 Tabel 52.B.4, Methode C, 30 °C ──────────────────────
   // 3 belaste aders (3-fase, of 3+/4+/5-aderige kabels)
   final pvcC3 = <double, double>{
     1.5: 17.5, 2.5: 24.0, 4.0: 32.0, 6.0: 41.0, 10.0: 57.0,
@@ -111,7 +111,7 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
     240.0: 461.0, 300.0: 530.0, 400.0: 625.0,
   };
 
-  // ── Cu XLPE — IEC 60364-5-52 Tabel B.52.5, Methode C, 30 °C ─────────────
+  // ── Cu XLPE — NEN 1010 Tabel 52.B.5, Methode C, 30 °C ─────────────────────
   final xlpeC3 = <double, double>{
     1.5: 22.0, 2.5: 30.0, 4.0: 40.0, 6.0: 51.0, 10.0: 70.0,
     16.0: 94.0, 25.0: 119.0, 35.0: 147.0, 50.0: 179.0, 70.0: 229.0,
@@ -123,6 +123,59 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
     16.0: 107.0, 25.0: 138.0, 35.0: 171.0, 50.0: 209.0, 70.0: 269.0,
     95.0: 328.0, 120.0: 382.0, 150.0: 441.0, 185.0: 506.0,
     240.0: 599.0, 300.0: 693.0, 400.0: 818.0,
+  };
+
+  // ── Cu PVC D1 — NEN 1010 Tabel 52.B.4 kolom D1, θ_ref=20°C, λ=1,0 K·m/W ─
+  final cuPvcD1_3 = <double, double>{     // 3 belaste aders
+    1.5: 18.0, 2.5: 24.0, 4.0: 30.0, 6.0: 38.0, 10.0: 50.0,
+    16.0: 64.0, 25.0: 82.0, 35.0: 98.0, 50.0: 116.0, 70.0: 143.0,
+    95.0: 169.0, 120.0: 192.0, 150.0: 217.0, 185.0: 243.0,
+    240.0: 280.0, 300.0: 316.0,
+  };
+  final cuPvcD2_3 = <double, double>{     // 3 belaste aders
+    1.5: 19.0, 2.5: 24.0, 4.0: 33.0, 6.0: 41.0, 10.0: 54.0,
+    16.0: 70.0, 25.0: 92.0, 35.0: 110.0, 50.0: 130.0, 70.0: 162.0,
+    95.0: 193.0, 120.0: 220.0, 150.0: 246.0, 185.0: 278.0,
+    240.0: 320.0, 300.0: 359.0,
+  };
+  // ── Cu PVC D1/D2 — NEN 1010 Tabel 52.B.2, 2 belaste aders ─────────────────
+  final cuPvcD1_2 = <double, double>{
+    1.5: 22.0, 2.5: 29.0, 4.0: 37.0, 6.0: 46.0, 10.0: 60.0,
+    16.0: 78.0, 25.0: 99.0, 35.0: 119.0, 50.0: 140.0, 70.0: 173.0,
+    95.0: 204.0, 120.0: 231.0, 150.0: 261.0, 185.0: 292.0,
+    240.0: 336.0, 300.0: 379.0,
+  };
+  final cuPvcD2_2 = <double, double>{
+    1.5: 22.0, 2.5: 28.0, 4.0: 38.0, 6.0: 48.0, 10.0: 64.0,
+    16.0: 83.0, 25.0: 110.0, 35.0: 132.0, 50.0: 156.0, 70.0: 192.0,
+    95.0: 230.0, 120.0: 261.0, 150.0: 293.0, 185.0: 331.0,
+    240.0: 382.0, 300.0: 427.0,
+  };
+
+  // ── Cu XLPE D1/D2 — NEN 1010 Tabel 52.B.5 (3 aders) en 52.B.3 (2 aders) ──
+  final cuXlpeD1_3 = <double, double>{
+    1.5: 21.0, 2.5: 28.0, 4.0: 36.0, 6.0: 44.0, 10.0: 58.0,
+    16.0: 75.0, 25.0: 96.0, 35.0: 115.0, 50.0: 135.0, 70.0: 167.0,
+    95.0: 197.0, 120.0: 223.0, 150.0: 251.0, 185.0: 281.0,
+    240.0: 324.0, 300.0: 365.0,
+  };
+  final cuXlpeD2_3 = <double, double>{
+    1.5: 23.0, 2.5: 30.0, 4.0: 39.0, 6.0: 49.0, 10.0: 65.0,
+    16.0: 84.0, 25.0: 107.0, 35.0: 129.0, 50.0: 153.0, 70.0: 188.0,
+    95.0: 226.0, 120.0: 257.0, 150.0: 287.0, 185.0: 324.0,
+    240.0: 375.0, 300.0: 419.0,
+  };
+  final cuXlpeD1_2 = <double, double>{
+    1.5: 25.0, 2.5: 33.0, 4.0: 43.0, 6.0: 53.0, 10.0: 71.0,
+    16.0: 91.0, 25.0: 116.0, 35.0: 139.0, 50.0: 164.0, 70.0: 203.0,
+    95.0: 239.0, 120.0: 271.0, 150.0: 306.0, 185.0: 343.0,
+    240.0: 395.0, 300.0: 446.0,
+  };
+  final cuXlpeD2_2 = <double, double>{
+    1.5: 27.0, 2.5: 35.0, 4.0: 46.0, 6.0: 58.0, 10.0: 77.0,
+    16.0: 100.0, 25.0: 129.0, 35.0: 155.0, 50.0: 183.0, 70.0: 225.0,
+    95.0: 270.0, 120.0: 306.0, 150.0: 343.0, 185.0: 387.0,
+    240.0: 448.0, 300.0: 502.0,
   };
 
   // Buitendiameter schaalfactoren t.o.v. 3-aderig (typisch NYY/N2XH)
@@ -142,9 +195,20 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
       // 1-aderig: 5% extra omdat er geen naburige verwarmingsbron is (geldt voor 1-fase/DC)
       final izPvc  = n == 1 ? iz2pvc  * 1.05 : (n <= 2 ? iz2pvc  : iz3pvc);
       final izXlpe = n == 1 ? iz2xlpe * 1.05 : (n <= 2 ? iz2xlpe : iz3xlpe);
-      // izC3/izE3: Iz voor singel in 3-fase circuit (3 belaste aders, IEC 60364-5-52 tabel B.52.4/B.52.5)
+      // izC3/izE3/izD*3: Iz voor singel in 3-fase circuit (3 belaste aders)
       final iz3Pvc  = n == 1 ? iz3pvc  : 0.0;
       final iz3Xlpe = n == 1 ? iz3xlpe : 0.0;
+
+      // D1/D2: 2 aders voor 1-/2-aderige kabels, 3 aders voor ≥3-aderige kabels
+      final izPvcD1  = n <= 2 ? cuPvcD1_2[a]  ?? 0.0 : cuPvcD1_3[a]  ?? 0.0;
+      final izPvcD2  = n <= 2 ? cuPvcD2_2[a]  ?? 0.0 : cuPvcD2_3[a]  ?? 0.0;
+      final izXlpeD1 = n <= 2 ? cuXlpeD1_2[a] ?? 0.0 : cuXlpeD1_3[a] ?? 0.0;
+      final izXlpeD2 = n <= 2 ? cuXlpeD2_2[a] ?? 0.0 : cuXlpeD2_3[a] ?? 0.0;
+      // Singel in 3-fase voor D1/D2
+      final izPvcD13  = n == 1 ? cuPvcD1_3[a]  ?? 0.0 : 0.0;
+      final izPvcD23  = n == 1 ? cuPvcD2_3[a]  ?? 0.0 : 0.0;
+      final izXlpeD13 = n == 1 ? cuXlpeD1_3[a] ?? 0.0 : 0.0;
+      final izXlpeD23 = n == 1 ? cuXlpeD2_3[a] ?? 0.0 : 0.0;
 
       cat[(Geleidermateriaal.koper, Isolatiemateriaal.pvc, a, n)] = KabelSpec(
         naam: '${_fa(a)} mm² Cu PVC $n×',
@@ -159,6 +223,10 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
         izE: (izPvc * 1.25).roundToDouble(),
         izC3: iz3Pvc.roundToDouble(),
         izE3: (iz3Pvc * 1.25).roundToDouble(),
+        izD1: izPvcD1.roundToDouble(),
+        izD2: izPvcD2.roundToDouble(),
+        izD13: izPvcD13.roundToDouble(),
+        izD23: izPvcD23.roundToDouble(),
       );
       cat[(Geleidermateriaal.koper, Isolatiemateriaal.xlpe, a, n)] = KabelSpec(
         naam: '${_fa(a)} mm² Cu XLPE $n×',
@@ -173,6 +241,10 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
         izE: (izXlpe * 1.30).roundToDouble(),
         izC3: iz3Xlpe.roundToDouble(),
         izE3: (iz3Xlpe * 1.30).roundToDouble(),
+        izD1: izXlpeD1.roundToDouble(),
+        izD2: izXlpeD2.roundToDouble(),
+        izD13: izXlpeD13.roundToDouble(),
+        izD23: izXlpeD23.roundToDouble(),
       );
     }
   }
@@ -215,6 +287,51 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
     185.0: 405.0, 240.0: 479.0, 300.0: 554.0, 400.0: 654.0,
   };
 
+  // ── Al PVC D1/D2 — NEN 1010 Tabel 52.B.4 (3 aders) en 52.B.2 (2 aders) ───
+  // Aluminium D2 voor 2-aderig (52.B.2): niet in tabel voor kleine doorsneden
+  final alPvcD1_3 = <double, double>{
+    16.0: 50.0, 25.0: 64.0, 35.0: 77.0, 50.0: 91.0,
+    70.0: 112.0, 95.0: 132.0, 120.0: 150.0, 150.0: 169.0,
+    185.0: 190.0, 240.0: 218.0, 300.0: 247.0,
+  };
+  final alPvcD2_3 = <double, double>{
+    16.0: 53.0, 25.0: 69.0, 35.0: 83.0, 50.0: 99.0,
+    70.0: 122.0, 95.0: 148.0, 120.0: 169.0, 150.0: 189.0,
+    185.0: 214.0, 240.0: 250.0, 300.0: 282.0,
+  };
+  final alPvcD1_2 = <double, double>{
+    16.0: 61.0, 25.0: 77.0, 35.0: 93.0, 50.0: 109.0,
+    70.0: 135.0, 95.0: 159.0, 120.0: 180.0, 150.0: 204.0,
+    185.0: 228.0, 240.0: 262.0, 300.0: 296.0,
+  };
+  final alPvcD2_2 = <double, double>{
+    16.0: 63.0, 25.0: 82.0, 35.0: 98.0, 50.0: 117.0,
+    70.0: 145.0, 95.0: 173.0, 120.0: 200.0, 150.0: 224.0,
+    185.0: 255.0, 240.0: 298.0, 300.0: 336.0,
+  };
+
+  // ── Al XLPE D1/D2 — NEN 1010 Tabel 52.B.5 (3 aders) en 52.B.3 (2 aders) ──
+  final alXlpeD1_3 = <double, double>{
+    16.0: 59.0, 25.0: 75.0, 35.0: 90.0, 50.0: 106.0,
+    70.0: 130.0, 95.0: 154.0, 120.0: 174.0, 150.0: 197.0,
+    185.0: 220.0, 240.0: 253.0, 300.0: 286.0,
+  };
+  final alXlpeD2_3 = <double, double>{
+    16.0: 64.0, 25.0: 82.0, 35.0: 98.0, 50.0: 117.0,
+    70.0: 144.0, 95.0: 172.0, 120.0: 197.0, 150.0: 220.0,
+    185.0: 250.0, 240.0: 290.0, 300.0: 326.0,
+  };
+  final alXlpeD1_2 = <double, double>{
+    16.0: 71.0, 25.0: 90.0, 35.0: 108.0, 50.0: 128.0,
+    70.0: 158.0, 95.0: 186.0, 120.0: 211.0, 150.0: 238.0,
+    185.0: 267.0, 240.0: 307.0, 300.0: 346.0,
+  };
+  final alXlpeD2_2 = <double, double>{
+    16.0: 76.0, 25.0: 98.0, 35.0: 117.0, 50.0: 139.0,
+    70.0: 170.0, 95.0: 204.0, 120.0: 233.0, 150.0: 261.0,
+    185.0: 296.0, 240.0: 343.0, 300.0: 386.0,
+  };
+
   for (final (a, rDc, x, d3) in alData) {
     for (final n in [1, 2, 3, 4, 5]) {
       final df = dFactor[n]!;
@@ -222,6 +339,15 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
       final izXlpe = n == 1 ? (alXlpeC2[a] ?? 0.0) * 1.05 : (n <= 2 ? alXlpeC2[a] ?? 0.0 : alXlpeC3[a] ?? 0.0);
       final iz3Pvc  = n == 1 ? alPvcC3[a]  ?? 0.0 : 0.0;
       final iz3Xlpe = n == 1 ? alXlpeC3[a] ?? 0.0 : 0.0;
+
+      final izPvcD1  = n <= 2 ? alPvcD1_2[a]  ?? 0.0 : alPvcD1_3[a]  ?? 0.0;
+      final izPvcD2  = n <= 2 ? alPvcD2_2[a]  ?? 0.0 : alPvcD2_3[a]  ?? 0.0;
+      final izXlpeD1 = n <= 2 ? alXlpeD1_2[a] ?? 0.0 : alXlpeD1_3[a] ?? 0.0;
+      final izXlpeD2 = n <= 2 ? alXlpeD2_2[a] ?? 0.0 : alXlpeD2_3[a] ?? 0.0;
+      final izPvcD13  = n == 1 ? alPvcD1_3[a]  ?? 0.0 : 0.0;
+      final izPvcD23  = n == 1 ? alPvcD2_3[a]  ?? 0.0 : 0.0;
+      final izXlpeD13 = n == 1 ? alXlpeD1_3[a] ?? 0.0 : 0.0;
+      final izXlpeD23 = n == 1 ? alXlpeD2_3[a] ?? 0.0 : 0.0;
 
       cat[(Geleidermateriaal.aluminium, Isolatiemateriaal.pvc, a, n)] = KabelSpec(
         naam: '${_fa(a)} mm² Al PVC $n×',
@@ -236,6 +362,10 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
         izE: (izPvc * 1.25).roundToDouble(),
         izC3: iz3Pvc.roundToDouble(),
         izE3: (iz3Pvc * 1.25).roundToDouble(),
+        izD1: izPvcD1.roundToDouble(),
+        izD2: izPvcD2.roundToDouble(),
+        izD13: izPvcD13.roundToDouble(),
+        izD23: izPvcD23.roundToDouble(),
       );
       cat[(Geleidermateriaal.aluminium, Isolatiemateriaal.xlpe, a, n)] = KabelSpec(
         naam: '${_fa(a)} mm² Al XLPE $n×',
@@ -250,6 +380,10 @@ Map<(Geleidermateriaal, Isolatiemateriaal, double, int), KabelSpec>
         izE: (izXlpe * 1.30).roundToDouble(),
         izC3: iz3Xlpe.roundToDouble(),
         izE3: (iz3Xlpe * 1.30).roundToDouble(),
+        izD1: izXlpeD1.roundToDouble(),
+        izD2: izXlpeD2.roundToDouble(),
+        izD13: izXlpeD13.roundToDouble(),
+        izD23: izXlpeD23.roundToDouble(),
       );
     }
   }

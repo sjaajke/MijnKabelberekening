@@ -69,8 +69,8 @@ enum Leggingswijze {
   b1('B1  — In kabelkanaal/buis op/in wand (meerkabelig)'),
   b2('B2  — In kabelkanaal/buis op/in wand (eénkabelig)'),
   c('C   — Aanliggend aan wand/plafond (direct op oppervlak)'),
-  d1('D1  — Direct ingegraven (in grond)'),
-  d2('D2  — In buis ingegraven'),
+  d1('D1  — In buis ingegraven'),
+  d2('D2  — Direct ingegraven (in grond)'),
   e('E   — In vrije lucht (1 D van oppervlak)'),
   f('F   — Op kabelgoot (touching)'),
   g('G   — Op kabelgoot (spaced, 1 D)');

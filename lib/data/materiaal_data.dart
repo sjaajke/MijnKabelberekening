@@ -21,12 +21,14 @@ import '../models/enums.dart';
 class IsolatieProp {
   final double maxTempContinu;    // °C
   final double maxTempKortsluit;  // °C
-  final double refTempTabel;      // °C
+  final double refTempTabel;      // °C — referentie voor methode C/E (lucht, 30°C)
+  final double refTempGrond;      // °C — referentie voor methode D1/D2 (grond, 20°C)
 
   const IsolatieProp({
     required this.maxTempContinu,
     required this.maxTempKortsluit,
     required this.refTempTabel,
+    this.refTempGrond = 20.0,
   });
 }
 

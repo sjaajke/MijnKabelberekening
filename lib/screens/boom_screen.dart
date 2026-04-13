@@ -46,6 +46,7 @@ class BoomScreen extends StatefulWidget {
 class _BoomScreenState extends State<BoomScreen> {
   late void Function() _berekeningListener;
   late BerekeningProvider _berekeningProvider;
+  double _boomBreedte = 280;
 
   /// l10n veilig vanuit event handlers (listen: false — geen abonnement).
   AppLocalizations get _l10n =>
@@ -222,6 +223,11 @@ class _BoomScreenState extends State<BoomScreen> {
                 onPressed: () => _pdfRapport(context, boom),
               ),
               IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                tooltip: l10n.boomHernoemen,
+                onPressed: () => _hernoemBoom(context, boomP, boom),
+              ),
+              IconButton(
                 icon: const Icon(Icons.delete_outline),
                 tooltip: l10n.btnVerwijderBoom,
                 onPressed: () async {
@@ -339,15 +345,79 @@ class _BoomScreenState extends State<BoomScreen> {
     }
   }
 
+  Future<void> _hernoemBoom(
+      BuildContext ctx, BoomProvider boomP, KabelBoom boom) async {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final controller = TextEditingController(text: boom.naam);
+    final nieuwNaam = await showDialog<String>(
+      context: ctx,
+      builder: (dlgCtx) => AlertDialog(
+        title: Text(l10n.boomHernoemen),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: l10n.boomNaam),
+          autofocus: true,
+          onSubmitted: (v) => Navigator.pop(dlgCtx, v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dlgCtx),
+            child: Text(l10n.btnAnnuleren),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dlgCtx, controller.text.trim()),
+            child: Text(l10n.projectHernoemen),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (nieuwNaam != null && nieuwNaam.isNotEmpty) {
+      await boomP.hernoemBoom(nieuwNaam);
+    }
+  }
+
+  Future<void> _hernoemNode(
+      BuildContext ctx, BoomProvider boomP, LeidingNode node) async {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final controller = TextEditingController(text: node.naam);
+    final nieuwNaam = await showDialog<String>(
+      context: ctx,
+      builder: (dlgCtx) => AlertDialog(
+        title: Text(l10n.leidingHernoemen),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: l10n.leidingNaam),
+          autofocus: true,
+          onSubmitted: (v) => Navigator.pop(dlgCtx, v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dlgCtx),
+            child: Text(l10n.btnAnnuleren),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dlgCtx, controller.text.trim()),
+            child: Text(l10n.projectHernoemen),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (nieuwNaam != null && nieuwNaam.isNotEmpty) {
+      await boomP.hernoemNode(node.id, nieuwNaam);
+    }
+  }
+
   Widget _boomLayout(
       BuildContext context, BoomProvider boomP, KabelBoom boom) {
     final actiefId = boomP.actiefNodeId;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Boom-paneel (links, vaste breedte) ─────────────────────────────
+        // ── Boom-paneel (links, instelbare breedte) ────────────────────────
         SizedBox(
-          width: 280,
+          width: _boomBreedte,
           child: Material(
             elevation: 1,
             child: SingleChildScrollView(
@@ -377,7 +447,27 @@ class _BoomScreenState extends State<BoomScreen> {
             ),
           ),
         ),
-        const VerticalDivider(width: 1, thickness: 1),
+        // ── Sleepbare scheidingslijn ────────────────────────────────────────
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onHorizontalDragUpdate: (details) {
+            setState(() {
+              _boomBreedte =
+                  (_boomBreedte + details.delta.dx).clamp(160.0, 520.0);
+            });
+          },
+          child: MouseRegion(
+            cursor: SystemMouseCursors.resizeColumn,
+            child: Container(
+              width: 8,
+              color: Colors.transparent,
+              child: Center(
+                child: Container(
+                    width: 1, color: Theme.of(context).dividerColor),
+              ),
+            ),
+          ),
+        ),
         // ── Detail-paneel (rechts) ─────────────────────────────────────────
         if (actiefId == null)
           Expanded(child: _geenSelectie(context.l10n))
@@ -440,6 +530,11 @@ class _BoomScreenState extends State<BoomScreen> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 16),
+                tooltip: context.l10n.leidingHernoemen,
+                onPressed: () => _hernoemNode(context, boomP, node),
+              ),
               IconButton(
                 icon: const Icon(Icons.account_tree_outlined, size: 16),
                 tooltip: context.l10n.btnVoegKindToe,

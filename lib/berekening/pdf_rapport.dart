@@ -66,7 +66,7 @@ Future<Uint8List> berekeningRapportPdf(
 
             widgets.add(
               pw.Text(
-                regel,
+                _sanitizeVoorPdf(regel),
                 style: pw.TextStyle(
                   font: isSectieKop || isHoofdTitel ? fontBold : fontMono,
                   fontFallback: [fontRegular, fontBold],
@@ -90,6 +90,36 @@ bool _isNaSeparator(List<String> regels, int index) {
   final vorige = regels[index - 1];
   return vorige.startsWith('─') || vorige.startsWith('═');
 }
+
+/// Vervangt Unicode-symbolen die NotoSansMono niet bevat door ASCII-equivalenten.
+String _sanitizeVoorPdf(String s) => s
+    .replaceAll('Ω', 'Ohm')
+    .replaceAll('²', '^2')
+    .replaceAll('³', '^3')
+    .replaceAll('√', 'sqrt')
+    .replaceAll('≤', '<=')
+    .replaceAll('≥', '>=')
+    .replaceAll('≠', '!=')
+    .replaceAll('Δ', 'Delta')
+    .replaceAll('θ', 'theta')
+    .replaceAll('λ', 'lambda')
+    .replaceAll('μ', 'u')
+    .replaceAll('ξ', 'xi')
+    .replaceAll('π', 'pi')
+    .replaceAll('φ', 'phi')
+    .replaceAll('°', 'deg')
+    .replaceAll('×', 'x')
+    .replaceAll('·', '.')
+    .replaceAll('→', '->')
+    .replaceAll('−', '-')
+    .replaceAll('–', '-')
+    .replaceAll('—', '-')
+    .replaceAll('☀', '(zon)')
+    .replaceAll('✓', 'OK')
+    .replaceAll('✗', 'NIET OK')
+    .replaceAll('↑', '^')
+    .replaceAll('↓', 'v');
+
 
 Future<Uint8List> boomRapportPdf(
     KabelBoom boom, AppLocalizations l10n) async {
@@ -158,7 +188,7 @@ void _voegTekstPaginaToe(
             final isHoofdTitel = i == 0;
             final isSectieKop = i > 0 && _isNaSeparator(regels, i);
             widgets.add(pw.Text(
-              regel,
+              _sanitizeVoorPdf(regel),
               style: pw.TextStyle(
                 font: isSectieKop || isHoofdTitel ? fontBold : fontMono,
                 fontFallback: [fontRegular, fontBold],

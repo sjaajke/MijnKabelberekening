@@ -575,6 +575,10 @@ class AppLocalizations {
   String get berekeningVerwijderen => isNL ? 'Berekening verwijderen' : 'Delete calculation';
   String get berekeningToevoegenAan => isNL ? 'Toevoegen aan project' : 'Add to project';
   String get projectKiezen => isNL ? 'Kies een project' : 'Choose a project';
+  String get boomHernoemen => isNL ? 'Kabelnet hernoemen' : 'Rename cable network';
+  String get boomNaam => isNL ? 'Naam kabelnet' : 'Network name';
+  String get leidingHernoemen => isNL ? 'Leiding hernoemen' : 'Rename circuit';
+  String get leidingNaam => isNL ? 'Naam leiding' : 'Circuit name';
   String get boomSlaOpInProject => isNL ? 'Kabelnet opslaan in project' : 'Save cable network to project';
   String get boomLaden => isNL ? 'Kabelnet laden' : 'Load cable network';
   String get boomLadenVraag => isNL
@@ -637,9 +641,9 @@ class AppLocalizations {
       ? 'C   — Aanliggend aan wand/plafond (direct op oppervlak)'
       : 'C   — Clipped to wall/ceiling (directly on surface)';
   String get leggingD1 => isNL
-      ? 'D1  — Direct ingegraven (in grond)'
-      : 'D1  — Direct buried (in ground)';
-  String get leggingD2 => isNL ? 'D2  — In buis ingegraven' : 'D2  — Buried in conduit';
+      ? 'D1  — In buis ingegraven'
+      : 'D1  — Buried in conduit';
+  String get leggingD2 => isNL ? 'D2  — Direct ingegraven (in grond)' : 'D2  — Direct buried (in ground)';
   String get leggingE => isNL
       ? 'E   — In vrije lucht (1 D van oppervlak)'
       : 'E   — In free air (1 D from surface)';

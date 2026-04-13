@@ -26,6 +26,7 @@ import '../models/project.dart';
 import '../state/berekening_provider.dart';
 import '../state/boom_provider.dart';
 import '../state/projecten_provider.dart';
+import 'boom_screen.dart';
 
 class ProjectDetailScreen extends StatelessWidget {
   const ProjectDetailScreen({super.key, required this.projectId});
@@ -274,12 +275,8 @@ class _BerekeningTegel extends StatelessWidget {
   }
 
   String _datumLabel(DateTime dt) {
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inDays == 0) {
-      return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
-    }
-    return '${dt.day}-${dt.month}-${dt.year}';
+    final tijd = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    return '${dt.day}-${dt.month}-${dt.year}  $tijd';
   }
 }
 
@@ -359,7 +356,12 @@ class _BoomTegel extends StatelessWidget {
     if (bevestigd == true && context.mounted) {
       final boomP = context.read<BoomProvider>();
       await boomP.laadBoom(opgeslaanBoom.boom);
-      if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst);
+      if (context.mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const BoomScreen()),
+        );
+      }
     }
   }
 
