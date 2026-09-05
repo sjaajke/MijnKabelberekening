@@ -46,6 +46,11 @@ class AppLocalizations {
   String get tabResultaten => isNL ? 'Resultaten' : 'Results';
   String get taalWisselen => isNL ? 'Taal' : 'Language';
 
+  // ── NAAM LEIDING (bovenaan invoerscherm, alleen enkele kabel) ─────────────
+  String get lblNaamLeiding => isNL ? 'Naam leiding' : 'Circuit name';
+  String get hintNaamLeiding =>
+      isNL ? 'bijv. Aanvoer verdieping 1' : 'e.g. Supply floor 1';
+
   // ── SYSTEEM & SPANNING ───────────────────────────────────────────────────
   String get sectSysteem => isNL ? 'Systeem & Spanning' : 'System & Voltage';
   String get lblSysteemtype => isNL ? 'Systeemtype' : 'System Type';

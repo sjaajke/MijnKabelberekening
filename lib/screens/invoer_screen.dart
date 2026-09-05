@@ -26,7 +26,7 @@ import '../data/transformatoren.dart';
 import '../state/berekening_provider.dart';
 import '../state/custom_catalogus_provider.dart';
 import '../widgets/sectie_card.dart';
-import '../widgets/invoer_rij.dart';
+import '../widgets/invoer_rij.dart' show GetalVeld, DropdownRij, SchakelaarRij, ResultaatRij, TekstVeld;
 import '../berekening/cyclisch.dart' show CyclischeFactor;
 
 class InvoerScreen extends StatefulWidget {
@@ -158,6 +158,12 @@ class _InvoerScreenState extends State<InvoerScreen> {
     final isBoom = context.watch<BerekeningProvider>().isBoomModus;
     return Column(
       children: [
+        // ── Naam leiding: altijd zichtbaar, alleen bij enkele kabel ──────────
+        if (!isBoom)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: _naamLeidingVeld(),
+          ),
         // ── Bronimpedantie-toggle: altijd zichtbaar ──────────────────────────
         if (!isBoom)
           Padding(
@@ -838,6 +844,23 @@ class _InvoerScreenState extends State<InvoerScreen> {
           ),
         ],
       ],
+    );
+  }
+
+  // ── NAAM LEIDING (bovenaan, buiten boommode) ────────────────────────────────
+  Widget _naamLeidingVeld() {
+    final l10n = context.l10n;
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: TekstVeld(
+          label: l10n.lblNaamLeiding,
+          hint: l10n.hintNaamLeiding,
+          waarde: _inv.naam,
+          onChanged: (v) => _update(_inv.copyWith(naam: v)),
+        ),
+      ),
     );
   }
 

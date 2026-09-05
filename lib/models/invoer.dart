@@ -21,6 +21,8 @@ import 'bundel_config.dart';
 
 /// Volledige invoer voor de kabelberekening.
 class Invoer {
+  /// Naam van de leiding (optioneel, alleen relevant bij enkele-kabelmodus).
+  final String naam;
   final Systeemtype systeem;
   final double spanningV;
   final double stroomA;           // 0 als vermogen opgegeven
@@ -110,6 +112,7 @@ class Invoer {
   final PvLaagPositie pvLaagPositie;
 
   const Invoer({
+    this.naam = '',
     required this.systeem,
     required this.spanningV,
     this.stroomA = 0,
@@ -263,6 +266,7 @@ class Invoer {
   }
 
   Map<String, dynamic> toJson() => {
+        'naam': naam,
         'systeem': systeem.name,
         'spanningV': spanningV,
         'stroomA': stroomA,
@@ -314,6 +318,7 @@ class Invoer {
       };
 
   factory Invoer.fromJson(Map<String, dynamic> j) => Invoer(
+        naam: j['naam'] as String? ?? '',
         systeem: Systeemtype.values.byName(j['systeem'] as String),
         spanningV: (j['spanningV'] as num).toDouble(),
         stroomA: (j['stroomA'] as num).toDouble(),
@@ -393,6 +398,7 @@ class Invoer {
       );
 
   Invoer copyWith({
+    String? naam,
     Systeemtype? systeem,
     double? spanningV,
     double? stroomA,
@@ -450,6 +456,7 @@ class Invoer {
     PvLaagPositie? pvLaagPositie,
   }) =>
       Invoer(
+        naam: naam ?? this.naam,
         systeem: systeem ?? this.systeem,
         spanningV: spanningV ?? this.spanningV,
         stroomA: stroomA ?? this.stroomA,

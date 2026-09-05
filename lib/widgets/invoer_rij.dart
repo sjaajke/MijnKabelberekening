@@ -106,6 +106,74 @@ class _GetalVeldState extends State<GetalVeld> {
   }
 }
 
+/// Label + TextFormField voor vrije tekst.
+/// Stateful zodat de TextEditingController synchroon blijft met [waarde]
+/// wanneer de parent de waarde programmatisch wijzigt (bijv. na een reset).
+class TekstVeld extends StatefulWidget {
+  final String label;
+  final String? hint;
+  final String waarde;
+  final ValueChanged<String> onChanged;
+
+  const TekstVeld({
+    super.key,
+    required this.label,
+    this.hint,
+    required this.waarde,
+    required this.onChanged,
+  });
+
+  @override
+  State<TekstVeld> createState() => _TekstVeldState();
+}
+
+class _TekstVeldState extends State<TekstVeld> {
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.waarde);
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void didUpdateWidget(covariant TekstVeld old) {
+    super.didUpdateWidget(old);
+    if (old.waarde != widget.waarde && !_focusNode.hasFocus) {
+      _controller.text = widget.waarde;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: TextFormField(
+        controller: _controller,
+        focusNode: _focusNode,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          hintText: widget.hint,
+          border: const OutlineInputBorder(),
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        ),
+        onChanged: widget.onChanged,
+      ),
+    );
+  }
+}
+
 /// Label + DropdownButtonFormField.
 /// Gebruikt [key: ValueKey(waarde)] zodat het FormField opnieuw wordt
 /// aangemaakt — en de weergave wordt bijgewerkt — wanneer [waarde]
