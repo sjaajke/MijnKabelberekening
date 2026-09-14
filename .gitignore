@@ -42,3 +42,26 @@ app.*.map.json
 /android/app/release
 xcode
 macos
+
+# Geheimen en credentials - nooit committen
+.env
+.env.*
+*.env
+!.env.example
+**/secrets/
+*secret*
+*credentials*
+*.pem
+*.p12
+*.jks
+*.keystore
+key.properties
+**/android/key.properties
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+*apikey*
+*api_key*
+*.p8
+AuthKey_*.p8
+/API KEY/
