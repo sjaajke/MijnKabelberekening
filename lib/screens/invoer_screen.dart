@@ -26,6 +26,7 @@ import '../data/transformatoren.dart';
 import '../state/berekening_provider.dart';
 import '../state/custom_catalogus_provider.dart';
 import '../widgets/sectie_card.dart';
+import '../widgets/leggingswijze_icoon.dart';
 import '../widgets/invoer_rij.dart' show GetalVeld, DropdownRij, SchakelaarRij, ResultaatRij, TekstVeld;
 import '../berekening/cyclisch.dart' show CyclischeFactor;
 
@@ -341,6 +342,7 @@ class _InvoerScreenState extends State<InvoerScreen> {
           waarde: _inv.legging,
           opties: Leggingswijze.values,
           display: (l) => _leggingLabel(l, l10n),
+          icoon: (l, h) => LeggingswijzeIcoon(l, hoogte: h),
           onChanged: (v) => _update(_inv.copyWith(legging: v)),
         ),
         const SizedBox(height: 4),

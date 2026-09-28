@@ -21,6 +21,7 @@ import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
 import '../models/gebruiker.dart';
 import '../state/gebruikers_provider.dart';
+import '../widgets/leggingswijze_icoon.dart';
 import '../widgets/invoer_rij.dart';
 
 class GebruikerSelectieScreen extends StatelessWidget {
@@ -332,6 +333,7 @@ class _PresetDialogState extends State<_PresetDialog> {
                 waarde: _p.legging,
                 opties: Leggingswijze.values,
                 display: (l) => l.label,
+                icoon: (l, h) => LeggingswijzeIcoon(l, hoogte: h),
                 onChanged: (v) => setState(() => _p = _p.copyWith(legging: v)),
               ),
               const SizedBox(height: 4),

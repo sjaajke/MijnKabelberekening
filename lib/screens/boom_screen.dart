@@ -19,8 +19,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 import '../berekening/rapport.dart';
 import '../berekening/pdf_rapport.dart';
+import '../berekening/excel_rapport.dart';
 import '../data/transformatoren.dart';
 import '../l10n/app_localizations.dart';
 import '../models/enums.dart';
@@ -223,6 +225,11 @@ class _BoomScreenState extends State<BoomScreen> {
                 onPressed: () => _pdfRapport(context, boom),
               ),
               IconButton(
+                icon: const Icon(Icons.table_chart_outlined),
+                tooltip: l10n.btnRapportExcel,
+                onPressed: () => _excelRapport(context, boom),
+              ),
+              IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 tooltip: l10n.boomHernoemen,
                 onPressed: () => _hernoemBoom(context, boomP, boom),
@@ -294,6 +301,21 @@ class _BoomScreenState extends State<BoomScreen> {
       bytes: pdfBytes,
       filename: '${boom.naam}.pdf',
     );
+  }
+
+  Future<void> _excelRapport(BuildContext ctx, KabelBoom boom) async {
+    final l10n = AppLocalizations(ctx.read<LanguageProvider>().locale);
+    final excelBytes = boomRapportExcel(boom, l10n);
+    await SharePlus.instance.share(ShareParams(
+      files: [
+        XFile.fromData(
+          excelBytes,
+          name: '${boom.naam}.xlsx',
+          mimeType:
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ),
+      ],
+    ));
   }
 
   void _kopieerRapport(BuildContext ctx, KabelBoom boom) {

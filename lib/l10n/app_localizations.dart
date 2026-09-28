@@ -296,6 +296,7 @@ class AppLocalizations {
   String get snackRapportGekopieerd =>
       isNL ? 'Rapport gekopieerd naar klembord' : 'Report copied to clipboard';
   String get btnRapportPdf => isNL ? 'Opslaan als PDF' : 'Save as PDF';
+  String get btnRapportExcel => isNL ? 'Opslaan als Excel' : 'Save as Excel';
 
   // ── CATALOGUS ────────────────────────────────────────────────────────────
   String get sectCatalogus => isNL ? 'Kabelcatalogus' : 'Cable Catalogue';

@@ -185,6 +185,9 @@ class DropdownRij<T> extends StatelessWidget {
   final String Function(T) display;
   final ValueChanged<T> onChanged;
 
+  /// Optionele afbeelding vóór de tekst; [hoogte] is de beschikbare hoogte.
+  final Widget Function(T, double hoogte)? icoon;
+
   const DropdownRij({
     super.key,
     required this.label,
@@ -192,6 +195,7 @@ class DropdownRij<T> extends StatelessWidget {
     required this.opties,
     required this.display,
     required this.onChanged,
+    this.icoon,
   });
 
   @override
@@ -209,16 +213,31 @@ class DropdownRij<T> extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         ),
+        itemHeight: icoon == null ? kMinInteractiveDimension : 56,
         items: opties
             .map((o) => DropdownMenuItem(
                 value: o,
-                child: Text(display(o))))
+                child: icoon == null
+                    ? Text(display(o))
+                    : Row(children: [
+                        icoon!(o, 44),
+                        const SizedBox(width: 10),
+                        Expanded(child: Text(display(o))),
+                      ])))
             .toList(),
         selectedItemBuilder: (ctx) => opties
             .map((o) => Align(
                 alignment: Alignment.centerLeft,
-                child: Text(display(o),
-                    overflow: TextOverflow.ellipsis, maxLines: 1)))
+                child: icoon == null
+                    ? Text(display(o),
+                        overflow: TextOverflow.ellipsis, maxLines: 1)
+                    : Row(children: [
+                        icoon!(o, 26),
+                        const SizedBox(width: 8),
+                        Expanded(
+                            child: Text(display(o),
+                                overflow: TextOverflow.ellipsis, maxLines: 1)),
+                      ])))
             .toList(),
         onChanged: (v) {
           if (v != null) onChanged(v);

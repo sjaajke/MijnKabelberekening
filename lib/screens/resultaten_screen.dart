@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../l10n/app_localizations.dart';
 import '../state/berekening_provider.dart';
 import '../state/projecten_provider.dart';
@@ -27,6 +28,7 @@ import '../models/resultaten.dart';
 import '../data/materiaal_data.dart';
 import '../berekening/rapport.dart';
 import '../berekening/pdf_rapport.dart';
+import '../berekening/excel_rapport.dart';
 import '../widgets/sectie_card.dart';
 import '../widgets/invoer_rij.dart';
 
@@ -73,6 +75,7 @@ class ResultatenScreen extends StatelessWidget {
           _opslaanKnop(context, l10n),
           _kopieerKnop(context, res, l10n),
           _pdfKnop(context, res, l10n),
+          _excelKnop(context, res, l10n),
           const SizedBox(height: 24),
         ],
       ),
@@ -861,6 +864,31 @@ class ResultatenScreen extends StatelessWidget {
             bytes: pdfBytes,
             filename: 'kabelberekening.pdf',
           );
+        },
+      ),
+    );
+  }
+
+  // ── EXCEL ─────────────────────────────────────────────────────────────────
+  Widget _excelKnop(BuildContext ctx, Resultaten r, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OutlinedButton.icon(
+        icon: const Icon(Icons.table_chart_outlined),
+        label: Text(l10n.btnRapportExcel),
+        onPressed: () async {
+          final inv = ctx.read<BerekeningProvider>().invoer;
+          final excelBytes = berekeningRapportExcel(inv, r, l10n);
+          await SharePlus.instance.share(ShareParams(
+            files: [
+              XFile.fromData(
+                excelBytes,
+                name: 'kabelberekening.xlsx',
+                mimeType:
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              ),
+            ],
+          ));
         },
       ),
     );
