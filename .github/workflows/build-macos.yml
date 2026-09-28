@@ -27,13 +27,16 @@ jobs:
           flutter-version: '3.41.x'
           channel: 'stable'
 
-      - name: Enable macOS desktop
-        run: flutter create --platforms=macos .
-
       - name: Get dependencies
         run: flutter pub get
 
       - name: Build macOS release
+        # Geen certificaat in CI: ad-hoc ondertekenen. TestFlight-builds worden lokaal via Xcode ondertekend.
+        env:
+          FLUTTER_XCODE_CODE_SIGN_IDENTITY: "-"
+          FLUTTER_XCODE_CODE_SIGN_STYLE: Manual
+          FLUTTER_XCODE_DEVELOPMENT_TEAM: ""
+          FLUTTER_XCODE_PROVISIONING_PROFILE_SPECIFIER: ""
         run: flutter build macos --release
 
       - name: Set version name
@@ -48,7 +51,7 @@ jobs:
       - name: Create DMG
         run: |
           hdiutil create -volname "MijnKabelberekening" \
-            -srcfolder "build/macos/Build/Products/Release/mijnkabelberekening.app" \
+            -srcfolder "build/macos/Build/Products/Release/kabelberekening.app" \
             -ov -format UDZO \
             MijnKabelberekening-macos-${{ steps.version.outputs.name }}.dmg
 

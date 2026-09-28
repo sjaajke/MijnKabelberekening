@@ -41,7 +41,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 xcode
-macos
 
 # Geheimen en credentials - nooit committen
 .env
